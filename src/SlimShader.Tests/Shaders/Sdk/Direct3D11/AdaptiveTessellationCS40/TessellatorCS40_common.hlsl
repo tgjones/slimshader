@@ -36,7 +36,7 @@ cbuffer cbNeverChanges : register(b0)
 
 
 // This is moved to macro defines at shader compile time, so that the partitioning mode can be changed during runtime
-//#define g_partitioning (D3D11_TESSELLATOR_PARTITIONING_POW2)
+#define g_partitioning (D3D11_TESSELLATOR_PARTITIONING_POW2)
 
 
 struct PROCESSED_TESS_FACTORS_TRI

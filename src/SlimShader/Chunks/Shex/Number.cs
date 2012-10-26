@@ -59,8 +59,8 @@ namespace SlimShader.Chunks.Shex
 		{
 			const int hexThreshold = 10000; // This is the correct value, derived through fxc.exe and a bisect-search.
 			const uint negThreshold = 0xFFFFFFF0; // TODO: Work out the actual negative threshold.
-			const int floatThresholdPos = 0x00800000; // TODO: Work out the actual float threshold.
-			const int floatThresholdNeg = -0x00800000; // TODO: Work out the actual float threshold.
+			const int floatThresholdPos = 0x00700000; // TODO: Work out the actual float threshold.
+			const int floatThresholdNeg = -0x00700000; // TODO: Work out the actual float threshold.
 			switch (Type)
 			{
 				case NumberType.Int:

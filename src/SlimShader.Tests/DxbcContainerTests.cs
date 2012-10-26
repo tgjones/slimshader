@@ -105,6 +105,10 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_EdgeFactorCS")]
+		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_NumVerticesIndicesCS")]
+		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_ScatterIDCS")]
+		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateIndicesCS")]
+		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateVerticesCS")]
 		public void CanParseShader(string file)
 		{
 			string binaryFile = file + ".o";
