@@ -35,6 +35,11 @@ namespace SlimShader.Chunks
 		Rdef,
 
 		/// <summary>
+		/// ?
+		/// </summary>
+		Sfi0,
+
+		/// <summary>
 		/// Shader
 		/// </summary>
 		Shdr,

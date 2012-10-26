@@ -22,6 +22,8 @@ namespace SlimShader.Chunks.Xsgn
 		RenderTargetArrayIndex = 4,
 
 		ViewportArrayIndex = 5,
+
+		[Description("VERTID")]
 		VertexID = 6,
 
 		[Description("PRIMID")]

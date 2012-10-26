@@ -55,6 +55,20 @@ namespace SlimShader.Chunks.Shex
 			return result;
 		}
 
+		// TODO: Could use this for other flags-style enums?
+		public static string GetDescription(this GlobalFlags value)
+		{
+			string result = string.Empty;
+			foreach (Enum enumValue in Enum.GetValues(typeof(GlobalFlags)))
+				if ((int) value > 0 && value.HasFlag(enumValue))
+				{
+					if (!string.IsNullOrEmpty(result))
+						result += " | ";
+					result += enumValue.GetDescription();
+				}
+			return result;
+		}
+
 		public static bool IsConditionalInstruction(this OpcodeType type)
 		{
 			switch (type)

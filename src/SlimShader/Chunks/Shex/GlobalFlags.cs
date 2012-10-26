@@ -1,13 +1,10 @@
 using System;
-using SlimShader.Util;
 
 namespace SlimShader.Chunks.Shex
 {
 	[Flags]
 	public enum GlobalFlags
 	{
-		None = 0,
-
 		/// <summary>
 		/// Refactoring allowed if bit set.
 		/// </summary>
@@ -27,6 +24,7 @@ namespace SlimShader.Chunks.Shex
 		/// <summary>
 		/// Enable RAW and structured buffers in non-CS 4.x shaders.
 		/// </summary>
+		[Description("enableRawAndStructuredBuffers")]
 		EnableRawAndStructuredBuffersInNonCsShaders = 8,
 
 		/// <summary>

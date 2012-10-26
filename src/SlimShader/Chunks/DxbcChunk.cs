@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SlimShader.Chunks.Ifce;
 using SlimShader.Chunks.Rdef;
+using SlimShader.Chunks.Sfio;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Stat;
 using SlimShader.Chunks.Xsgn;
@@ -20,6 +21,7 @@ namespace SlimShader.Chunks
 			{ "PCSG".ToFourCc(), ChunkType.Pcsg },
 			{ "RDEF".ToFourCc(), ChunkType.Rdef },
 			{ "SHDR".ToFourCc(), ChunkType.Shdr },
+			{ "SFI0".ToFourCc(), ChunkType.Sfi0 },
 			{ "SHEX".ToFourCc(), ChunkType.Shex },
 			{ "STAT".ToFourCc(), ChunkType.Stat }
 		};
@@ -59,6 +61,8 @@ namespace SlimShader.Chunks
 				case ChunkType.Rdef:
 					chunk = ResourceDefinitionChunk.Parse(chunkContentReader);
 					break;
+				case ChunkType.Sfi0:
+					return Sfi0Chunk.Parse(chunkContentReader);
 				case ChunkType.Shdr:
 				case ChunkType.Shex:
 					chunk = ShaderProgramChunk.Parse(chunkContentReader);

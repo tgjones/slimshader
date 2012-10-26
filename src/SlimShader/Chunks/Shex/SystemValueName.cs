@@ -22,7 +22,7 @@ namespace SlimShader.Chunks.Shex
 		[Description("viewportarrayindex")]
 		ViewportArrayIndex = 5,
 
-		[Description("vertexid")]
+		[Description("vertex_id")]
 		VertexID = 6,
 
 		[Description("primitive_id")]
