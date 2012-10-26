@@ -59,7 +59,8 @@ namespace SlimShader.Chunks.Shex
 		{
 			const int hexThreshold = 10000; // This is the correct value, derived through fxc.exe and a bisect-search.
 			const uint negThreshold = 0xFFFFFFF0; // TODO: Work out the actual negative threshold.
-			const uint floatThreshold = 0x00800000; // TODO: Work out the actual float threshold.
+			const int floatThresholdPos = 0x00800000; // TODO: Work out the actual float threshold.
+			const int floatThresholdNeg = -0x00800000; // TODO: Work out the actual float threshold.
 			switch (Type)
 			{
 				case NumberType.Int:
@@ -85,7 +86,7 @@ namespace SlimShader.Chunks.Shex
 					// move bytes around without interpreting them - this is from the mov doc page:
 					// "The modifiers, other than swizzle, assume the data is floating point. The absence of modifiers 
 					// just moves data without altering bits."
-					if (AsInt > floatThreshold)
+					if (AsInt < floatThresholdNeg || AsInt > floatThresholdPos)
 						goto case NumberType.Float;
 					goto case NumberType.Int;
 				default:

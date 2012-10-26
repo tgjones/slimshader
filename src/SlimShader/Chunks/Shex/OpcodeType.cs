@@ -677,5 +677,5 @@ namespace SlimShader.Chunks.Shex
 		Dtou,
 		Itod,
 		Utod
-	};
+	}
 }
