@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D75528F5-54F9-4E31-94F6-03C194F74CF2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SlimShader</RootNamespace>
+    <AssemblyName>SlimShader</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile5</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chunks\Pcsg\PatchConstantSignatureChunk.cs" />
+    <Compile Include="Chunks\Stat\EnumExtensions.cs" />
+    <Compile Include="Chunks\Stat\StatisticsChunk.cs" />
+    <Compile Include="ChunkType.cs" />
+    <Compile Include="DxbcChunk.cs" />
+    <Compile Include="DxbcContainer.cs" />
+    <Compile Include="DxbcContainerHeader.cs" />
+    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="InputOutputSignature\EnumExtensions.cs" />
+    <Compile Include="InputOutputSignature\InputOutputSignatureChunk.cs" />
+    <Compile Include="InputOutputSignature\InputSignatureChunk.cs" />
+    <Compile Include="InputOutputSignature\MinPrecision.cs" />
+    <Compile Include="InputOutputSignature\Name.cs" />
+    <Compile Include="InputOutputSignature\OutputSignatureChunk.cs" />
+    <Compile Include="InputOutputSignature\RegisterComponentType.cs" />
+    <Compile Include="InputOutputSignature\SignatureElementSize.cs" />
+    <Compile Include="InputOutputSignature\SignatureParameterDescription.cs" />
+    <Compile Include="Interface\ClassInstance.cs" />
+    <Compile Include="Interface\ClassType.cs" />
+    <Compile Include="Interface\InterfacesChunk.cs" />
+    <Compile Include="Interface\InterfaceSlot.cs" />
+    <Compile Include="IO\BytecodeReader.cs" />
+    <Compile Include="ParseException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceDefinition\CBufferType.cs" />
+    <Compile Include="ResourceDefinition\ConstantBuffer.cs" />
+    <Compile Include="ResourceDefinition\EnumExtensions.cs" />
+    <Compile Include="ResourceDefinition\ResourceBinding.cs" />
+    <Compile Include="ResourceDefinition\ResourceDefinitionChunk.cs" />
+    <Compile Include="ResourceDefinition\ResourceDimension.cs" />
+    <Compile Include="ResourceDefinition\ShaderCBufferFlags.cs" />
+    <Compile Include="ResourceDefinition\ShaderFlags.cs" />
+    <Compile Include="ResourceDefinition\ShaderInputFlags.cs" />
+    <Compile Include="ResourceDefinition\ShaderInputType.cs" />
+    <Compile Include="ResourceDefinition\ShaderTarget.cs" />
+    <Compile Include="ResourceDefinition\ShaderType.cs" />
+    <Compile Include="ResourceDefinition\ShaderTypeMember.cs" />
+    <Compile Include="ResourceDefinition\ShaderVariable.cs" />
+    <Compile Include="ResourceDefinition\ShaderVariableClass.cs" />
+    <Compile Include="ResourceDefinition\ShaderVariableFlags.cs" />
+    <Compile Include="ResourceDefinition\ShaderVariableType.cs" />
+    <Compile Include="Shader\ComponentMask.cs" />
+    <Compile Include="Shader\ConstantBufferAccessPattern.cs" />
+    <Compile Include="Shader\CustomDataClass.cs" />
+    <Compile Include="Shader\EnumExtensions.cs" />
+    <Compile Include="Shader\ExtendedOperandType.cs" />
+    <Compile Include="Shader\GlobalFlags.cs" />
+    <Compile Include="Shader\InstructionTestBoolean.cs" />
+    <Compile Include="Shader\InstructionTokenExtendedType.cs" />
+    <Compile Include="Shader\InterpolationMode.cs" />
+    <Compile Include="Shader\Number.cs" />
+    <Compile Include="Shader\NumberType.cs" />
+    <Compile Include="Shader\NumberTypeAttribute.cs" />
+    <Compile Include="Shader\OpcodeHeader.cs" />
+    <Compile Include="Shader\OpcodeType.cs" />
+    <Compile Include="Shader\Operand4ComponentName.cs" />
+    <Compile Include="Shader\Operand4ComponentSelectionMode.cs" />
+    <Compile Include="Shader\OperandIndexDimension.cs" />
+    <Compile Include="Shader\OperandIndexRepresentation.cs" />
+    <Compile Include="Shader\OperandModifier.cs" />
+    <Compile Include="Shader\OperandNumComponents.cs" />
+    <Compile Include="Shader\OperandType.cs" />
+    <Compile Include="Shader\Primitive.cs" />
+    <Compile Include="Shader\PrimitiveTopology.cs" />
+    <Compile Include="Shader\ProgramType.cs" />
+    <Compile Include="Shader\ResourceDimension.cs" />
+    <Compile Include="Shader\ResourceReturnType.cs" />
+    <Compile Include="Shader\SamplerMode.cs" />
+    <Compile Include="Shader\ShaderMessageFormat.cs" />
+    <Compile Include="Shader\ShaderProgramChunk.cs" />
+    <Compile Include="Shader\ShaderVersion.cs" />
+    <Compile Include="Shader\SystemValueName.cs" />
+    <Compile Include="Shader\TessellatorDomain.cs" />
+    <Compile Include="Shader\TessellatorOutputPrimitive.cs" />
+    <Compile Include="Shader\TessellatorPartitioning.cs" />
+    <Compile Include="Shader\Tokens\ConstantBufferDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ControlPointCountDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\CustomDataToken.cs" />
+    <Compile Include="Shader\Tokens\DeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\FunctionBodyDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\FunctionTableDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\GeometryShaderInputPrimitiveDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\GeometryShaderInstanceCountDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\GeometryShaderMaxOutputVertexCountDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\GeometryShaderOutputPrimitiveTopologyDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\GlobalFlagsDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\HullShaderForkPhaseInstanceCountDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\HullShaderMaxTessFactorDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ImmediateConstantBufferDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ImmediateDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\IndexableTempRegisterDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\IndexingRangeDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\InputRegisterDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\InstructionToken.cs" />
+    <Compile Include="Shader\Tokens\InterfaceDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\NameToken.cs" />
+    <Compile Include="Shader\Tokens\OpcodeToken.cs" />
+    <Compile Include="Shader\Tokens\Operand.cs" />
+    <Compile Include="Shader\Tokens\OperandIndex.cs" />
+    <Compile Include="Shader\Tokens\OutputRegisterDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\PixelShaderInputRegisterDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\RawShaderResourceViewDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\RawThreadGroupSharedMemoryDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\RawUnorderedAccessViewDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ResourceDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ResourceReturnTypeToken.cs" />
+    <Compile Include="Shader\Tokens\SamplerDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ShaderMessageDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\StructuredShaderResourceViewDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\StructuredThreadGroupSharedMemoryDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\StructuredUnorderedAccessViewDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\TempRegisterDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\TessellatorDomainDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\TessellatorOutputPrimitiveDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\TessellatorPartitioningDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\ThreadGroupDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\TypedUnorderedAccessViewDeclarationToken.cs" />
+    <Compile Include="Shader\Tokens\UnorderedAccessViewDeclarationTokenBase.cs" />
+    <Compile Include="Shader\UnorderedAccessViewCoherency.cs" />
+    <Compile Include="Util\DecoderExtensions.cs" />
+    <Compile Include="Util\DescriptionAttribute.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
