@@ -26,7 +26,7 @@ namespace SlimShader.Tests
 		public void CanLoadShaderBytecode()
 		{
 			// Arrange.
-			var fileBytes = File.ReadAllBytes("Shaders/test.o");
+			var fileBytes = File.ReadAllBytes("Shaders/FxDis/test.o");
 
 			// Act.
 			var container = DxbcContainer.Parse(new BytecodeReader(fileBytes, 0, fileBytes.Length));
@@ -82,25 +82,25 @@ namespace SlimShader.Tests
 			Assert.That(resourceToken1.Operand.Indices[0].Value, Is.EqualTo(0));
 		}
 
-		[TestCase("Shaders/test")]
-		[TestCase("Shaders/ds5/basic")]
-		[TestCase("Shaders/gs4/CubeMap_Inst")]
-		[TestCase("Shaders/hs5/basic")]
-		[TestCase("Shaders/ps4/fxaa")]
-		[TestCase("Shaders/ps4/primID")]
-		[TestCase("Shaders/ps5/conservative_depth_ge")]
-		[TestCase("Shaders/ps5/interfaces")]
-		[TestCase("Shaders/ps5/sample")]
-		[TestCase("Shaders/vs4/mov")]
-		[TestCase("Shaders/vs4/multiple_const_buffers")]
-		[TestCase("Shaders/vs4/switch")]
-		[TestCase("Shaders/vs5/any")]
-		[TestCase("Shaders/vs5/const_temp")]
-		[TestCase("Shaders/vs5/mad_imm")]
-		[TestCase("Shaders/vs5/mov")]
-		[TestCase("Shaders/vs5/sincos")]
-		[TestCase("Shaders/Sdk/BasicCompute11")]
-		[TestCase("Shaders/Sdk/DynamicShaderLinkage11_PS")]
+		[TestCase("Shaders/FxDis/test")]
+		[TestCase("Shaders/HlslCrossCompiler/ds5/basic")]
+		[TestCase("Shaders/HlslCrossCompiler/gs4/CubeMap_Inst")]
+		[TestCase("Shaders/HlslCrossCompiler/hs5/basic")]
+		[TestCase("Shaders/HlslCrossCompiler/ps4/fxaa")]
+		[TestCase("Shaders/HlslCrossCompiler/ps4/primID")]
+		[TestCase("Shaders/HlslCrossCompiler/ps5/conservative_depth_ge")]
+		[TestCase("Shaders/HlslCrossCompiler/ps5/interfaces")]
+		[TestCase("Shaders/HlslCrossCompiler/ps5/sample")]
+		[TestCase("Shaders/HlslCrossCompiler/vs4/mov")]
+		[TestCase("Shaders/HlslCrossCompiler/vs4/multiple_const_buffers")]
+		[TestCase("Shaders/HlslCrossCompiler/vs4/switch")]
+		[TestCase("Shaders/HlslCrossCompiler/vs5/any")]
+		[TestCase("Shaders/HlslCrossCompiler/vs5/const_temp")]
+		[TestCase("Shaders/HlslCrossCompiler/vs5/mad_imm")]
+		[TestCase("Shaders/HlslCrossCompiler/vs5/mov")]
+		[TestCase("Shaders/HlslCrossCompiler/vs5/sincos")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11")]
+		[TestCase("Shaders/Sdk/Direct3D11/DynamicShaderLinkage11/DynamicShaderLinkage11_PS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC6HDecode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode")]

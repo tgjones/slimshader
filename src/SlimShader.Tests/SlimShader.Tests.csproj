@@ -59,40 +59,40 @@
     <Compile Include="DxbcContainerTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Shaders\ds5\basic.asm">
+    <Content Include="Shaders\HlslCrossCompiler\ds5\basic.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\gs4\CubeMapGS.fx">
+    <Content Include="Shaders\HlslCrossCompiler\gs4\CubeMapGS.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\gs4\CubeMap_Inst.asm">
+    <Content Include="Shaders\HlslCrossCompiler\gs4\CubeMap_Inst.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\hs5\basic.asm">
+    <Content Include="Shaders\HlslCrossCompiler\hs5\basic.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps4\fxaa.asm">
+    <Content Include="Shaders\HlslCrossCompiler\ps4\fxaa.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps4\primID.asm">
+    <Content Include="Shaders\HlslCrossCompiler\ps4\primID.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\conservative_depth_ge.asm">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\conservative_depth_ge.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\interfaces.asm">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\interfaces.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\sample.asm">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\sample.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\BasicCompute11.asm">
+    <Content Include="Shaders\Sdk\Direct3D11\BasicCompute11\BasicCompute11.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\BasicCompute11.hlsl">
+    <Content Include="Shaders\Sdk\Direct3D11\BasicCompute11\BasicCompute11.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\BasicCompute11.o">
+    <Content Include="Shaders\Sdk\Direct3D11\BasicCompute11\BasicCompute11.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_common.hlsl">
@@ -154,151 +154,151 @@
     <Content Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC7Encode.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_LightPSH.h">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_LightPSH.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_MaterialPSH.h">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_MaterialPSH.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_PS.asm">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PS.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_PS.hlsl">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PS.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_PSBuffers.h">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PSBuffers.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_VS.hlsl">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_VS.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\test">
+    <Content Include="Shaders\FxDis\test">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Sdk\DynamicShaderLinkage11_PS.o">
+    <Content Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PS.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Shaders\test.o">
+    <None Include="Shaders\FxDis\test.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="Shaders\test.asm">
+    <Content Include="Shaders\FxDis\test.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\mov.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\mov.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\multiple_const_buffers.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\multiple_const_buffers.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\switch.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\switch.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\any.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\any.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\const_temp.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\const_temp.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\mad_imm.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\mad_imm.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\mov.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\mov.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\sincos.asm">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\sincos.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ds5\basic">
+    <Content Include="Shaders\HlslCrossCompiler\ds5\basic">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ds5\basic.o">
+    <Content Include="Shaders\HlslCrossCompiler\ds5\basic.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\gs4\CubeMap_Inst.o">
+    <Content Include="Shaders\HlslCrossCompiler\gs4\CubeMap_Inst.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\hs5\basic">
+    <Content Include="Shaders\HlslCrossCompiler\hs5\basic">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\hs5\basic.o">
+    <Content Include="Shaders\HlslCrossCompiler\hs5\basic.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps4\fxaa">
+    <Content Include="Shaders\HlslCrossCompiler\ps4\fxaa">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps4\fxaa.o">
+    <Content Include="Shaders\HlslCrossCompiler\ps4\fxaa.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps4\primID">
+    <Content Include="Shaders\HlslCrossCompiler\ps4\primID">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps4\primID.o">
+    <Content Include="Shaders\HlslCrossCompiler\ps4\primID.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\conservative_depth">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\conservative_depth">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\conservative_depth_ge.o">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\conservative_depth_ge.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\interfaces">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\interfaces">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\interfaces.o">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\interfaces.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\sample">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\sample">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ps5\sample.o">
+    <Content Include="Shaders\HlslCrossCompiler\ps5\sample.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\mov">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\mov">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\mov.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\mov.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\multiple_const_buffers">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\multiple_const_buffers">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\multiple_const_buffers.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\multiple_const_buffers.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\switch">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\switch">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs4\switch.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs4\switch.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\any">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\any">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\any.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\any.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\const_temp">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\const_temp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\const_temp.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\const_temp.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\mad_imm">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\mad_imm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\mad_imm.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\mad_imm.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\mov">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\mov">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\mov.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\mov.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\sincos">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\sincos">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\vs5\sincos.o">
+    <Content Include="Shaders\HlslCrossCompiler\vs5\sincos.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
