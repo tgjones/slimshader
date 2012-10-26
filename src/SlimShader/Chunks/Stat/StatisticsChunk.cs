@@ -1,6 +1,6 @@
 using System.Text;
-using SlimShader.IO;
-using SlimShader.Shader;
+using SlimShader.Chunks.Shex;
+using SlimShader.Util;
 
 namespace SlimShader.Chunks.Stat
 {

@@ -3,11 +3,15 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SharpDX.D3DCompiler;
-using SlimShader.IO;
-using SlimShader.Shader;
-using SlimShader.Shader.Tokens;
-using ResourceDimension = SlimShader.Shader.ResourceDimension;
-using ResourceReturnType = SlimShader.Shader.ResourceReturnType;
+using SlimShader.Chunks;
+using SlimShader.Chunks.Rdef;
+using SlimShader.Chunks.Shex;
+using SlimShader.Chunks.Shex.Tokens;
+using SlimShader.Chunks.Xsgn;
+using SlimShader.Util;
+using ConstantBuffer = SharpDX.D3DCompiler.ConstantBuffer;
+using ResourceDimension = SlimShader.Chunks.Shex.ResourceDimension;
+using ResourceReturnType = SlimShader.Chunks.Shex.ResourceReturnType;
 
 namespace SlimShader.Tests
 {
@@ -239,7 +243,7 @@ namespace SlimShader.Tests
 			//shaderReflection.GetThreadGroupSize(); // TODO
 		}
 
-		private static void CompareConstantBuffer(ConstantBuffer expected, ResourceDefinition.ConstantBuffer actual)
+		private static void CompareConstantBuffer(ConstantBuffer expected, Chunks.Rdef.ConstantBuffer actual)
 		{
 			Assert.AreEqual((int) expected.Description.Flags, (int) actual.Flags);
 			Assert.AreEqual(expected.Description.Name, actual.Name);
@@ -252,7 +256,7 @@ namespace SlimShader.Tests
 		}
 
 		private static void CompareConstantBufferVariable(ShaderReflectionVariable expected,
-			ResourceDefinition.ShaderVariable actual)
+			ShaderVariable actual)
 		{
 			//Assert.AreEqual(expected.Description.DefaultValue, actual.DefaultValue); // TODO
 			Assert.AreEqual((int) expected.Description.Flags, (int) actual.Flags);
@@ -268,7 +272,7 @@ namespace SlimShader.Tests
 		}
 
 		private static void CompareConstantBufferVariableType(ShaderReflectionType expected,
-			ResourceDefinition.ShaderType actual)
+			ShaderType actual)
 		{
 			//Assert.AreEqual(expected.BaseClass, actual.BaseTypeName); // TODO
 			Assert.AreEqual((int) expected.Description.Class, (int) actual.VariableClass);
@@ -283,7 +287,7 @@ namespace SlimShader.Tests
 		}
 
 		private static void CompareParameter(ShaderParameterDescription expected,
-			InputOutputSignature.SignatureParameterDescription actual)
+			SignatureParameterDescription actual)
 		{
 			Assert.AreEqual((int) expected.ComponentType, (int) actual.ComponentType);
 			//Assert.AreEqual((int) expected.ReadWriteMask, (int) actual.ReadWriteMask); // TODO: Bug in SharpDX?
@@ -297,7 +301,7 @@ namespace SlimShader.Tests
 		}
 
 		private static void CompareResourceBinding(InputBindingDescription expected,
-			ResourceDefinition.ResourceBinding actual)
+			ResourceBinding actual)
 		{
 			Assert.AreEqual(expected.BindCount, actual.BindCount);
 			Assert.AreEqual(expected.BindPoint, actual.BindPoint);

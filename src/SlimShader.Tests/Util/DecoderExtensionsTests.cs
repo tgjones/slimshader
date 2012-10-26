@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using SlimShader.Shader;
+using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
 namespace SlimShader.Tests.Util

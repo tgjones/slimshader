@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SlimShader.Chunks.Pcsg;
+using SlimShader.Chunks;
+using SlimShader.Chunks.Ifce;
+using SlimShader.Chunks.Rdef;
+using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Stat;
-using SlimShader.IO;
-using SlimShader.InputOutputSignature;
-using SlimShader.Interface;
-using SlimShader.ResourceDefinition;
-using SlimShader.Shader;
+using SlimShader.Chunks.Xsgn;
 using SlimShader.Util;
 
 namespace SlimShader

@@ -1,4 +1,4 @@
-using SlimShader.Shader;
+using SlimShader.Chunks.Shex;
 
 namespace SlimShader.Chunks.Stat
 {
