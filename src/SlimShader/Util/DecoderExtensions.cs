@@ -47,6 +47,16 @@ namespace SlimShader.Util
 			return mask;
 		}
 
+		public static sbyte DecodeSigned4BitValue(this uint token, byte start, byte end)
+		{
+			if (end - start != 3)
+				throw new ArgumentOutOfRangeException();
+			var value = token.DecodeValue<sbyte>(start, end);
+			if (value > 7)
+				return (sbyte) (value - 16);
+			return value;
+		}
+
 		public static uint ToFourCc(this string fourCc)
 		{
 			if (string.IsNullOrEmpty(fourCc) || fourCc.Length != 4)

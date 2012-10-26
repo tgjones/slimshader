@@ -621,6 +621,7 @@ namespace SlimShader.Chunks.Shex
 		[NumberType(NumberType.UInt)]
 		ImmAtomicUMin,
 
+		[Description("sync")]
 		Sync,
 
 		[NumberType(NumberType.Double)]

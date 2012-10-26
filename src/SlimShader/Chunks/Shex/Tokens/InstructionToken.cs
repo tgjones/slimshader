@@ -8,22 +8,31 @@ namespace SlimShader.Chunks.Shex.Tokens
 	/// <summary>
 	/// Instruction Token
 	///
-	/// OpcodeToken0:
-	///
+	/// Normal instructions:
 	/// [10:00] OpcodeType
-	/// [13:13] Saturate?
+	/// [12:11] resinfo_return_type TODO
+	/// [13:13] Saturate
+	/// [17:14] Ignored, 0
 	/// [18:18] InstructionTestBoolean
-	/// [23:16] Ignored, 0
+	/// [22:19] precise_mask TODO
+	/// [23:23] Ignored, 0
 	/// [30:24] Instruction length in DWORDs including the opcode token.
 	/// [31]    0 normally. 1 if extended operand definition, meaning next DWORD
 	///         contains extended operand description.
+	/// 
+	/// OpcodeType == Sync:
+	/// [11:11] ThreadsInGroup
+	/// [12:12] SharedMemory
+	/// [13:13] UavGroup
+	/// [14:14] UavGlobal
 	///
 	/// OpcodeToken0 is followed by 1 or more operands.
 	/// </summary>
 	public class InstructionToken : OpcodeToken
 	{
-		public bool Saturate { get; set; }
-		public InstructionTestBoolean TestBoolean { get; set; }
+		public bool Saturate { get; private set; }
+		public InstructionTestBoolean TestBoolean { get; private set; }
+		public SyncFlags SyncFlags { get; private set; }
 		public List<InstructionTokenExtendedType> ExtendedTypes { get; private set; }
 		public sbyte[] SampleOffsets { get; private set; }
 		public ResourceDimension ResourceTarget { get; set; }
@@ -54,8 +63,15 @@ namespace SlimShader.Chunks.Shex.Tokens
 			var instructionEnd = reader.CurrentPosition + (header.Length * sizeof(uint));
 			var token0 = reader.ReadUInt32();
 
-			instructionToken.Saturate = (token0.DecodeValue(13, 13) == 1);
-			instructionToken.TestBoolean = token0.DecodeValue<InstructionTestBoolean>(18, 18);
+			if (header.OpcodeType == OpcodeType.Sync)
+			{
+				instructionToken.SyncFlags = token0.DecodeValue<SyncFlags>(11, 14);
+			}
+			else
+			{
+				instructionToken.Saturate = (token0.DecodeValue(13, 13) == 1);
+				instructionToken.TestBoolean = token0.DecodeValue<InstructionTestBoolean>(18, 18);
+			}
 
 			bool extended = header.IsExtended;
 			while (extended)
@@ -68,9 +84,9 @@ namespace SlimShader.Chunks.Shex.Tokens
 				switch (extendedType)
 				{
 					case InstructionTokenExtendedType.SampleControls:
-						instructionToken.SampleOffsets[0] = DecodeSigned4BitValue(extendedToken, 09, 12);
-						instructionToken.SampleOffsets[1] = DecodeSigned4BitValue(extendedToken, 13, 16);
-						instructionToken.SampleOffsets[2] = DecodeSigned4BitValue(extendedToken, 17, 20);
+						instructionToken.SampleOffsets[0] = extendedToken.DecodeSigned4BitValue(09, 12);
+						instructionToken.SampleOffsets[1] = extendedToken.DecodeSigned4BitValue(13, 16);
+						instructionToken.SampleOffsets[2] = extendedToken.DecodeSigned4BitValue(17, 20);
 						break;
 					case InstructionTokenExtendedType.ResourceDim:
 						instructionToken.ResourceTarget = extendedToken.DecodeValue<ResourceDimension>(6, 10);
@@ -113,21 +129,13 @@ namespace SlimShader.Chunks.Shex.Tokens
 			return instructionToken;
 		}
 
-		// TODO: Move this to the Decoder class.
-		private static sbyte DecodeSigned4BitValue(uint token, byte start, byte end)
-		{
-			if (end - start != 3)
-				throw new ArgumentOutOfRangeException();
-			var value = token.DecodeValue<sbyte>(start, end);
-			if (value > 7)
-				return (sbyte) (value - 16);
-			return value;
-		}
-
 		public override string ToString()
 		{
 			string result = TypeDescription;
-			
+
+			if (Header.OpcodeType == OpcodeType.Sync)
+				result += SyncFlags.GetDescription();
+
 			if (ExtendedTypes.Contains(InstructionTokenExtendedType.ResourceDim))
 				result += "_indexable";
 

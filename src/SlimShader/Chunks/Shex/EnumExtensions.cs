@@ -39,6 +39,22 @@ namespace SlimShader.Chunks.Shex
 			}
 		}
 
+		public static string GetDescription(this SyncFlags value)
+		{
+			string result = string.Empty;
+
+			if (value.HasFlag(SyncFlags.UnorderedAccessViewGlobal))
+				result += "_uglobal";
+			if (value.HasFlag(SyncFlags.UnorderedAccessViewGroup))
+				result += "_ugroup";
+			if (value.HasFlag(SyncFlags.SharedMemory))
+				result += "_g";
+			if (value.HasFlag(SyncFlags.ThreadsInGroup))
+				result += "_t";
+
+			return result;
+		}
+
 		public static bool IsConditionalInstruction(this OpcodeType type)
 		{
 			switch (type)
