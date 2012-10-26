@@ -76,10 +76,8 @@ namespace SlimShader.Chunks.Xsgn
 				SystemValueType = (Name) parameterReader.ReadUInt32(),
 				ComponentType = (RegisterComponentType) parameterReader.ReadUInt32(),
 				Register = parameterReader.ReadUInt32(),
-				//Mask = (ComponentMask) parameterReader.ReadByte(),
-				//ReadWriteMask = (ComponentMask) parameterReader.ReadByte(),
 				Stream = stream,
-				//MinPrecision = (MinPrecision) parameterReader.ReadByte()
+				//MinPrecision = (MinPrecision) parameterReader.ReadByte() TODO
 			};
 
 			uint mask = parameterReader.ReadUInt32();
