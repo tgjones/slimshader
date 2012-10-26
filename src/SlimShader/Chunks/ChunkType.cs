@@ -45,12 +45,12 @@ namespace SlimShader.Chunks
 		Sfi0,
 
 		/// <summary>
-		/// Shader
+		/// Shader (SM 4.0)
 		/// </summary>
 		Shdr,
 
 		/// <summary>
-		/// Shader
+		/// Shader (SM 5.0)
 		/// </summary>
 		Shex,
 

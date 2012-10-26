@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex;
@@ -223,7 +224,7 @@ namespace SlimShader.Chunks.Stat
 				return result;
 
 			// Unknown.
-			var unknown = reader.ReadUInt32();
+			Debug.Assert(reader.ReadUInt32() == 0); // TODO
 
 			result.ControlPoints = reader.ReadUInt32();
 			result.HullShaderOutputPrimitive = (TessellatorOutputPrimitive) reader.ReadUInt32();

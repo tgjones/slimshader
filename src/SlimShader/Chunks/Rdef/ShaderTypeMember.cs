@@ -52,53 +52,6 @@ namespace SlimShader.Chunks.Rdef
 
 		public override string ToString()
 		{
-			// For example:
-			// row_major modelview;               // Offset:    0 Size:    64
-			// float4x4 modelview;                // Offset:    0 Size:    64
-			// int unusedTestA;                   // Offset:   64 Size:     4 [unused]
-			// float4 cool;                       // Offset:    0 Size:    16
-			// interface iBaseLight g_abstractAmbientLighting;// Offset:    1 Size:     1
-			// struct cAmbientLight
-			// {
-			//       
-			//     float3 m_vLightColor;          // Offset:    0
-			//     bool m_bEnable;                // Offset:   12
-			//
-			// } g_ambientLight;                  // Offset:    0 Size:    16
-
-			//string variableType = string.Empty;
-			//switch (Type.VariableClass)
-			//{
-			//	case ShaderVariableClass.MatrixRows:
-			//		variableType += Type.VariableClass.GetDescription() + " ";
-			//		break;
-			//}
-
-			//if (string.IsNullOrEmpty(Type.BaseTypeName))
-			//{
-			//	variableType += Type.VariableType.GetDescription();
-			//	// TODO: This might not all be necessary - perhaps BaseTypeName is always set when it's an array?
-			//	if (Type.Columns > 1 && Type.VariableType != ShaderVariableType.InterfacePointer)
-			//	{
-			//		variableType += Type.Columns;
-			//		if (Type.Rows > 1)
-			//			variableType += "x" + Type.Rows;
-			//	}
-			//}
-			//else
-			//{
-			//	if (Type.VariableType == ShaderVariableType.InterfacePointer)
-			//		variableType += Type.VariableType.GetDescription() + " ";
-			//	variableType += Type.BaseTypeName;
-			//}
-
-			//string arrayCount = string.Empty;
-			//if (Type.ElementCount > 0)
-			//	arrayCount = "[" + Type.ElementCount + "]";
-
-			//string declaration = string.Format("{0} {1}{2};", variableType, Name, arrayCount);
-			//return string.Format("{0,-35}// Offset: {1,4}", declaration, Offset);
-
 			string declaration = Type + " " + Name;
 			if (Type.ElementCount > 0)
 				declaration += string.Format("[{0}]", Type.ElementCount);

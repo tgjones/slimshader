@@ -105,7 +105,7 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateIndicesCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateVerticesCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11")]
-		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLPS")] // Can't parsed SDBG chunk type yet.
+		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLPS")] // Can't parse SDBG chunk type yet.
 		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLVS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC6HDecode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
@@ -276,12 +276,14 @@ namespace SlimShader.Tests
 			//Assert.AreEqual(expected.Description.DefaultValue, actual.DefaultValue); // TODO
 			Assert.AreEqual((int) expected.Description.Flags, (int) actual.Flags);
 			Assert.AreEqual(expected.Description.Name, actual.Name);
-			//Assert.AreEqual(expected.Description.SamplerSize, actual.Size); // TODO
+			Assert.AreEqual(expected.Description.SamplerSize, actual.SamplerSize);
 			Assert.AreEqual(expected.Description.Size, actual.Size);
 			Assert.AreEqual(expected.Description.StartOffset, actual.StartOffset);
-			//Assert.AreEqual(expected.Description.StartSampler, actual.Size); // TODO
-			//Assert.AreEqual(expected.Description.StartTexture, actual.Size); // TODO
-			//Assert.AreEqual(expected.Description.TextureSize, actual.Size); // TODO
+			if (expected.Description.StartSampler != -1 && actual.StartSampler != 0)
+				Assert.AreEqual(expected.Description.StartSampler, actual.StartSampler);
+			if (expected.Description.StartTexture != -1 && actual.StartTexture != 0)
+			Assert.AreEqual(expected.Description.StartTexture, actual.StartTexture);
+			Assert.AreEqual(expected.Description.TextureSize, actual.TextureSize);
 
 			CompareConstantBufferVariableType(expected.GetVariableType(), actual.ShaderType);
 		}
@@ -298,7 +300,7 @@ namespace SlimShader.Tests
 			//Assert.AreEqual(expected.Description.Offset, actual.off); // TODO
 			Assert.AreEqual(expected.Description.RowCount, actual.Rows);
 			Assert.AreEqual((int) expected.Description.Type, (int) actual.VariableType);
-			//Assert.AreEqual(expected.NumInterfaces, actual.Rows); // TODO
+			//Assert.AreEqual(expected.NumInterfaces, 0); // TODO
 		}
 
 		private static void CompareParameter(ShaderParameterDescription expected,

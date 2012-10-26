@@ -55,7 +55,7 @@ namespace SlimShader.Chunks
 					break;
 				case ChunkType.Isgn :
 				case ChunkType.Osgn:
-				case ChunkType.Osg5:
+				//case ChunkType.Osg5: // Doesn't seem to be used?
 				case ChunkType.Pcsg:
 					chunk = InputOutputSignatureChunk.Parse(chunkContentReader, chunkType,
 						container.ResourceDefinition.Target.ProgramType);

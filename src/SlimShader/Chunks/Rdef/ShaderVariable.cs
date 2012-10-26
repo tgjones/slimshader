@@ -56,11 +56,10 @@ namespace SlimShader.Chunks.Rdef
 		/// </summary>
 		public object DefaultValue { get; private set; }
 
-		// TODO
-		//public uint StartTexture { get; set; }
-		//public uint TextureSize { get; set; }
-		//public uint StartSampler { get; set; }
-		//public uint SamplerSize { get; set; }
+		public int StartTexture { get; private set; }
+		public int TextureSize { get; private set; }
+		public int StartSampler { get; private set; }
+		public int SamplerSize { get; private set; }
 
 		///// <summary>
 		///// Gets the corresponding interface slot for a variable that represents an interface pointer.
@@ -90,17 +89,7 @@ namespace SlimShader.Chunks.Rdef
 				// https://github.com/mirrors/wine/blob/master/dlls/d3dcompiler_43/reflection.c#L1362
 			}
 
-			if (target.MajorVersion >= 5)
-			{
-				// https://github.com/mirrors/wine/blob/master/dlls/d3dcompiler_43/reflection.c#L1371
-				// TODO: Work out what these unknown values are.
-				uint unknown1 = variableReader.ReadUInt32();
-				uint unknown2 = variableReader.ReadUInt32();
-				uint unknown3 = variableReader.ReadUInt32();
-				uint unknown4 = variableReader.ReadUInt32();
-			}
-
-			return new ShaderVariable
+			var result = new ShaderVariable
 			{
 				Member = new ShaderTypeMember(0)
 				{
@@ -112,6 +101,16 @@ namespace SlimShader.Chunks.Rdef
 				Size = size,
 				Flags = flags
 			};
+
+			if (target.MajorVersion >= 5)
+			{
+				result.StartTexture = variableReader.ReadInt32();
+				result.TextureSize = variableReader.ReadInt32();
+				result.StartSampler = variableReader.ReadInt32();
+				result.SamplerSize = variableReader.ReadInt32();
+			}
+
+			return result;
 		}
 
 		public override string ToString()
