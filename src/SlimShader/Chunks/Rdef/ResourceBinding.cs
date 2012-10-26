@@ -72,7 +72,7 @@ namespace SlimShader.Chunks.Rdef
 				returnType += "4";
 			return string.Format("// {0,-30} {1,10} {2,7} {3,11} {4,4} {5,8}",
 				Name, Type.GetDescription(), returnType,
-				Dimension.GetDescription(Type) + (Dimension.IsMultiSampled() ? NumSamples.ToString() : string.Empty),
+				Dimension.GetDescription(Type, ReturnType) + (Dimension.IsMultiSampled() ? NumSamples.ToString() : string.Empty),
 				BindPoint, BindCount);
 		}
 	}

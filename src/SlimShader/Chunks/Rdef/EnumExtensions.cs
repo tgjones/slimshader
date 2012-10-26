@@ -17,10 +17,14 @@ namespace SlimShader.Chunks.Rdef
 			}
 		}
 
-		public static string GetDescription(this ShaderResourceViewDimension value, ShaderInputType shaderInputType)
+		public static string GetDescription(this ShaderResourceViewDimension value, ShaderInputType shaderInputType,
+			ResourceReturnType format)
 		{
 			switch (shaderInputType)
 			{
+				case ShaderInputType.ByteAddress :
+				case ShaderInputType.Structured:
+					return "r/o";
 				case ShaderInputType.UavRwByteAddress :
 				case ShaderInputType.UavRwStructured :
 				case ShaderInputType.UavRwStructuredWithCounter :
