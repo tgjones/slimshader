@@ -59,6 +59,7 @@
     <Compile Include="DxbcContainerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\FxDis\readme.txt" />
     <Content Include="Shaders\HlslCrossCompiler\ds5\basic.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
