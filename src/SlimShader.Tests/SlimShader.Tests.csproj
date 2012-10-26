@@ -59,6 +59,15 @@
     <Compile Include="DxbcContainerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSL.fx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLPS.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLVS.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\NBodyGravityCS11.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -87,6 +96,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawVS.o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLPS.o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLVS.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Shaders\Sdk\readme.txt" />

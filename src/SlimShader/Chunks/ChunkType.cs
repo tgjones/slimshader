@@ -35,6 +35,11 @@ namespace SlimShader.Chunks
 		Rdef,
 
 		/// <summary>
+		/// Shader debugging info
+		/// </summary>
+		Sdbg,
+
+		/// <summary>
 		/// ?
 		/// </summary>
 		Sfi0,

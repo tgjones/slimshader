@@ -105,6 +105,8 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateIndicesCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateVerticesCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11")]
+		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLPS")] // Can't parsed SDBG chunk type yet.
+		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLVS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC6HDecode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode")]
