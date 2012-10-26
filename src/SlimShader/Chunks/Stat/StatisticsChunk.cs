@@ -1,4 +1,5 @@
 using System.Text;
+using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 

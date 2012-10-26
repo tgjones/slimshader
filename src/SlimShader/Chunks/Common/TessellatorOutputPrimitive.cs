@@ -1,6 +1,6 @@
 ﻿using SlimShader.Util;
 
-namespace SlimShader.Chunks.Shex
+namespace SlimShader.Chunks.Common
 {
 	public enum TessellatorOutputPrimitive
 	{

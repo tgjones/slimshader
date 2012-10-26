@@ -1,23 +1,23 @@
 ﻿using System;
-using SlimShader.Chunks.Shex;
+using SlimShader.Chunks.Common;
 
 namespace SlimShader.Chunks.Rdef
 {
 	internal static class EnumExtensions
 	{
-		public static bool IsMultiSampled(this ResourceDimension value)
+		public static bool IsMultiSampled(this ShaderResourceViewDimension value)
 		{
 			switch (value)
 			{
-				case ResourceDimension.Texture2DMultiSampled :
-				case ResourceDimension.Texture2DMultiSampledArray :
+				case ShaderResourceViewDimension.Texture2DMultiSampled :
+				case ShaderResourceViewDimension.Texture2DMultiSampledArray :
 					return true;
 				default :
 					return false;
 			}
 		}
 
-		public static string GetDescription(this ResourceDimension value, ShaderInputType shaderInputType)
+		public static string GetDescription(this ShaderResourceViewDimension value, ShaderInputType shaderInputType)
 		{
 			switch (shaderInputType)
 			{

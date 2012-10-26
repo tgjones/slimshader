@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SlimShader.Chunks.Shex;
+using SlimShader.Chunks.Common;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Rdef
@@ -33,7 +33,7 @@ namespace SlimShader.Chunks.Rdef
 			uint constantBufferOffset = headerReader.ReadUInt32();
 			uint resourceBindingCount = headerReader.ReadUInt32();
 			uint resourceBindingOffset = headerReader.ReadUInt32();
-			var target = ShaderTarget.Parse(headerReader);
+			var target = ShaderVersion.ParseRdef(headerReader);
 			uint flags = headerReader.ReadUInt32();
 
 			var creatorOffset = headerReader.ReadUInt32();

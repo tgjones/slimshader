@@ -1,5 +1,5 @@
 using System;
-using SlimShader.Chunks.Shex;
+using SlimShader.Chunks.Common;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Rdef
@@ -55,6 +55,12 @@ namespace SlimShader.Chunks.Rdef
 		/// The default value for initializing the variable.
 		/// </summary>
 		public object DefaultValue { get; private set; }
+
+		// TODO
+		//public uint StartTexture { get; set; }
+		//public uint TextureSize { get; set; }
+		//public uint StartSampler { get; set; }
+		//public uint SamplerSize { get; set; }
 
 		///// <summary>
 		///// Gets the corresponding interface slot for a variable that represents an interface pointer.

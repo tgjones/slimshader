@@ -1,3 +1,4 @@
+using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 

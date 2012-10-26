@@ -7,7 +7,7 @@ namespace SlimShader.Chunks.Rdef
 	/// Based on D3D_SHADER_CBUFFER_FLAGS.
 	/// </summary>
 	[Flags]
-	public enum ShaderCBufferFlags
+	public enum ConstantBufferFlags
 	{
 		None = 0,
 

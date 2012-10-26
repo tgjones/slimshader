@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace SlimShader.Chunks.Shex
+namespace SlimShader.Chunks.Common
 {
 	[Flags]
 	public enum ComponentMask
 	{
-		None = 0, // TODO: Might not need this if Operand is refactored to include only relevant properties.
+		None = 0,
 
 		X = 1,
 		Y = 2,

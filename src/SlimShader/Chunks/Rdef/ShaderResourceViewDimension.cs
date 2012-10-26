@@ -6,7 +6,7 @@ namespace SlimShader.Chunks.Rdef
 	/// Very similar to Shader.ResourceDimension, but this one is used within the RDEF (Resource Definition) chunk.
 	/// The multi-sampled values are different from ResourceDimension.
 	/// </summary>
-	public enum ResourceDimension
+	public enum ShaderResourceViewDimension
 	{
 		/// <summary>
 		/// The type is unknown.
@@ -77,6 +77,6 @@ namespace SlimShader.Chunks.Rdef
 		/// <summary>
 		/// The resource is a raw buffer.
 		/// </summary>
-		BufferEx = 11
+		ExtendedBuffer = 11
 	}
 }

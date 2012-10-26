@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
@@ -17,9 +18,9 @@ namespace SlimShader.Chunks.Rdef
 		public string Name { get; private set; }
 
 		/// <summary>
-		/// A <see cref="CBufferType" />-typed value that indicates the intended use of the constant data.
+		/// A <see cref="ConstantBufferType" />-typed value that indicates the intended use of the constant data.
 		/// </summary>
-		public CBufferType BufferType { get; private set; }
+		public ConstantBufferType BufferType { get; private set; }
 
 		public List<ShaderVariable> Variables { get; private set; }
 
@@ -29,10 +30,10 @@ namespace SlimShader.Chunks.Rdef
 		public uint Size { get; private set; }
 
 		/// <summary>
-		/// A combination of <see cref="ShaderCBufferFlags" />-typed values that are combined by using a bitwise OR 
+		/// A combination of <see cref="ConstantBufferFlags" />-typed values that are combined by using a bitwise OR 
 		/// operation. The resulting value specifies properties for the shader constant-buffer.
 		/// </summary>
-		public ShaderCBufferFlags Flags { get; private set; }
+		public ConstantBufferFlags Flags { get; private set; }
 
 		public ConstantBuffer()
 		{
@@ -59,8 +60,8 @@ namespace SlimShader.Chunks.Rdef
 				result.Variables.Add(ShaderVariable.Parse(reader, variableReader, target, i == 0));
 
 			result.Size = constantBufferReader.ReadUInt32();
-			result.Flags = (ShaderCBufferFlags) constantBufferReader.ReadUInt32();
-			result.BufferType = (CBufferType) constantBufferReader.ReadUInt32();
+			result.Flags = (ConstantBufferFlags) constantBufferReader.ReadUInt32();
+			result.BufferType = (ConstantBufferType) constantBufferReader.ReadUInt32();
 
 			return result;
 		}

@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using SharpDX.D3DCompiler;
 using SlimShader.Chunks;
+using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Rdef;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
@@ -11,7 +12,7 @@ using SlimShader.Chunks.Xsgn;
 using SlimShader.Util;
 using ConstantBuffer = SharpDX.D3DCompiler.ConstantBuffer;
 using ResourceDimension = SlimShader.Chunks.Shex.ResourceDimension;
-using ResourceReturnType = SlimShader.Chunks.Shex.ResourceReturnType;
+using ResourceReturnType = SlimShader.Chunks.Common.ResourceReturnType;
 
 namespace SlimShader.Tests
 {

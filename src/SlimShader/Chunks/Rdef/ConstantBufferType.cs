@@ -6,18 +6,18 @@ namespace SlimShader.Chunks.Rdef
 	/// Indicates a constant buffer's type.
 	/// Based on D3D11_CBUFFER_TYPE.
 	/// </summary>
-	public enum CBufferType
+	public enum ConstantBufferType
 	{
 		/// <summary>
 		/// A buffer containing scalar constants.
 		/// </summary>
 		[Description("cbuffer")]
-		CBuffer,
+		ConstantBuffer,
 
 		/// <summary>
 		/// A buffer containing texture data.
 		/// </summary>
-		TBuffer,
+		TextureBuffer,
 
 		/// <summary>
 		/// A buffer containing interface pointers.
@@ -29,6 +29,6 @@ namespace SlimShader.Chunks.Rdef
 		/// A buffer containing binding information.
 		/// </summary>
 		[Description("Resource bind info for")]
-		ResourceBindInfo
+		ResourceBindInformation
 	}
 }

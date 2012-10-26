@@ -1,12 +1,33 @@
-﻿using System;
+using System;
 using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
-namespace SlimShader.Chunks.Rdef
+namespace SlimShader.Chunks.Common
 {
-	public static class ShaderTarget
+	/// <summary>
+	/// Version Token (VerTok)
+	/// [07:00] minor version number (0-255)
+	/// [15:08] major version number (0-255)
+	/// [31:16] D3D10_SB_TOKENIZED_PROGRAM_TYPE
+	/// </summary>
+	public class ShaderVersion
 	{
-		public static ShaderVersion Parse(BytecodeReader reader)
+		public byte MajorVersion { get; private set; }
+		public byte MinorVersion { get; private set; }
+		public ProgramType ProgramType { get; private set; }
+
+		public static ShaderVersion ParseShex(BytecodeReader reader)
+		{
+			uint versionToken = reader.ReadUInt32();
+			return new ShaderVersion
+			{
+				MinorVersion = versionToken.DecodeValue<byte>(0, 3),
+				MajorVersion = versionToken.DecodeValue<byte>(4, 7),
+				ProgramType = versionToken.DecodeValue<ProgramType>(16, 31)
+			};
+		}
+
+		public static ShaderVersion ParseRdef(BytecodeReader reader)
 		{
 			uint target = reader.ReadUInt32();
 
@@ -23,13 +44,13 @@ namespace SlimShader.Chunks.Rdef
 				case 0x4853:
 					programType = ProgramType.HullShader;
 					break;
-				case 0x4753 :
+				case 0x4753:
 					programType = ProgramType.GeometryShader;
 					break;
-				case 0x4453 :
+				case 0x4453:
 					programType = ProgramType.DomainShader;
 					break;
-				case 0x4353 :
+				case 0x4353:
 					programType = ProgramType.ComputeShader;
 					break;
 				default:

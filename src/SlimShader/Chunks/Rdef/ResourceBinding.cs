@@ -1,4 +1,4 @@
-using SlimShader.Chunks.Shex;
+using SlimShader.Chunks.Common;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Rdef
@@ -8,13 +8,44 @@ namespace SlimShader.Chunks.Rdef
 	/// </summary>
 	public class ResourceBinding
 	{
+		/// <summary>
+		/// Name of the shader resource.
+		/// </summary>
 		public string Name { get; private set; }
+
+		/// <summary>
+		/// Identifies the type of data in the resource.
+		/// </summary>
 		public ShaderInputType Type { get; private set; }
+
+		/// <summary>
+		/// Starting bind point.
+		/// </summary>
 		public uint BindPoint { get; private set; }
+
+		/// <summary>
+		/// Number of contiguous bind points for arrays.
+		/// </summary>
 		public uint BindCount { get; private set; }
+
+		/// <summary>
+		/// Shader input-parameter options.
+		/// </summary>
 		public ShaderInputFlags Flags { get; private set; }
-		public ResourceDimension Dimension { get; private set; }
+
+		/// <summary>
+		/// Identifies the dimensions of the bound resource.
+		/// </summary>
+		public ShaderResourceViewDimension Dimension { get; private set; }
+
+		/// <summary>
+		/// If the input is a texture, the return type.
+		/// </summary>
 		public ResourceReturnType ReturnType { get; private set; }
+
+		/// <summary>
+		/// The number of samples for a multisampled texture; otherwise 0.
+		/// </summary>
 		public uint NumSamples { get; private set; }
 
 		public static ResourceBinding Parse(BytecodeReader reader, BytecodeReader resourceBindingReader)
@@ -26,7 +57,7 @@ namespace SlimShader.Chunks.Rdef
 				Name = nameReader.ReadString(),
 				Type = (ShaderInputType) resourceBindingReader.ReadUInt32(),
 				ReturnType = (ResourceReturnType) resourceBindingReader.ReadUInt32(),
-				Dimension = (ResourceDimension) resourceBindingReader.ReadUInt32(),
+				Dimension = (ShaderResourceViewDimension) resourceBindingReader.ReadUInt32(),
 				NumSamples = resourceBindingReader.ReadUInt32(),
 				BindPoint = resourceBindingReader.ReadUInt32(),
 				BindCount = resourceBindingReader.ReadUInt32(),

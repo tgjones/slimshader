@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.Util;
 
@@ -21,7 +22,7 @@ namespace SlimShader.Chunks.Shex
 		{
 			var program = new ShaderProgramChunk
 			{
-				Version = ShaderVersion.Parse(reader),
+				Version = ShaderVersion.ParseShex(reader),
 
 				// Length Token (LenTok)
 				// Always follows VerTok
