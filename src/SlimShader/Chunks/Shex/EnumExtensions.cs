@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using SlimShader.Chunks.Common;
 
 namespace SlimShader.Chunks.Shex
@@ -62,9 +63,9 @@ namespace SlimShader.Chunks.Shex
 		{
 			return type.GetAttributeValue<NumberTypeAttribute, NumberType>((a, v) =>
 			{
-				if (a == null)
+				if (!a.Any())
 					return NumberType.Unknown;
-				return a.Type;
+				return a.First().Type;
 			});	
 		}
 

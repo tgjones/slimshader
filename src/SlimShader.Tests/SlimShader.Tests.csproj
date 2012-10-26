@@ -59,6 +59,21 @@
     <Compile Include="DxbcContainerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11DS.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11HS.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11PS.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11VS.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\FxDis\readme.txt" />
     <Content Include="Shaders\HlslCrossCompiler\ds5\basic.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -158,6 +173,18 @@
     <Content Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_TessellateVerticesCS.o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11DS.o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11HS.o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11PS.o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11VS.o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\Sdk\DirectX SDK EULA.txt" />
     <Content Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC6HDecode.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

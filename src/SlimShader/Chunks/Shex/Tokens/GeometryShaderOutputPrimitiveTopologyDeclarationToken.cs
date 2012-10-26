@@ -31,7 +31,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 
 		public override string ToString()
 		{
-			return string.Format("{0} {1}", TypeDescription, PrimitiveTopology.GetDescription());
+			return string.Format("{0} {1}", TypeDescription, PrimitiveTopology.GetDescription(ChunkType.Shex));
 		}
 	}
 }

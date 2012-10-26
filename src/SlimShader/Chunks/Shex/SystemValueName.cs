@@ -39,15 +39,34 @@ namespace SlimShader.Chunks.Shex
 
 		// The following are added for D3D11
 
+		[Description("finalQuadUeq0EdgeTessFactor")]
 		FinalQuadUEq0EdgeTessFactor = 11,
+
+		[Description("finalQuadVeq0EdgeTessFactor")]
 		FinalQuadVEq0EdgeTessFactor = 12,
+
+		[Description("finalQuadUeq1EdgeTessFactor")]
 		FinalQuadUEq1EdgeTessFactor = 13,
+
+		[Description("finalQuadVeq1EdgeTessFactor")]
 		FinalQuadVEq1EdgeTessFactor = 14,
+
+		[Description("finalQuadUInsideTessFactor")]
 		FinalQuadUInsideTessFactor = 15,
+
+		[Description("finalQuadVInsideTessFactor")]
 		FinalQuadVInsideTessFactor = 16,
+
+		[Description("finalTriUeq0EdgeTessFactor")]
 		FinalTriUEq0EdgeTessFactor = 17,
+
+		[Description("finalTriVeq0EdgeTessFactor")]
 		FinalTriVEq0EdgeTessFactor = 18,
+
+		[Description("finalTriWeq0EdgeTessFactor")]
 		FinalTriWEq0EdgeTessFactor = 19,
+
+		[Description("finalTriInsideTessFactor")]
 		FinalTriInsideTessFactor = 20,
 
 		[Description("finalLineDetailTessFactor")]

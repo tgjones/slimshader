@@ -1,6 +1,4 @@
-﻿using SlimShader.Util;
-
-namespace SlimShader.Chunks.Common
+﻿namespace SlimShader.Chunks.Common
 {
 	/// <summary>
 	/// Values that identify domain options for tessellator data.
@@ -16,17 +14,19 @@ namespace SlimShader.Chunks.Common
 		/// <summary>
 		/// Isoline data.
 		/// </summary>
-		[Description("domain_isoline")]
+		[Description("domain_isoline", ChunkType.Shex)]
 		Isoline = 1,
 
 		/// <summary>
 		/// Triangle data.
 		/// </summary>
+		[Description("domain_tri", ChunkType.Shex)]
 		Tri = 2,
 
 		/// <summary>
 		/// Quad data.
 		/// </summary>
-		Quad = 3
+		[Description("domain_quad", ChunkType.Shex)]
+		Quadrilateral = 3
 	}
 }

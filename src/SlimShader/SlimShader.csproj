@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chunks\Xsgn\PatchConstantSignatureChunk.cs" />
-    <Compile Include="Chunks\Stat\EnumExtensions.cs" />
     <Compile Include="Chunks\Stat\StatisticsChunk.cs" />
     <Compile Include="Chunks\ChunkType.cs" />
     <Compile Include="Chunks\DxbcChunk.cs" />
@@ -154,7 +153,7 @@
     <Compile Include="Chunks\Shex\Tokens\UnorderedAccessViewDeclarationTokenBase.cs" />
     <Compile Include="Chunks\Shex\UnorderedAccessViewCoherency.cs" />
     <Compile Include="Util\DecoderExtensions.cs" />
-    <Compile Include="Util\DescriptionAttribute.cs" />
+    <Compile Include="Chunks\DescriptionAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

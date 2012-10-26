@@ -278,12 +278,14 @@ namespace SlimShader.Chunks.Shex.Tokens
 							break;
 						case OperandIndexDimension._1D:
 							index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
+								|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
 								|| !OperandType.RequiresRegisterNumberFor1DIndex())
 								? string.Format("[{0}]", Indices[0])
 								: Indices[0].ToString();
 							break;
 						case OperandIndexDimension._2D :
 							index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
+								|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
 								|| !OperandType.RequiresRegisterNumberFor2DIndex())
 								? string.Format("[{0}][{1}]", Indices[0], Indices[1])
 								: string.Format("{0}[{1}]", Indices[0], Indices[1]);

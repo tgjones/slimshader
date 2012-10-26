@@ -86,8 +86,11 @@ namespace SlimShader.Chunks.Rdef
 				var unknown3 = typeReader.ReadUInt32();
 
 				var parentNameOffset = typeReader.ReadUInt32();
-				var parentNameReader = reader.CopyAtOffset((int) parentNameOffset);
-				result.BaseTypeName = parentNameReader.ReadString();
+				if (parentNameOffset > 0)
+				{
+					var parentNameReader = reader.CopyAtOffset((int) parentNameOffset);
+					result.BaseTypeName = parentNameReader.ReadString();
+				}
 			}
 
 			if (memberCount > 0)

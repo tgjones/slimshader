@@ -1,6 +1,4 @@
-﻿using SlimShader.Util;
-
-namespace SlimShader.Chunks.Common
+﻿namespace SlimShader.Chunks.Common
 {
 	public enum ResourceReturnType
 	{
@@ -43,6 +41,7 @@ namespace SlimShader.Chunks.Common
 		/// <summary>
 		/// Return type is a double-precision value.
 		/// </summary>
+		[Description("double")]
 		Double = 7,
 
 		/// <summary>

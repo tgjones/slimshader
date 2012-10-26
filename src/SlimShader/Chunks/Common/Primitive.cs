@@ -6,13 +6,13 @@ namespace SlimShader.Chunks.Common
 	{
 		Undefined = 0,
 
-		[Description("point")]
+		[Description("point", ChunkType.Shex)]
 		Point = 1,
 
-		[Description("line")]
+		[Description("line", ChunkType.Shex)]
 		Line = 2,
 
-		[Description("triangle")]
+		[Description("triangle", ChunkType.Shex)]
 		Triangle = 3,
 
 		// Adjacency values should be equal to (0x4 & non-adjacency):

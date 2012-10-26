@@ -1,24 +1,22 @@
-﻿using SlimShader.Util;
-
-namespace SlimShader.Chunks.Common
+﻿namespace SlimShader.Chunks.Common
 {
 	public enum PrimitiveTopology
 	{
 		Undefined = 0,
 
-		[Description("pointlist")]
+		[Description("pointlist", ChunkType.Shex)]
 		PointList = 1,
 
-		[Description("linelist")]
+		[Description("linelist", ChunkType.Shex)]
 		LineList = 2,
 
-		[Description("linestrip")]
+		[Description("linestrip", ChunkType.Shex)]
 		LineStrip = 3,
 
-		[Description("trianglelist")]
+		[Description("trianglelist", ChunkType.Shex)]
 		TriangleList = 4,
 
-		[Description("trianglestrip")]
+		[Description("trianglestrip", ChunkType.Shex)]
 		TriangleStrip = 5,
 
 		// 6 is reserved for legacy triangle fans

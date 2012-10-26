@@ -1,5 +1,3 @@
-using SlimShader.Util;
-
 namespace SlimShader.Chunks.Common
 {
 	public enum ProgramType : ushort

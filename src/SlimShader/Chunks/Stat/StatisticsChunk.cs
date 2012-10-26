@@ -248,14 +248,16 @@ namespace SlimShader.Chunks.Stat
 			{
 				sb.AppendLine("// Tessellation Domain   # of control points");
 				sb.AppendLine("// -------------------- --------------------");
-				sb.AppendLine(string.Format("// {0,-20} {1,20}", TessellatorDomain.GetDescription(), ControlPoints));
+				sb.AppendLine(string.Format("// {0,-20} {1,20}", TessellatorDomain.GetDescription(),
+					ControlPoints));
 				sb.AppendLine("//");
 			}
 			if (HullShaderOutputPrimitive != TessellatorOutputPrimitive.Undefined)
 			{
 				sb.AppendLine("// Tessellation Output Primitive  Partitioning Type ");
 				sb.AppendLine("// ------------------------------ ------------------");
-				sb.AppendLine(string.Format("// {0,-30} {1,-18}", HullShaderOutputPrimitive.GetDescription(),
+				sb.AppendLine(string.Format("// {0,-30} {1,-18}", 
+					HullShaderOutputPrimitive.GetDescription(ChunkType.Stat),
 					HullShaderPartitioning.GetDescription()));
 				sb.AppendLine("//");
 			}

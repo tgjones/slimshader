@@ -30,9 +30,17 @@ namespace SlimShader.Chunks.Xsgn
 		InstanceID = 8,
 		IsFrontFace = 9,
 		SampleIndex = 10,
+
+		[Description("QUADEDGE")]
 		FinalQuadEdgeTessFactor = 11,
+
+		[Description("QUADINT")]
 		FinalQuadInsideTessFactor = 12,
+
+		[Description("TRIEDGE")]
 		FinalTriEdgeTessFactor = 13,
+
+		[Description("TRIINT")]
 		FinalTriInsideTessFactor = 14,
 
 		[Description("LINEDET")]
