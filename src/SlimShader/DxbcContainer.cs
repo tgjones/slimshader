@@ -56,6 +56,11 @@ namespace SlimShader
 			Chunks = new List<DxbcChunk>();
 		}
 
+		public static DxbcContainer Parse(byte[] bytes)
+		{
+			return Parse(new BytecodeReader(bytes, 0, bytes.Length));
+		}
+
 		public static DxbcContainer Parse(BytecodeReader reader)
 		{
 			var container = new DxbcContainer();

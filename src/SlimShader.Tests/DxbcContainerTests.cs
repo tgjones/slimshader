@@ -123,7 +123,7 @@ namespace SlimShader.Tests
 		{
 			string binaryFile = file + ".o";
 			var binaryFileBytes = File.ReadAllBytes(binaryFile);
-			var container = DxbcContainer.Parse(new BytecodeReader(binaryFileBytes, 0, binaryFileBytes.Length));
+			var container = DxbcContainer.Parse(binaryFileBytes);
 
 			CompareAssemblyOutput(file, container);
 			CompareDirect3DReflection(binaryFileBytes, container);
