@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Chunks">
+      <UniqueIdentifier>{40cdb9f0-b89a-49ba-9d58-403ef8c15977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Ifce">
+      <UniqueIdentifier>{4bd0ab0f-62e1-4a12-b762-71d91acbe5a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Xsgn">
+      <UniqueIdentifier>{fb710181-391c-4849-8890-49fefe3ded79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Common">
+      <UniqueIdentifier>{edf73bf1-fe1f-4d05-b482-696b8ea1c617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Rdef">
+      <UniqueIdentifier>{a46676a2-b1e0-466d-a473-52b07130c151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Sdbg">
+      <UniqueIdentifier>{34c16001-f989-43ea-825f-01ae76868bce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Sfi0">
+      <UniqueIdentifier>{6dc5892c-11c8-4764-adc3-2fe5d03d2f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Shex">
+      <UniqueIdentifier>{0d6d937f-65a6-4ba8-aea5-9679475d88b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Stat">
+      <UniqueIdentifier>{3261ae2e-b85d-48bd-afe1-6ba4d1c41696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Shex\Tokens">
+      <UniqueIdentifier>{24803a31-b108-4218-8130-70ed9e3ea3ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{b0a3c163-431d-463b-97f4-10d7c7471e24}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Chunks\Common\ProgramType.h">
+      <Filter>Chunks\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Ifce\InterfacesChunk.h">
+      <Filter>Chunks\Ifce</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Rdef\ResourceDefinitionChunk.h">
+      <Filter>Chunks\Rdef</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Sdbg\DebuggingChunk.h">
+      <Filter>Chunks\Sdbg</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Sfi0\Sfi0Chunk.h">
+      <Filter>Chunks\Sfi0</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Shex\ShaderProgramChunk.h">
+      <Filter>Chunks\Shex</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\ChunkType.h">
+      <Filter>Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\DxbcChunk.h">
+      <Filter>Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Stat\StatisticsChunk.h">
+      <Filter>Chunks\Stat</Filter>
+    </ClInclude>
+    <ClInclude Include="DxbcContainer.h" />
+    <ClInclude Include="DxbcContainerHeader.h" />
+    <ClInclude Include="Util\BytecodeReader.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Decoder.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\PCH.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Xsgn\InputOutputSignatureChunk.h">
+      <Filter>Chunks\Xsgn</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Xsgn\InputSignatureChunk.h">
+      <Filter>Chunks\Xsgn</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Common\ShaderVersion.h">
+      <Filter>Chunks\Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Chunks\DxbcChunk.cpp">
+      <Filter>Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="DxbcContainerHeader.cpp" />
+    <ClCompile Include="Util\BytecodeReader.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Decoder.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\PCH.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

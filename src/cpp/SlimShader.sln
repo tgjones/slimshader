@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlimShader", "SlimShader\SlimShader.vcxproj", "{53C4A5A2-CB3A-4A97-8481-11C1685112F4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlimShader", "Source\SlimShader.vcxproj", "{53C4A5A2-CB3A-4A97-8481-11C1685112F4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlimShader.Tests", "SlimShader.Tests\SlimShader.Tests.vcxproj", "{06EDE3F3-FE5F-41B0-B6F9-FDE7506FDE10}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlimShader.Tests", "Tests\SlimShader.Tests.vcxproj", "{06EDE3F3-FE5F-41B0-B6F9-FDE7506FDE10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
