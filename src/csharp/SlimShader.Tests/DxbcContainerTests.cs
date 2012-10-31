@@ -121,6 +121,7 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11VS")]
 		public void CanParseShader(string file)
 		{
+			file = "../../../../../" + file;
 			string binaryFile = file + ".o";
 			var binaryFileBytes = File.ReadAllBytes(binaryFile);
 			var container = DxbcContainer.Parse(binaryFileBytes);
