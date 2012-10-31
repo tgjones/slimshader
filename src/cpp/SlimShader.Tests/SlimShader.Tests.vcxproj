@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{06EDE3F3-FE5F-41B0-B6F9-FDE7506FDE10}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SlimShaderTests</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_defines.h" />
+    <ClInclude Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_LightPSH.h" />
+    <ClInclude Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_MaterialPSH.h" />
+    <ClInclude Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PSBuffers.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SlimShader.Tests.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\CompileShader.bat" />
+    <None Include="Shaders\FxDis\test.asm" />
+    <None Include="Shaders\HlslCrossCompiler\ds5\basic.asm" />
+    <None Include="Shaders\HlslCrossCompiler\gs4\CubeMap_Inst.asm" />
+    <None Include="Shaders\HlslCrossCompiler\hs5\basic.asm" />
+    <None Include="Shaders\HlslCrossCompiler\ps4\fxaa.asm" />
+    <None Include="Shaders\HlslCrossCompiler\ps4\primID.asm" />
+    <None Include="Shaders\HlslCrossCompiler\ps5\conservative_depth_ge.asm" />
+    <None Include="Shaders\HlslCrossCompiler\ps5\interfaces.asm" />
+    <None Include="Shaders\HlslCrossCompiler\ps5\sample.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs4\mov.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs4\multiple_const_buffers.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs4\switch.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs5\any.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs5\const_temp.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs5\mad_imm.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs5\mov.asm" />
+    <None Include="Shaders\HlslCrossCompiler\vs5\sincos.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_EdgeFactorCS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_NumVerticesIndicesCS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_ScatterIDCS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_TessellateIndicesCS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_TessellateVerticesCS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\BasicCompute11\BasicCompute11.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLPS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLVS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC6HDecode.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC7Decode.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC7Encode.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\NBodyGravityCS11.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawGS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawPS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawVS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11DS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11HS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11PS.asm" />
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11VS.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

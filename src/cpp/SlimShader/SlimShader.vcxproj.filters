@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{b0a3c163-431d-463b-97f4-10d7c7471e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks">
+      <UniqueIdentifier>{40cdb9f0-b89a-49ba-9d58-403ef8c15977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Ifce">
+      <UniqueIdentifier>{4bd0ab0f-62e1-4a12-b762-71d91acbe5a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Xsgn">
+      <UniqueIdentifier>{fb710181-391c-4849-8890-49fefe3ded79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Common">
+      <UniqueIdentifier>{edf73bf1-fe1f-4d05-b482-696b8ea1c617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Rdef">
+      <UniqueIdentifier>{a46676a2-b1e0-466d-a473-52b07130c151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Sdbg">
+      <UniqueIdentifier>{34c16001-f989-43ea-825f-01ae76868bce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Sfi0">
+      <UniqueIdentifier>{6dc5892c-11c8-4764-adc3-2fe5d03d2f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Shex">
+      <UniqueIdentifier>{0d6d937f-65a6-4ba8-aea5-9679475d88b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chunks\Stat">
+      <UniqueIdentifier>{3261ae2e-b85d-48bd-afe1-6ba4d1c41696}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BytecodeReader.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Decoder.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="DxbcContainerHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DxbcContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DxbcChunk.h">
+      <Filter>Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkType.h">
+      <Filter>Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="InterfacesChunk.h">
+      <Filter>Chunks\Ifce</Filter>
+    </ClInclude>
+    <ClInclude Include="InputOutputSignatureChunk.h">
+      <Filter>Chunks\Xsgn</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSignatureChunk.h">
+      <Filter>Chunks\Xsgn</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramType.h">
+      <Filter>Chunks\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceDefinitionChunk.h">
+      <Filter>Chunks\Rdef</Filter>
+    </ClInclude>
+    <ClInclude Include="DebuggingChunk.h">
+      <Filter>Chunks\Sdbg</Filter>
+    </ClInclude>
+    <ClInclude Include="Sfi0Chunk.h">
+      <Filter>Chunks\Sfi0</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgramChunk.h">
+      <Filter>Chunks\Shex</Filter>
+    </ClInclude>
+    <ClInclude Include="StatisticsChunk.h">
+      <Filter>Chunks\Stat</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BytecodeReader.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Decoder.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="DxbcContainerHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DxbcChunk.cpp">
+      <Filter>Chunks</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{dcc07723-59eb-495c-8767-a07914f9398c}</UniqueIdentifier>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_LightPSH.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_MaterialPSH.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PSBuffers.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_defines.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SlimShader.Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\HlslCrossCompiler\vs5\any.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\ds5\basic.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\hs5\basic.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\BasicCompute11\BasicCompute11.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLPS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\BasicHLSL11\BasicHLSLVS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC6HDecode.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC7Decode.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\BC6HBC7EncoderDecoder11\BC7Encode.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\CompileShader.bat">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\ps5\conservative_depth_ge.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs5\const_temp.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\gs4\CubeMap_Inst.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\DynamicShaderLinkage11\DynamicShaderLinkage11_PS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\ps4\fxaa.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\ps5\interfaces.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs5\mad_imm.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs5\mov.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs4\mov.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs4\multiple_const_buffers.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\NBodyGravityCS11.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawGS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawPS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\NBodyGravityCS11\ParticleDrawVS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\ps4\primID.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\ps5\sample.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11DS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11HS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11PS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\SimpleBezier11\SimpleBezier11VS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs5\sincos.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\HlslCrossCompiler\vs4\switch.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_EdgeFactorCS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_NumVerticesIndicesCS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_ScatterIDCS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_TessellateIndicesCS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Sdk\Direct3D11\AdaptiveTessellationCS40\TessellatorCS40_TessellateVerticesCS.asm">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FxDis\test.asm">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
