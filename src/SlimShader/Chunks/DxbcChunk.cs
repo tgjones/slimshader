@@ -64,9 +64,11 @@ namespace SlimShader.Chunks
 					chunk = ResourceDefinitionChunk.Parse(chunkContentReader);
 					break;
 				case ChunkType.Sdbg :
-					return DebuggingChunk.Parse(chunkContentReader);
+					chunk = DebuggingChunk.Parse(chunkContentReader);
+					break;
 				case ChunkType.Sfi0:
-					return Sfi0Chunk.Parse(chunkContentReader);
+					chunk = Sfi0Chunk.Parse(chunkContentReader);
+					break;
 				case ChunkType.Shdr:
 				case ChunkType.Shex:
 					chunk = ShaderProgramChunk.Parse(chunkContentReader);
