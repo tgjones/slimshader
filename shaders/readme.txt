@@ -1,0 +1,1 @@
+These shaders are used to test SlimShader can parse DirectX Bytecode.

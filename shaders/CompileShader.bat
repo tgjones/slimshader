@@ -1,0 +1,1 @@
+fxc /T %1 /Fo %2.o /Fc %2.asm %2.hlsl /E %3 %4 %5
