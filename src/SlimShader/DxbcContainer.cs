@@ -65,24 +65,7 @@ namespace SlimShader
 		{
 			var container = new DxbcContainer();
 
-			uint fourCc = reader.ReadUInt32();
-			if (fourCc != "DXBC".ToFourCc())
-				throw new ParseException("Invalid FourCC");
-
-			var uniqueKey = new uint[4];
-			uniqueKey[0] = reader.ReadUInt32();
-			uniqueKey[1] = reader.ReadUInt32();
-			uniqueKey[2] = reader.ReadUInt32();
-			uniqueKey[3] = reader.ReadUInt32();
-
-			container.Header = new DxbcContainerHeader
-			{
-				FourCc = fourCc,
-				UniqueKey = uniqueKey,
-				One = reader.ReadUInt32(),
-				TotalSize = reader.ReadUInt32(),
-				ChunkCount = reader.ReadUInt32()
-			};
+			container.Header = DxbcContainerHeader.Parse(reader);
 
 			for (uint i = 0; i < container.Header.ChunkCount; i++)
 			{
