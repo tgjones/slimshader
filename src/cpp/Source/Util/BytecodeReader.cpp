@@ -1,12 +1,26 @@
 #include "PCH.h"
 #include "BytecodeReader.h"
 
+using namespace std;
 using namespace SlimShader;
 
 BytecodeReader::BytecodeReader(const uint8_t *bytecode, size_t length)
 	: _bytecode(bytecode), _end(bytecode + length)
 {
 
+}
+
+BytecodeReader::BytecodeReader(const BytecodeReader& reader, uint32_t length)
+	: _bytecode(reader._bytecode), _end(reader._bytecode + length)
+{
+
+}
+
+BytecodeReader BytecodeReader::CopyAtOffset(const uint32_t offset) const
+{
+	BytecodeReader result(*this);
+	result._bytecode += offset;
+	return result;
 }
 
 const bool BytecodeReader::IsEndOfBuffer()

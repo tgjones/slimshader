@@ -11,56 +11,56 @@ namespace SlimShader
 		/// <summary>
 		/// Interfaces
 		/// </summary>
-		Ifce = 'IFCE',
+		Ifce = 'ECFI',
 
 		/// <summary>
 		/// Input signature
 		/// </summary>
-		Isgn,
+		Isgn = 'NGSI',
 
 		/// <summary>
 		/// Output signature (SM5)
 		/// </summary>
-		Osg5,
+		Osg5 = '5GSO',
 
 		/// <summary>
 		/// Output signature
 		/// </summary>
-		Osgn,
+		Osgn = 'NGSO',
 
 		/// <summary>
 		/// Patch constant signature
 		/// </summary>
-		Pcsg,
+		Pcsg = 'GSCP',
 
 		/// <summary>
 		/// Resource definition
 		/// </summary>
-		Rdef,
+		Rdef = 'FEDR',
 
 		/// <summary>
 		/// Shader debugging info
 		/// </summary>
-		Sdbg,
+		Sdbg = 'GBDS',
 
 		/// <summary>
 		/// ?
 		/// </summary>
-		Sfi0,
+		Sfi0 = '0IFS',
 
 		/// <summary>
 		/// Shader (SM 4.0)
 		/// </summary>
-		Shdr,
+		Shdr = 'RDHS',
 
 		/// <summary>
 		/// Shader (SM 5.0)
 		/// </summary>
-		Shex,
+		Shex = 'XEHS',
 
 		/// <summary>
 		/// Statistics
 		/// </summary>
-		Stat
+		Stat = 'TATS'
 	};
 };

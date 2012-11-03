@@ -5,9 +5,13 @@
 
 namespace SlimShader
 {
+	/// <summary>
+	/// TODO
+	/// Contains the original source code of the shader, and links source code lines to ASM ops.
+	/// </summary>
 	class DebuggingChunk : public DxbcChunk
 	{
 	public :
-		static DebuggingChunk Parse(shared_ptr<BytecodeReader> reader);
+		static std::shared_ptr<DebuggingChunk> Parse(BytecodeReader& reader);
 	};
 };

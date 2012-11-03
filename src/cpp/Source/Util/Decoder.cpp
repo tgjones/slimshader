@@ -1,10 +1,10 @@
 #include "PCH.h"
 #include "Decoder.h"
-#include <cmath>
 
+using namespace std;
 using namespace SlimShader;
 
-uint32_t generate_mask(uint8_t start, uint8_t end)
+uint32_t SlimShader::GenerateMask(uint8_t start, uint8_t end)
 {
 	uint32_t mask = 0;
 	for (int i = start; i <= end; i++)
@@ -12,16 +12,20 @@ uint32_t generate_mask(uint8_t start, uint8_t end)
 	return mask;
 }
 
-uint32_t decode(uint32_t token, uint8_t start, uint8_t end)
+uint32_t SlimShader::DecodeValue(uint32_t token, uint8_t start, uint8_t end)
 {
-	const uint32_t mask = generate_mask(start, end);
+	const uint32_t mask = GenerateMask(start, end);
 	const uint8_t shift = start;
 
 	return (token & mask) >> shift;
 }
 
-template <class T>
-T decode(uint32_t token, uint8_t start, uint8_t end)
+string SlimShader::ToFourCcString(uint32_t fourCc)
 {
-	return (T) decode(token, start, end);
+	char chars[4];
+	chars[0] = DecodeValue<char>(fourCc, 0, 7);
+	chars[1] = DecodeValue<char>(fourCc, 8, 15);
+	chars[2] = DecodeValue<char>(fourCc, 16, 23);
+	chars[3] = DecodeValue<char>(fourCc, 24, 31);
+	return string(chars);
 }

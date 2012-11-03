@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SlimShader.Chunks.Ifce;
 using SlimShader.Chunks.Rdef;
 using SlimShader.Chunks.Sdbg;
-using SlimShader.Chunks.Sfio;
+using SlimShader.Chunks.Sfi0;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Stat;
 using SlimShader.Chunks.Xsgn;

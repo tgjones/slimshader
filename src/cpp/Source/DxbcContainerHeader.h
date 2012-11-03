@@ -3,14 +3,12 @@
 #include "PCH.h"
 #include "BytecodeReader.h"
 
-using namespace std;
-
 namespace SlimShader
 {
 	class DxbcContainerHeader
 	{
 	public :
-		static DxbcContainerHeader Parse(shared_ptr<BytecodeReader> reader);
+		static DxbcContainerHeader Parse(BytecodeReader& reader);
 
 		uint32_t GetFourCc();
 		uint32_t* GetUniqueKey();

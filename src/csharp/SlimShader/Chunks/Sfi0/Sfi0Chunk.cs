@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using SlimShader.Util;
 
-namespace SlimShader.Chunks.Sfio
+namespace SlimShader.Chunks.Sfi0
 {
 	/// <summary>
 	/// TODO: No idea, but this is present in ParticleDrawVS.asm, which is unique for including

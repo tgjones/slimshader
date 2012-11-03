@@ -83,6 +83,38 @@
     <ClInclude Include="Chunks\Common\ShaderVersion.h">
       <Filter>Chunks\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Chunks\Common\PrimitiveTopology.h">
+      <Filter>Chunks\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunks\Common\ComponentMask.h" />
+    <ClInclude Include="Chunks\Common\Primitive.h" />
+    <ClInclude Include="Chunks\Common\ResourceReturnType.h" />
+    <ClInclude Include="Chunks\Common\TessellatorDomain.h" />
+    <ClInclude Include="Chunks\Common\TessellatorOutputPrimitive.h" />
+    <ClInclude Include="Chunks\Common\TessellatorPartitioning.h" />
+    <ClInclude Include="Chunks\Ifce\ClassInstance.h" />
+    <ClInclude Include="Chunks\Ifce\ClassType.h" />
+    <ClInclude Include="Chunks\Ifce\InterfaceSlot.h" />
+    <ClInclude Include="Chunks\Rdef\ConstantBuffer.h" />
+    <ClInclude Include="Chunks\Rdef\ConstantBufferFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ConstantBufferType.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderInputFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderInputType.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderResourceViewDimension.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariableClass.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariableFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariableType.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariable.h" />
+    <ClInclude Include="Chunks\Rdef\ResourceBinding.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderTypeMember.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderType.h" />
+    <ClInclude Include="Chunks\Xsgn\Name.h" />
+    <ClInclude Include="Chunks\Xsgn\RegisterComponentType.h" />
+    <ClInclude Include="Chunks\Xsgn\SignatureElementSize.h" />
+    <ClInclude Include="Chunks\Xsgn\SignatureParameterDescription.h" />
+    <ClInclude Include="Chunks\Xsgn\PatchConstantSignatureChunk.h" />
+    <ClInclude Include="Chunks\Xsgn\OutputSignatureChunk.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chunks\DxbcChunk.cpp">
@@ -92,11 +124,35 @@
     <ClCompile Include="Util\BytecodeReader.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="Util\Decoder.cpp">
-      <Filter>Util</Filter>
-    </ClCompile>
     <ClCompile Include="Util\PCH.cpp">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="DxbcContainer.cpp" />
+    <ClCompile Include="Chunks\Stat\StatisticsChunk.cpp">
+      <Filter>Chunks\Stat</Filter>
+    </ClCompile>
+    <ClCompile Include="Chunks\Ifce\ClassInstance.cpp" />
+    <ClCompile Include="Chunks\Ifce\ClassType.cpp" />
+    <ClCompile Include="Chunks\Ifce\InterfaceSlot.cpp" />
+    <ClCompile Include="Chunks\Ifce\InterfacesChunk.cpp" />
+    <ClCompile Include="Chunks\Rdef\ConstantBuffer.cpp" />
+    <ClCompile Include="Chunks\Rdef\ResourceBinding.cpp" />
+    <ClCompile Include="Chunks\Rdef\ResourceDefinitionChunk.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderVariable.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderType.cpp" />
+    <ClCompile Include="Chunks\Shex\ShaderProgramChunk.cpp" />
+    <ClCompile Include="Chunks\Sfi0\Sfi0Chunk.cpp" />
+    <ClCompile Include="Chunks\Sdbg\DebuggingChunk.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderTypeMember.cpp" />
+    <ClCompile Include="Chunks\Common\ShaderVersion.cpp" />
+    <ClCompile Include="Util\Decoder.cpp" />
+    <ClCompile Include="Chunks\Xsgn\SignatureParameterDescription.cpp" />
+    <ClCompile Include="Chunks\Xsgn\InputOutputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Common\ResourceReturnType.cpp" />
+    <ClCompile Include="Chunks\Rdef\ConstantBufferType.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderResourceViewDimension.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderInputType.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderVariableClass.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderVariableType.cpp" />
   </ItemGroup>
 </Project>

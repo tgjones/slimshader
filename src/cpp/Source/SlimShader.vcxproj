@@ -50,7 +50,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.;Chunks;Chunks\Common;Chunks\Ifce;Chunks\Rdef;Chunks\Sdbg;Chunks\Sfi0;Chunks\Shex;Chunks\Shex\Tokens;Chunks\Stat;Chunks\Xsgn;Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Dependencies\Boost.1.51.0\include;.;Chunks;Chunks\Common;Chunks\Ifce;Chunks\Rdef;Chunks\Sdbg;Chunks\Sfi0;Chunks\Shex;Chunks\Shex\Tokens;Chunks\Stat;Chunks\Xsgn;Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -90,17 +90,47 @@ copy Util\*.h ..\SDK\Include</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Chunks\ChunkType.h" />
+    <ClInclude Include="Chunks\Common\ComponentMask.h" />
+    <ClInclude Include="Chunks\Common\Primitive.h" />
+    <ClInclude Include="Chunks\Common\PrimitiveTopology.h" />
     <ClInclude Include="Chunks\Common\ProgramType.h" />
+    <ClInclude Include="Chunks\Common\ResourceReturnType.h" />
     <ClInclude Include="Chunks\Common\ShaderVersion.h" />
+    <ClInclude Include="Chunks\Common\TessellatorDomain.h" />
+    <ClInclude Include="Chunks\Common\TessellatorOutputPrimitive.h" />
+    <ClInclude Include="Chunks\Common\TessellatorPartitioning.h" />
     <ClInclude Include="Chunks\DxbcChunk.h" />
+    <ClInclude Include="Chunks\Ifce\ClassInstance.h" />
+    <ClInclude Include="Chunks\Ifce\ClassType.h" />
     <ClInclude Include="Chunks\Ifce\InterfacesChunk.h" />
+    <ClInclude Include="Chunks\Ifce\InterfaceSlot.h" />
+    <ClInclude Include="Chunks\Rdef\ConstantBuffer.h" />
+    <ClInclude Include="Chunks\Rdef\ConstantBufferFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ConstantBufferType.h" />
+    <ClInclude Include="Chunks\Rdef\ResourceBinding.h" />
     <ClInclude Include="Chunks\Rdef\ResourceDefinitionChunk.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderInputFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderInputType.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderResourceViewDimension.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderType.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderTypeMember.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariable.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariableClass.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariableFlags.h" />
+    <ClInclude Include="Chunks\Rdef\ShaderVariableType.h" />
     <ClInclude Include="Chunks\Sdbg\DebuggingChunk.h" />
     <ClInclude Include="Chunks\Sfi0\Sfi0Chunk.h" />
     <ClInclude Include="Chunks\Shex\ShaderProgramChunk.h" />
     <ClInclude Include="Chunks\Stat\StatisticsChunk.h" />
     <ClInclude Include="Chunks\Xsgn\InputOutputSignatureChunk.h" />
     <ClInclude Include="Chunks\Xsgn\InputSignatureChunk.h" />
+    <ClInclude Include="Chunks\Xsgn\Name.h" />
+    <ClInclude Include="Chunks\Xsgn\OutputSignatureChunk.h" />
+    <ClInclude Include="Chunks\Xsgn\PatchConstantSignatureChunk.h" />
+    <ClInclude Include="Chunks\Xsgn\RegisterComponentType.h" />
+    <ClInclude Include="Chunks\Xsgn\SignatureElementSize.h" />
+    <ClInclude Include="Chunks\Xsgn\SignatureParameterDescription.h" />
     <ClInclude Include="DxbcContainer.h" />
     <ClInclude Include="DxbcContainerHeader.h" />
     <ClInclude Include="Util\BytecodeReader.h" />
@@ -108,7 +138,31 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClInclude Include="Util\PCH.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Chunks\Common\ResourceReturnType.cpp" />
+    <ClCompile Include="Chunks\Common\ShaderVersion.cpp" />
     <ClCompile Include="Chunks\DxbcChunk.cpp" />
+    <ClCompile Include="Chunks\Ifce\ClassInstance.cpp" />
+    <ClCompile Include="Chunks\Ifce\ClassType.cpp" />
+    <ClCompile Include="Chunks\Ifce\InterfacesChunk.cpp" />
+    <ClCompile Include="Chunks\Ifce\InterfaceSlot.cpp" />
+    <ClCompile Include="Chunks\Rdef\ConstantBuffer.cpp" />
+    <ClCompile Include="Chunks\Rdef\ConstantBufferType.cpp" />
+    <ClCompile Include="Chunks\Rdef\ResourceBinding.cpp" />
+    <ClCompile Include="Chunks\Rdef\ResourceDefinitionChunk.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderInputType.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderResourceViewDimension.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderType.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderTypeMember.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderVariable.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderVariableClass.cpp" />
+    <ClCompile Include="Chunks\Rdef\ShaderVariableType.cpp" />
+    <ClCompile Include="Chunks\Sdbg\DebuggingChunk.cpp" />
+    <ClCompile Include="Chunks\Sfi0\Sfi0Chunk.cpp" />
+    <ClCompile Include="Chunks\Shex\ShaderProgramChunk.cpp" />
+    <ClCompile Include="Chunks\Stat\StatisticsChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\InputOutputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\SignatureParameterDescription.cpp" />
+    <ClCompile Include="DxbcContainer.cpp" />
     <ClCompile Include="DxbcContainerHeader.cpp" />
     <ClCompile Include="Util\BytecodeReader.cpp" />
     <ClCompile Include="Util\Decoder.cpp" />

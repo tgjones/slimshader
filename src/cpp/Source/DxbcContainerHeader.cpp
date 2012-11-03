@@ -3,21 +3,21 @@
 
 using namespace SlimShader;
 
-DxbcContainerHeader DxbcContainerHeader::Parse(shared_ptr<BytecodeReader> reader)
+DxbcContainerHeader DxbcContainerHeader::Parse(BytecodeReader& reader)
 {
-	auto fourCc = reader->ReadUInt32();
-	if (fourCc != 'DXBC')
+	auto fourCc = reader.ReadUInt32();
+	if (fourCc != 'CBXD')
 		throw new std::runtime_error("Invalid FourCC");
 
 	DxbcContainerHeader result;
 	result._fourCc = fourCc;
-	result._uniqueKey[0] = reader->ReadUInt32();
-	result._uniqueKey[1] = reader->ReadUInt32();
-	result._uniqueKey[2] = reader->ReadUInt32();
-	result._uniqueKey[3] = reader->ReadUInt32();
-	result._one = reader->ReadUInt32();
-	result._totalSize = reader->ReadUInt32();
-	result._chunkCount = reader->ReadUInt32();
+	result._uniqueKey[0] = reader.ReadUInt32();
+	result._uniqueKey[1] = reader.ReadUInt32();
+	result._uniqueKey[2] = reader.ReadUInt32();
+	result._uniqueKey[3] = reader.ReadUInt32();
+	result._one = reader.ReadUInt32();
+	result._totalSize = reader.ReadUInt32();
+	result._chunkCount = reader.ReadUInt32();
 	
 	return result;
 }

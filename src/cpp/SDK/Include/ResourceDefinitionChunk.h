@@ -1,7 +1,10 @@
 #pragma once
 
 #include "PCH.h"
+#include "ConstantBuffer.h"
 #include "DxbcChunk.h"
+#include "ResourceBinding.h"
+#include "ShaderFlags.h"
 #include "ShaderVersion.h"
 
 namespace SlimShader
@@ -14,8 +17,23 @@ namespace SlimShader
 	class ResourceDefinitionChunk : public DxbcChunk
 	{
 	public :
-		static ResourceDefinitionChunk Parse(shared_ptr<BytecodeReader> reader);
+		static std::shared_ptr<ResourceDefinitionChunk> Parse(BytecodeReader& reader);
 
-		shared_ptr<ShaderVersion> GetTarget();
+		const std::vector<ConstantBuffer>& GetConstantBuffers();
+		const std::vector<ResourceBinding>& GetResourceBindings();
+		const ShaderVersion& GetTarget() const;
+		ShaderFlags GetFlags() const;
+		const std::string& GetCreator() const;
+
+		friend std::ostream& operator<<(std::ostream& out, const ResourceDefinitionChunk& value);
+
+	private:
+		ResourceDefinitionChunk(ShaderVersion target);
+
+		std::vector<ConstantBuffer> _constantBuffers;
+		std::vector<ResourceBinding> _resourceBindings;
+		const ShaderVersion _target;
+		ShaderFlags _flags;
+		std::string _creator;
 	};
 };

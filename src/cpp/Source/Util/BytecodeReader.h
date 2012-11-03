@@ -2,15 +2,15 @@
 
 #include "PCH.h"
 
-using namespace std;
-
 namespace SlimShader
 {
 	class BytecodeReader
 	{
 	public :
 		BytecodeReader(const uint8_t *bytecode, size_t length);
-		BytecodeReader(const shared_ptr<BytecodeReader> reader, uint32_t length);
+		BytecodeReader(const BytecodeReader& reader, uint32_t length);
+
+		BytecodeReader CopyAtOffset(const uint32_t offset) const;
 
 		const bool IsEndOfBuffer();
 		const long GetCurrentPosition();
@@ -21,13 +21,13 @@ namespace SlimShader
 		int32_t ReadInt32();
 		float ReadFloat();
 		double ReadDouble();
-		string ReadString();
+		std::string ReadString();
 
 	private :
-		const uint8_t* _bytecode;
-		const uint8_t* _end;
-
 		template <class T>
 		T Read();
+
+		const uint8_t* _bytecode;
+		const uint8_t* _end;
 	};
 };

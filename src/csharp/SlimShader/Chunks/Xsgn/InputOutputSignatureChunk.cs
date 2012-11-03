@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SlimShader.Chunks.Common;
-using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Xsgn
@@ -12,7 +11,7 @@ namespace SlimShader.Chunks.Xsgn
 	{
 		public List<SignatureParameterDescription> Parameters { get; private set; }
 
-		public InputOutputSignatureChunk()
+		protected InputOutputSignatureChunk()
 		{
 			Parameters = new List<SignatureParameterDescription>();
 		}

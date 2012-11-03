@@ -8,6 +8,6 @@ namespace SlimShader
 	class ShaderProgramChunk : public DxbcChunk
 	{
 	public :
-		static ShaderProgramChunk Parse(shared_ptr<BytecodeReader> reader);
+		static std::shared_ptr<ShaderProgramChunk> Parse(BytecodeReader& reader);
 	};
 };
