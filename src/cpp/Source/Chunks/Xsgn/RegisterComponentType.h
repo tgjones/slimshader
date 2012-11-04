@@ -11,4 +11,6 @@ namespace SlimShader
 		SInt32 = 2,
 		Float32 = 3
 	};
+
+	std::string ToString(RegisterComponentType value);
 };

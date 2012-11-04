@@ -100,14 +100,14 @@ ostream& SlimShader::operator<<(ostream &out, const DxbcContainer &container)
 
 	if (container.GetPatchConstantSignature() != nullptr)
 	{
-		out << container.GetPatchConstantSignature();
+		out << *container.GetPatchConstantSignature();
 		out << "//" << endl;
 	}
 
-	out << container.GetInputSignature();
+	out << *container.GetInputSignature();
 	out << "//" << endl;
 
-	out << container.GetOutputSignature();
+	out << *container.GetOutputSignature();
 
 	if (container.GetStatistics() != nullptr)
 		out << *container.GetStatistics();

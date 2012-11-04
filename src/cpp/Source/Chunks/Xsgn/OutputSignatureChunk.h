@@ -7,6 +7,7 @@ namespace SlimShader
 {
 	class OutputSignatureChunk : public InputOutputSignatureChunk
 	{
-	
+	protected :
+		virtual std::string GetOutputDescription() const;
 	};
 };

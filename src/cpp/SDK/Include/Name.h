@@ -33,4 +33,6 @@ namespace SlimShader
 		DepthGreaterEqual = 67,
 		DepthLessEqual = 68
 	};
+
+	std::string ToString(Name value);
 };

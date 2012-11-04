@@ -65,6 +65,8 @@ namespace SlimShader
 		/// </summary>
 		uint32_t GetStream() const;
 
+		friend std::ostream& operator<<(std::ostream& out, const SignatureParameterDescription& value);
+
 	private :
 		SignatureParameterDescription() { }
 

@@ -13,16 +13,16 @@ namespace SlimShader
 		static std::shared_ptr<InputOutputSignatureChunk> Parse(BytecodeReader& reader, const ChunkType chunkType,
 			const ProgramType programType);
 
-		virtual ~InputOutputSignatureChunk() = 0; // Force InputOutputSignatureChunk to be abstract.
-
 		const std::vector<SignatureParameterDescription>& GetParameters() const;
+
+		friend std::ostream& operator<<(std::ostream& out, const InputOutputSignatureChunk& value);
  
 	protected :
-		InputOutputSignatureChunk() {}
+		InputOutputSignatureChunk() { }
+
+		virtual std::string GetOutputDescription() const = 0;
 
 	private :
 		std::vector<SignatureParameterDescription> _parameters;
 	};
-
-	inline InputOutputSignatureChunk::~InputOutputSignatureChunk() { }
 };

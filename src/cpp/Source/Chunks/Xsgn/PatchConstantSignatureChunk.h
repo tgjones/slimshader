@@ -7,6 +7,7 @@ namespace SlimShader
 {
 	class PatchConstantSignatureChunk : public InputOutputSignatureChunk
 	{
-	
+	protected :
+		virtual std::string GetOutputDescription() const;
 	};
 };
