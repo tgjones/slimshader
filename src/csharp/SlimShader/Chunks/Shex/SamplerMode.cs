@@ -1,6 +1,4 @@
-﻿using SlimShader.Util;
-
-namespace SlimShader.Chunks.Shex
+﻿namespace SlimShader.Chunks.Shex
 {
 	public enum SamplerMode
 	{
