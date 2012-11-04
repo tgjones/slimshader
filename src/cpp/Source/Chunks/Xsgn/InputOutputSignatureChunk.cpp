@@ -58,3 +58,22 @@ const std::vector<SignatureParameterDescription>& InputOutputSignatureChunk::Get
 {
 	return _parameters;
 }
+
+ostream& SlimShader::operator<<(ostream& out, const InputOutputSignatureChunk& value)
+{
+	out << "// Output signature:" << endl;
+	out << "//" << endl;
+
+	out << "// Name                 Index   Mask Register SysValue Format   Used" << endl;
+	out << "// -------------------- ----- ------ -------- -------- ------ ------" << endl;
+
+	for (auto& parameter : value._parameters)
+		out << "// " << parameter << endl;
+
+	if (value._parameters.size() > 0)
+		out << "//" << endl;
+	else
+		out << "// no " << value.GetOutputDescription() << endl;
+
+	return out;
+}

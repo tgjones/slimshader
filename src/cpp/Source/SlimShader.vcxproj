@@ -121,6 +121,8 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClInclude Include="Chunks\Rdef\ShaderVariableType.h" />
     <ClInclude Include="Chunks\Sdbg\DebuggingChunk.h" />
     <ClInclude Include="Chunks\Sfi0\Sfi0Chunk.h" />
+    <ClInclude Include="Chunks\Shex\ConstantBufferAccessPattern.h" />
+    <ClInclude Include="Chunks\Shex\CustomDataClass.h" />
     <ClInclude Include="Chunks\Shex\ShaderProgramChunk.h" />
     <ClInclude Include="Chunks\Stat\StatisticsChunk.h" />
     <ClInclude Include="Chunks\Xsgn\InputOutputSignatureChunk.h" />
@@ -138,6 +140,7 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClInclude Include="Util\PCH.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Chunks\Common\ComponentMask.cpp" />
     <ClCompile Include="Chunks\Common\ResourceReturnType.cpp" />
     <ClCompile Include="Chunks\Common\ShaderVersion.cpp" />
     <ClCompile Include="Chunks\DxbcChunk.cpp" />
@@ -158,9 +161,15 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClCompile Include="Chunks\Rdef\ShaderVariableType.cpp" />
     <ClCompile Include="Chunks\Sdbg\DebuggingChunk.cpp" />
     <ClCompile Include="Chunks\Sfi0\Sfi0Chunk.cpp" />
+    <ClCompile Include="Chunks\Shex\ConstantBufferAccessPattern.cpp" />
     <ClCompile Include="Chunks\Shex\ShaderProgramChunk.cpp" />
     <ClCompile Include="Chunks\Stat\StatisticsChunk.cpp" />
     <ClCompile Include="Chunks\Xsgn\InputOutputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\InputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\Name.cpp" />
+    <ClCompile Include="Chunks\Xsgn\OutputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\PatchConstantSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\RegisterComponentType.cpp" />
     <ClCompile Include="Chunks\Xsgn\SignatureParameterDescription.cpp" />
     <ClCompile Include="DxbcContainer.cpp" />
     <ClCompile Include="DxbcContainerHeader.cpp" />

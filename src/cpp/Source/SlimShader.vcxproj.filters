@@ -115,6 +115,8 @@
     <ClInclude Include="Chunks\Xsgn\SignatureParameterDescription.h" />
     <ClInclude Include="Chunks\Xsgn\PatchConstantSignatureChunk.h" />
     <ClInclude Include="Chunks\Xsgn\OutputSignatureChunk.h" />
+    <ClInclude Include="Chunks\Shex\ConstantBufferAccessPattern.h" />
+    <ClInclude Include="Chunks\Shex\CustomDataClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chunks\DxbcChunk.cpp">
@@ -154,5 +156,12 @@
     <ClCompile Include="Chunks\Rdef\ShaderInputType.cpp" />
     <ClCompile Include="Chunks\Rdef\ShaderVariableClass.cpp" />
     <ClCompile Include="Chunks\Rdef\ShaderVariableType.cpp" />
+    <ClCompile Include="Chunks\Shex\ConstantBufferAccessPattern.cpp" />
+    <ClCompile Include="Chunks\Common\ComponentMask.cpp" />
+    <ClCompile Include="Chunks\Xsgn\Name.cpp" />
+    <ClCompile Include="Chunks\Xsgn\RegisterComponentType.cpp" />
+    <ClCompile Include="Chunks\Xsgn\InputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\OutputSignatureChunk.cpp" />
+    <ClCompile Include="Chunks\Xsgn\PatchConstantSignatureChunk.cpp" />
   </ItemGroup>
 </Project>

@@ -18,4 +18,6 @@ namespace SlimShader
 
 		All = X | Y | Z | W // 15
 	};
+
+	std::string ToStringShex(ComponentMask value);
 };

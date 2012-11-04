@@ -3,6 +3,7 @@
 
 #include "Decoder.h"
 
+using namespace std;
 using namespace SlimShader;
 
 SignatureParameterDescription SignatureParameterDescription::Parse(const BytecodeReader& reader,
@@ -73,3 +74,71 @@ RegisterComponentType SignatureParameterDescription::GetComponentType() const { 
 ComponentMask SignatureParameterDescription::GetMask() const { return _mask; }
 ComponentMask SignatureParameterDescription::GetReadWriteMask() const { return _readWriteMask; }
 uint32_t SignatureParameterDescription::GetStream() const { return _stream; }
+
+bool RequiresMask(Name value)
+{
+	switch (value)
+	{
+	case Name::Coverage:
+	case Name::Depth:
+	case Name::DepthGreaterEqual :
+	case Name::DepthLessEqual :
+		return false;
+	default :
+		return true;
+	}
+}
+
+string GetRegisterName(Name value)
+{
+	switch (value)
+	{
+	case Name::DepthGreaterEqual:
+		return "oDepthGE";
+	case Name::DepthLessEqual:
+		return "oDepthLE";
+	default:
+		throw runtime_error("Unsupported value: " + to_string((int) value));
+	}
+}
+
+string ToString(ComponentMask value)
+{
+	string result;
+
+	result += (HasFlag(value, ComponentMask::X)) ? "x" : " ";
+	result += (HasFlag(value, ComponentMask::Y)) ? "y" : " ";
+	result += (HasFlag(value, ComponentMask::Z)) ? "z" : " ";
+	result += (HasFlag(value, ComponentMask::W)) ? "w" : " ";
+
+	return result;
+}
+
+ostream& SlimShader::operator<<(ostream& out, const SignatureParameterDescription& value)
+{
+	// For example:
+	// Name                 Index   Mask Register SysValue Format   Used
+	// TEXCOORD                 0   xyzw        0     NONE  float   xyzw
+	// SV_DepthGreaterEqual     0    N/A oDepthGE  DEPTHGE  float    YES
+	if (RequiresMask(value._systemValueType))
+	{
+		out << boost::format("%-20s %5i   %-4s %8s %8s %6s   %-4s")
+			% value._semanticName % value._semanticIndex
+			% ToStringShex(value._mask)
+			% value._register
+			% ToString(value._systemValueType)
+			% ToString(value._componentType)
+			% ::ToString(value._readWriteMask);
+	}
+	else
+	{
+		out << boost::format("%-20s %5i   %5s %8s %8s %6s   %4s")
+			% value._semanticName % value._semanticIndex
+			% "N/A"
+			% GetRegisterName(value._systemValueType)
+			% ToString(value._systemValueType)
+			% ToString(value._componentType)
+			% "YES";
+	}
+	return out;
+}
