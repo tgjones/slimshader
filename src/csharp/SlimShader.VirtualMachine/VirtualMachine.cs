@@ -61,10 +61,10 @@ namespace SlimShader.VirtualMachine
 			switch (destination.OperandType)
 			{
 				case OperandType.Output:
-					_outputRegisters[destination.Indices[0].Value].Values[0] = source.ImmediateValues[0];
-					_outputRegisters[destination.Indices[0].Value].Values[1] = source.ImmediateValues[1];
-					_outputRegisters[destination.Indices[0].Value].Values[2] = source.ImmediateValues[2];
-					_outputRegisters[destination.Indices[0].Value].Values[3] = source.ImmediateValues[3];
+					_outputRegisters[destination.Indices[0].Value].Values[0] = source.ImmediateValues32[0];
+					_outputRegisters[destination.Indices[0].Value].Values[1] = source.ImmediateValues32[1];
+					_outputRegisters[destination.Indices[0].Value].Values[2] = source.ImmediateValues32[2];
+					_outputRegisters[destination.Indices[0].Value].Values[3] = source.ImmediateValues32[3];
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();

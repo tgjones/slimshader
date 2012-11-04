@@ -26,7 +26,7 @@ namespace SlimShader.Tests
 		public void CanLoadShaderBytecode()
 		{
 			// Arrange.
-			var fileBytes = File.ReadAllBytes("Shaders/FxDis/test.o");
+			var fileBytes = File.ReadAllBytes("../../../../../Shaders/FxDis/test.o");
 
 			// Act.
 			var container = DxbcContainer.Parse(new BytecodeReader(fileBytes, 0, fileBytes.Length));

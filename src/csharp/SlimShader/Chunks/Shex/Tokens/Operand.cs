@@ -71,7 +71,8 @@ namespace SlimShader.Chunks.Shex.Tokens
 		public bool IsExtended { get; internal set; }
 		public OperandModifier Modifier { get; internal set; }
 		public OperandIndex[] Indices { get; private set; }
-		public Number[] ImmediateValues { get; private set; }
+		public Number[] ImmediateValues32 { get; private set; }
+		public double[] ImmediateValues64 { get; private set; }
 
 		public Operand(OpcodeType parentType)
 		{
@@ -85,7 +86,8 @@ namespace SlimShader.Chunks.Shex.Tokens
 			};
 			IndexRepresentations = new OperandIndexRepresentation[3];
 			Indices = new OperandIndex[3];
-			ImmediateValues = new Number[4];
+			ImmediateValues32 = new Number[4];
+			ImmediateValues64 = new double[4];
 		}
 
 		public static Operand Parse(BytecodeReader reader, OpcodeType parentType)
@@ -190,11 +192,11 @@ namespace SlimShader.Chunks.Shex.Tokens
 			{
 				case OperandType.Immediate32:
 					for (var i = 0; i < operand.NumComponents; i++)
-						operand.ImmediateValues[i] = Number.Parse32(reader, numberType);
+						operand.ImmediateValues32[i] = Number.Parse(reader, numberType);
 					break;
 				case OperandType.Immediate64:
 					for (var i = 0; i < operand.NumComponents; i++)
-						operand.ImmediateValues[i] = Number.Parse64(reader, numberType);
+						operand.ImmediateValues64[i] = reader.ReadDouble();
 					break;
 			}
 
@@ -244,79 +246,81 @@ namespace SlimShader.Chunks.Shex.Tokens
 
 		public override string ToString()
 		{
-			var numberType = _parentType.GetNumberType();
 			switch (OperandType)
 			{
 				case OperandType.Immediate32:
-				{
-					string result = (numberType == NumberType.Double) ? "d(" : "l(";
-					bool addSpaces = _parentType != OpcodeType.Mov && _parentType != OpcodeType.MovC;
-					for (int i = 0; i < NumComponents; i++)
+				case OperandType.Immediate64:
 					{
-						result += ImmediateValues[i].ToString();
-
-						if (i < NumComponents - 1)
+						string result = (OperandType == OperandType.Immediate64) ? "d(" : "l(";
+						bool addSpaces = _parentType != OpcodeType.Mov && _parentType != OpcodeType.MovC;
+						for (int i = 0; i < NumComponents; i++)
 						{
-							result += ",";
-							if (addSpaces)
-								result += " ";
+							result += (OperandType == OperandType.Immediate64)
+								? ImmediateValues64[i].ToString()
+								: ImmediateValues32[i].ToString();
+
+							if (i < NumComponents - 1)
+							{
+								result += ",";
+								if (addSpaces)
+									result += " ";
+							}
 						}
+						result += ")";
+						return result;
 					}
-					result += ")";
-					return result;
-				}
 				case OperandType.Null:
-				{
-					return OperandType.GetDescription();
-				}
+					{
+						return OperandType.GetDescription();
+					}
 				default:
-				{
-					string index = string.Empty;
-					switch (IndexDimension)
 					{
-						case OperandIndexDimension._0D:
-							break;
-						case OperandIndexDimension._1D:
-							index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
-								|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
-								|| !OperandType.RequiresRegisterNumberFor1DIndex())
-								? string.Format("[{0}]", Indices[0])
-								: Indices[0].ToString();
-							break;
-						case OperandIndexDimension._2D :
-							index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
-								|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
-								|| !OperandType.RequiresRegisterNumberFor2DIndex())
-								? string.Format("[{0}][{1}]", Indices[0], Indices[1])
-								: string.Format("{0}[{1}]", Indices[0], Indices[1]);
-							break;
-						case OperandIndexDimension._3D:
-							break;
-					}
+						string index = string.Empty;
+						switch (IndexDimension)
+						{
+							case OperandIndexDimension._0D:
+								break;
+							case OperandIndexDimension._1D:
+								index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
+									|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
+									|| !OperandType.RequiresRegisterNumberFor1DIndex())
+									? string.Format("[{0}]", Indices[0])
+									: Indices[0].ToString();
+								break;
+							case OperandIndexDimension._2D:
+								index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
+									|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
+									|| !OperandType.RequiresRegisterNumberFor2DIndex())
+									? string.Format("[{0}][{1}]", Indices[0], Indices[1])
+									: string.Format("{0}[{1}]", Indices[0], Indices[1]);
+								break;
+							case OperandIndexDimension._3D:
+								break;
+						}
 
-					string components;
-					switch (SelectionMode)
-					{
-						case Operand4ComponentSelectionMode.Mask:
-							components = ComponentMask.GetDescription();
-							break;
-						case Operand4ComponentSelectionMode.Swizzle:
-							components = Swizzles[0].GetDescription()
-								+ Swizzles[1].GetDescription()
-								+ Swizzles[2].GetDescription()
-								+ Swizzles[3].GetDescription();
-							break;
-						case Operand4ComponentSelectionMode.Select1:
-							components = Swizzles[0].GetDescription();
-							break;
-						default:
-							throw new ArgumentOutOfRangeException();
-					}
-					if (!string.IsNullOrEmpty(components))
-						components = "." + components;
+						string components;
+						switch (SelectionMode)
+						{
+							case Operand4ComponentSelectionMode.Mask:
+								components = ComponentMask.GetDescription();
+								break;
+							case Operand4ComponentSelectionMode.Swizzle:
+								components = Swizzles[0].GetDescription()
+									+ Swizzles[1].GetDescription()
+									+ Swizzles[2].GetDescription()
+									+ Swizzles[3].GetDescription();
+								break;
+							case Operand4ComponentSelectionMode.Select1:
+								components = Swizzles[0].GetDescription();
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
+						if (!string.IsNullOrEmpty(components))
+							components = "." + components;
 
-					return Modifier.Wrap(string.Format("{0}{1}{2}", OperandType.GetDescription(), index, components));
-				}
+						return Modifier.Wrap(string.Format("{0}{1}{2}", OperandType.GetDescription(), index, components));
+					}
 			}
 		}
 	}

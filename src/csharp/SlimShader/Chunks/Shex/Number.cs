@@ -4,12 +4,25 @@ using SlimShader.Util;
 namespace SlimShader.Chunks.Shex
 {
 	/// <summary>
-	/// Represents an int, float, uint or double.
+	/// Represents an int, float or uint.
 	/// </summary>
 	public struct Number
 	{
-		public readonly byte[] RawBytes;
-		public readonly NumberType Type;
+		private readonly NumberType _type;
+		private readonly byte _byte0;
+		private readonly byte _byte1;
+		private readonly byte _byte2;
+		private readonly byte _byte3;
+
+		public NumberType Type
+		{
+			get { return _type; }
+		}
+
+		public byte[] RawBytes
+		{
+			get { return new[] { _byte0, _byte1, _byte2, _byte3 }; }
+		}
 
 		public int AsInt
 		{
@@ -26,29 +39,24 @@ namespace SlimShader.Chunks.Shex
 			get { return BitConverter.ToSingle(RawBytes, 0); }
 		}
 
-		public double AsDouble
-		{
-			get { return BitConverter.ToDouble(RawBytes, 0); }
-		}
-
 		public Number(byte[] rawBytes, NumberType type)
 		{
-			RawBytes = rawBytes;
-			Type = type;
+			_byte0 = rawBytes[0];
+			_byte1 = rawBytes[1];
+			_byte2 = rawBytes[2];
+			_byte3 = rawBytes[3];
+			_type = type;
 		}
 
-		public static Number Parse32(BytecodeReader reader, NumberType type)
+		public Number(float value)
+			: this(BitConverter.GetBytes(value), NumberType.Float)
 		{
-			return ParseInternal(reader, type, 4);
+
 		}
 
-		public static Number Parse64(BytecodeReader reader, NumberType type)
+		public static Number Parse(BytecodeReader reader, NumberType type)
 		{
-			return ParseInternal(reader, type, 8);
-		}
-
-		private static Number ParseInternal(BytecodeReader reader, NumberType type, byte byteCount)
-		{
+			const int byteCount = 4;
 			var bytes = new byte[byteCount];
 			for (int i = 0; i < byteCount; i++)
 				bytes[i] = reader.ReadByte();
@@ -77,8 +85,6 @@ namespace SlimShader.Chunks.Shex
 					if (RawBytes[0] == 0 && RawBytes[1] == 0 && RawBytes[2] == 0 && RawBytes[3] == 128)
 						return "-0.000000"; // "Negative" zero
 					return ((double) AsFloat).ToString("F6");
-				case NumberType.Double:
-					return AsDouble.ToString("F6");
 				case NumberType.Unknown:
 					// fxc.exe has some strange rules for formatting output of numbers of 
 					// unknown type - for example, as operands to the mov op. It only matters for string output -
