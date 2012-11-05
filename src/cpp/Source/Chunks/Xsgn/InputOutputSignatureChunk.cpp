@@ -47,7 +47,7 @@ shared_ptr<InputOutputSignatureChunk> InputOutputSignatureChunk::Parse(BytecodeR
 		throw runtime_error("chunkType");
 	}
 
-	for (int i = 0; i < elementCount; i++)
+	for (uint32_t i = 0; i < elementCount; i++)
 		result->_parameters.push_back(
 			SignatureParameterDescription::Parse(reader, chunkReader, chunkType, elementSize, programType));
 

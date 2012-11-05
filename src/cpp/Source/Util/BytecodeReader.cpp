@@ -43,6 +43,11 @@ uint32_t BytecodeReader::ReadUInt32()
 	return Read<uint32_t>();
 }
 
+uint64_t BytecodeReader::ReadUInt64()
+{
+	return Read<uint64_t>();
+}
+
 int32_t BytecodeReader::ReadInt32()
 {
 	return Read<int32_t>();

@@ -21,7 +21,7 @@ InterfaceSlot InterfaceSlot::Parse(const BytecodeReader& reader, BytecodeReader&
 	InterfaceSlot result;
 
 	vector<uint32_t> typeIDs, tableIDs;
-	for (int i = 0; i < count; i++)
+	for (uint32_t i = 0; i < count; i++)
 	{
 		result._typeIDs.push_back(typeIDsReader.ReadUInt16());
 		result._tableIDs.push_back(tableIDsReader.ReadUInt32());

@@ -11,8 +11,8 @@ namespace SlimShader.Chunks.Shex.Tokens
 	/// [10:00] D3D10_SB_OPCODE_CUSTOMDATA
 	/// [31:11] == D3D10_SB_CUSTOMDATA_DCL_IMMEDIATE_CONSTANT_BUFFER
 	///
-	/// OpcodeToken0 is followed by:
-	/// (1) DWORD indicating length of declaration, including OpcodeToken0.
+	/// OpcodeToken1 is followed by:
+	/// (1) DWORD indicating length of declaration, including OpcodeToken0 and 1.
 	///     This length must = 2(for OpcodeToken0 and 1) + a multiple of 4 
 	///                                                    (# of immediate constants)
 	/// (2) Sequence of 4-tuples of DWORDs defining the Immediate Constant Buffer.

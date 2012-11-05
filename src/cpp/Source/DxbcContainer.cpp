@@ -26,7 +26,7 @@ DxbcContainer DxbcContainer::Parse(BytecodeReader& reader)
 	BytecodeReader headerReader(reader);
 	container._header = DxbcContainerHeader::Parse(headerReader);
 
-	for (int i = 0; i < container._header.GetChunkCount(); i++)
+	for (uint32_t i = 0; i < container._header.GetChunkCount(); i++)
 	{
 		auto chunkOffset = headerReader.ReadUInt32();
 		auto chunkReader = reader.CopyAtOffset(chunkOffset); 

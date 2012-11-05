@@ -24,19 +24,19 @@ shared_ptr<InterfacesChunk> InterfacesChunk::Parse(BytecodeReader& reader, uint3
 	auto interfaceSlotOffset = headerReader.ReadUInt32();
 	auto interfaceSlotReader = reader.CopyAtOffset(interfaceSlotOffset);
 
-	for (auto i = 0; i < classTypeCount; i++)
+	for (uint32_t i = 0; i < classTypeCount; i++)
 	{
 		auto classType = ClassType::Parse(reader, availableClassReader);
 		result->_availableClassTypes.push_back(classType);
 	}
 
-	for (auto i = 0; i < classInstanceCount; i++)
+	for (uint32_t i = 0; i < classInstanceCount; i++)
 	{
 		auto classInstance = ClassInstance::Parse(reader, availableClassReader);
 		result->_availableClassInstances.push_back(classInstance);
 	}
 
-	for (auto i = 0; i < interfaceSlotCount; i++)
+	for (uint32_t i = 0; i < interfaceSlotCount; i++)
 	{
 		auto interfaceSlot = InterfaceSlot::Parse(reader, interfaceSlotReader);
 		interfaceSlot.SetID(i); // TODO: Really??

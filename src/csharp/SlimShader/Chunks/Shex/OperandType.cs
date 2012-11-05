@@ -1,6 +1,4 @@
-﻿using SlimShader.Util;
-
-namespace SlimShader.Chunks.Shex
+﻿namespace SlimShader.Chunks.Shex
 {
 	public enum OperandType
 	{
@@ -239,6 +237,6 @@ namespace SlimShader.Chunks.Shex
 		/// <summary>
 		/// Cycle counter
 		/// </summary>
-		CycleCounter = 40,
+		CycleCounter = 40
 	}
 }

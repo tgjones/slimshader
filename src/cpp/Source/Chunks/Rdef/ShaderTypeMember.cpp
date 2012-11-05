@@ -59,7 +59,7 @@ ostream& SlimShader::operator<<(ostream& out, const ShaderTypeMember& value)
 		% declarationLines[declarationLines.size() - 1]
 		% (value._parentOffset + value._offset)).str();
 	
-	for (int i = 0; i < declarationLines.size(); i++)
+	for (size_t i = 0; i < declarationLines.size(); i++)
 	{
 		out << declarationLines[i];
 		if (i < declarationLines.size() - 1)

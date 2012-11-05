@@ -298,26 +298,29 @@ namespace SlimShader.Chunks.Shex.Tokens
 								break;
 						}
 
-						string components;
-						switch (SelectionMode)
+						string components = string.Empty;
+						if (_parentType != OpcodeType.DclConstantBuffer)
 						{
-							case Operand4ComponentSelectionMode.Mask:
-								components = ComponentMask.GetDescription();
-								break;
-							case Operand4ComponentSelectionMode.Swizzle:
-								components = Swizzles[0].GetDescription()
-									+ Swizzles[1].GetDescription()
-									+ Swizzles[2].GetDescription()
-									+ Swizzles[3].GetDescription();
-								break;
-							case Operand4ComponentSelectionMode.Select1:
-								components = Swizzles[0].GetDescription();
-								break;
-							default:
-								throw new ArgumentOutOfRangeException();
+							switch (SelectionMode)
+							{
+								case Operand4ComponentSelectionMode.Mask:
+									components = ComponentMask.GetDescription();
+									break;
+								case Operand4ComponentSelectionMode.Swizzle:
+									components = Swizzles[0].GetDescription()
+										+ Swizzles[1].GetDescription()
+										+ Swizzles[2].GetDescription()
+										+ Swizzles[3].GetDescription();
+									break;
+								case Operand4ComponentSelectionMode.Select1:
+									components = Swizzles[0].GetDescription();
+									break;
+								default:
+									throw new ArgumentOutOfRangeException();
+							}
+							if (!string.IsNullOrEmpty(components))
+								components = "." + components;
 						}
-						if (!string.IsNullOrEmpty(components))
-							components = "." + components;
 
 						return Modifier.Wrap(string.Format("{0}{1}{2}", OperandType.GetDescription(), index, components));
 					}

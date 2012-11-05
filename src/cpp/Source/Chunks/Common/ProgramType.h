@@ -16,4 +16,6 @@ namespace SlimShader
 		DomainShader = 4,
 		ComputeShader = 5
 	};
+
+	std::string ToString(ProgramType value);
 };

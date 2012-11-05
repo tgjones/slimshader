@@ -43,11 +43,11 @@ shared_ptr<ResourceDefinitionChunk> ResourceDefinitionChunk::Parse(BytecodeReade
 	result->_creator = creator;
 
 	auto constantBufferReader = reader.CopyAtOffset(constantBufferOffset);
-	for (int i = 0; i < constantBufferCount; i++)
+	for (uint32_t i = 0; i < constantBufferCount; i++)
 		result->_constantBuffers.push_back(ConstantBuffer::Parse(reader, constantBufferReader, result->_target));
 
 	auto resourceBindingReader = reader.CopyAtOffset(resourceBindingOffset);
-	for (int i = 0; i < resourceBindingCount; i++)
+	for (uint32_t i = 0; i < resourceBindingCount; i++)
 		result->_resourceBindings.push_back(ResourceBinding::Parse(reader, resourceBindingReader));
 
 	return result;

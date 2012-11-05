@@ -22,7 +22,7 @@ ConstantBuffer ConstantBuffer::Parse(const BytecodeReader& reader,
 	result._bufferType = static_cast<ConstantBufferType>(constantBufferReader.ReadUInt32());
 
 	auto variableReader = reader.CopyAtOffset(variableOffset);
-	for (int i = 0; i < variableCount; i++)
+	for (uint32_t i = 0; i < variableCount; i++)
 		result._variables.push_back(ShaderVariable::Parse(reader, variableReader, target, i == 0));
 
 	return result;

@@ -21,6 +21,6 @@ namespace SlimShader
 	{
 		auto valueInt = static_cast<int>(value);
 		auto flagInt = static_cast<int>(flag);
-		return valueInt & flagInt == flagInt;
+		return (valueInt & flagInt) == flagInt;
 	}
 };
