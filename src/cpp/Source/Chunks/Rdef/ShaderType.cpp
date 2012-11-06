@@ -83,7 +83,7 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const ShaderType& value)
 	case ShaderVariableClass::MatrixRows:
 		{
 			out << indentString;
-			if (value._baseTypeName.size() > 0) // BaseTypeName is only populated in SM 5.0
+			if (!value._baseTypeName.empty()) // BaseTypeName is only populated in SM 5.0
 			{
 				out << ToString(value._variableClass) << value._baseTypeName;
 			}

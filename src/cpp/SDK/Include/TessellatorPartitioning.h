@@ -11,4 +11,7 @@ namespace SlimShader
 		FractionalOdd = 3,
 		FractionalEven = 4
 	};
+
+	std::string ToStringShex(TessellatorPartitioning value);
+	std::string ToStringStat(TessellatorPartitioning value);
 };

@@ -124,63 +124,14 @@ uint32_t StatisticsChunk::GetUnknown5() const { return _unknown5; }
 uint32_t StatisticsChunk::GetUnknown6() const { return _unknown6; }
 uint32_t StatisticsChunk::GetUnknown7() const { return _unknown7; }
 
-std::string ToString(TessellatorDomain value)
-{
-	switch (value)
-	{
-	case TessellatorDomain::Isoline :
-		return "Isoline";
-	case TessellatorDomain::Tri :
-		return "Tri";
-	case TessellatorDomain::Quadrilateral :
-		return "Quadrilateral";
-	default :
-		throw runtime_error("Unsupported value: " + to_string((int) value));
-	}
-}
-
-std::string ToString(TessellatorOutputPrimitive value)
-{
-	switch (value)
-	{
-	case TessellatorOutputPrimitive::Point :
-		return "Point";
-	case TessellatorOutputPrimitive::Line :
-		return "Line";
-	case TessellatorOutputPrimitive::TriangleCw :
-		return "Clockwise Triangles";
-	case TessellatorOutputPrimitive::TriangleCcw :
-		return "Counter-Clockwise Triangles";
-	default :
-		throw runtime_error("Unsupported value: " + to_string((int) value));
-	}
-}
-
-std::string ToString(TessellatorPartitioning value)
-{
-	switch (value)
-	{
-	case TessellatorPartitioning::Integer :
-		return "Integer";
-	case TessellatorPartitioning::Pow2 :
-		return "Pow2";
-	case TessellatorPartitioning::FractionalOdd :
-		return "FractionalOdd";
-	case TessellatorPartitioning::FractionalEven :
-		return "FractionalEven";
-	default :
-		throw runtime_error("Unsupported value: " + to_string((int) value));
-	}
-}
-
 std::ostream& SlimShader::operator<<(std::ostream& out, const StatisticsChunk& chunk)
 {
 	if (chunk._tessellatorDomain != TessellatorDomain::Undefined)
 	{
 		out << "// Tessellation Domain   # of control points" << endl;
 		out << "// -------------------- --------------------" << endl;
-		out << boost::format("// %-20 %20") 
-			% ToString(chunk._tessellatorDomain)
+		out << boost::format("// %-20s %20i") 
+			% ToStringStat(chunk._tessellatorDomain)
 			% chunk._controlPoints
 			<< endl;
 		out << "//" << endl;
@@ -189,9 +140,9 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const StatisticsChunk& c
 	{
 		out << "// Tessellation Output Primitive  Partitioning Type " << endl;
 		out << "// ------------------------------ ------------------" << endl;
-		out << boost::format("// %-30 %-18")
-			% ToString(chunk._hullShaderOutputPrimitive)
-			% ToString(chunk._hullShaderPartitioning)
+		out << boost::format("// %-30s %-18s")
+			% ToStringStat(chunk._hullShaderOutputPrimitive)
+			% ToStringStat(chunk._hullShaderPartitioning)
 			<< endl;
 		out << "//" << endl;
 	}

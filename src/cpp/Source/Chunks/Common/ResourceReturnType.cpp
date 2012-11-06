@@ -20,6 +20,8 @@ string SlimShader::ToString(ResourceReturnType value)
 		return "uint";
 	case ResourceReturnType::Float :
 		return "float";
+	case ResourceReturnType::Mixed :
+		return "mixed";
 	case ResourceReturnType::Double :
 		return "double";
 	default :

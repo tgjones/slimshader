@@ -15,6 +15,8 @@ ClassInstance ClassInstance::Parse(const BytecodeReader& reader, BytecodeReader&
 
 	ClassInstance result;
 
+	result._name = name;
+	result._type = type;
 	result._constantBuffer = classInstanceReader.ReadUInt16();
 	result._constantBufferOffset = classInstanceReader.ReadUInt16();
 	result._texture = classInstanceReader.ReadUInt16();
@@ -37,8 +39,11 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const ClassInstance& val
 	// --------------------------- ---- -- --------- ------- -------
 	// g_ambientLight                12  0         0       -       -
 
-	out << boost::format("%-27 %4 %2 %9 %7 %7")
-		% value._name % value._type % value._constantBuffer % value._constantBufferOffset
+	out << boost::format("%-27s %4i %2i %9i %7s %7s")
+		% value._name 
+		% value._type 
+		% value._constantBuffer 
+		% value._constantBufferOffset
 		% ((value._texture == 0xFFFF) ? "-" : to_string(value._texture))
 		% ((value._sampler == 0xFFFF) ? "-" : to_string(value._sampler));
 	return out;

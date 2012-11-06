@@ -64,7 +64,7 @@ namespace SlimShader
 	class PixelShaderInputRegisterDeclarationToken : public InputRegisterDeclarationToken
 	{
 	public :
-		static std::shared_ptr<PixelShaderInputRegisterDeclarationToken> Parse(BytecodeReader& reader);
+		PixelShaderInputRegisterDeclarationToken(InterpolationMode interpolationMode, Operand operand);
 
 		/// <summary>
 		/// Not applicable for D3D10_SB_OPCODE_DCL_INPUT_PS_SGV
@@ -75,6 +75,6 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
-		InterpolationMode _interpolationMode;
+		const InterpolationMode _interpolationMode;
 	};
 };

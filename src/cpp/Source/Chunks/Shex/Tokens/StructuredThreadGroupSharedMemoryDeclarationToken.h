@@ -36,6 +36,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		StructuredThreadGroupSharedMemoryDeclarationToken(Operand operand);
+
 		uint32_t _structByteSize;
 		uint32_t _structCount;
 	};

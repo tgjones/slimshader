@@ -20,4 +20,6 @@ namespace SlimShader
 		TriangleListAdj = 12,
 		TriangleStripAdj = 13,
 	};
+
+	std::string ToStringShex(PrimitiveTopology value);
 };

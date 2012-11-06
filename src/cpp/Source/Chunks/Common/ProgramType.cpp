@@ -4,7 +4,7 @@
 using namespace std;
 using namespace SlimShader;
 
-string ToString(ProgramType value)
+string SlimShader::ToString(ProgramType value)
 {
 	switch (value)
 	{

@@ -14,6 +14,8 @@ namespace SlimShader
 		return (T) DecodeValue(token, start, end);
 	}
 
+	int8_t DecodeSigned4BitValue(uint32_t token, uint8_t start, uint8_t end);
+
 	std::string ToFourCcString(uint32_t fourCc);
 
 	template <class T>

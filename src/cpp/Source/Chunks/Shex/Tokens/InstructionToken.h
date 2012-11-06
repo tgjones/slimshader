@@ -38,12 +38,14 @@ namespace SlimShader
 	class InstructionToken : public OpcodeToken
 	{
 	public :
-		static std::shared_ptr<InstructionToken> Parse(BytecodeReader& reader, OpcodeHeader& header);
+		static std::shared_ptr<InstructionToken> Parse(BytecodeReader& reader, const OpcodeHeader& header);
 
 	protected :
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		InstructionToken();
+
 		bool _saturate;
 		InstructionTestBoolean _testBoolean;
 		SyncFlags _syncFlags;

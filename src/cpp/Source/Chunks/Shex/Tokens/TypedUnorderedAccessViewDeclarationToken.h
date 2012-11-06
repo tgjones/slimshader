@@ -38,6 +38,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		TypedUnorderedAccessViewDeclarationToken(UnorderedAccessViewCoherency coherency, Operand operand);
+
 		ResourceDimension _resourceDimension;
 		ResourceReturnTypeToken _returnType;
 	};

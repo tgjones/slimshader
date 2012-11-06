@@ -15,6 +15,7 @@ namespace SlimShader
 		static Number Parse(BytecodeReader& reader, NumberType type);
 
 		Number(uint8_t rawBytes[4], NumberType type);
+		Number() { }
 
 		NumberType GetType() const;
 

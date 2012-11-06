@@ -28,5 +28,8 @@ namespace SlimShader
 
 	protected :
 		virtual void Print(std::ostream& out) const;
+
+	private :
+		RawShaderResourceViewDeclarationToken(Operand operand);
 	};
 };

@@ -30,5 +30,8 @@ namespace SlimShader
 
 	protected :
 		virtual void Print(std::ostream& out) const;
+
+	private :
+		RawUnorderedAccessViewDeclarationToken(UnorderedAccessViewCoherency coherency, Operand operand);
 	};
 };

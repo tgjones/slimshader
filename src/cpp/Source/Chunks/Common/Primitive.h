@@ -47,4 +47,6 @@ namespace SlimShader
 		_31ControlPointPatch = 38,
 		_32ControlPointPatch = 39,
 	};
+
+	std::string ToStringShex(Primitive value);
 };

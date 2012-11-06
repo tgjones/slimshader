@@ -111,3 +111,11 @@ shared_ptr<DeclarationToken> DeclarationToken::Parse(BytecodeReader& reader, Opc
 		throw runtime_error("OpcodeType '" + to_string((int) opcodeType) + "' is not supported.");
 	}
 }
+
+const Operand& DeclarationToken::GetOperand() const { return _operand; }
+
+DeclarationToken::DeclarationToken(Operand operand)
+	: _operand(operand)
+{
+
+}

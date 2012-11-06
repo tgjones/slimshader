@@ -20,6 +20,16 @@ uint32_t SlimShader::DecodeValue(uint32_t token, uint8_t start, uint8_t end)
 	return (token & mask) >> shift;
 }
 
+int8_t SlimShader::DecodeSigned4BitValue(uint32_t token, uint8_t start, uint8_t end)
+{
+	if (end - start != 3)
+		throw runtime_error("Not the right length");
+	auto value = DecodeValue<int8_t>(token, start, end);
+	if (value > 7)
+		return (int8_t) (value - 16);
+	return value;
+}
+
 string SlimShader::ToFourCcString(uint32_t fourCc)
 {
 	char chars[4];
@@ -27,5 +37,5 @@ string SlimShader::ToFourCcString(uint32_t fourCc)
 	chars[1] = DecodeValue<char>(fourCc, 8, 15);
 	chars[2] = DecodeValue<char>(fourCc, 16, 23);
 	chars[3] = DecodeValue<char>(fourCc, 24, 31);
-	return string(chars);
+	return string(chars, 4);
 }

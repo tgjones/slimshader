@@ -58,5 +58,12 @@ namespace SlimShader
 
 	protected :
 		virtual void Print(std::ostream& out) const;
+
+	private:
+		ResourceDeclarationToken(Operand operand);
+
+		ResourceDimension _resourceDimension;
+		uint8_t _sampleCount;
+		ResourceReturnTypeToken _returnType;
 	};
 };

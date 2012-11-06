@@ -96,7 +96,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 					throw new ArgumentOutOfRangeException();
 			}
 
-			result.Operand = Operand.Parse(reader, token0.DecodeValue<OpcodeType>(0, 10));
+			result.Operand = Operand.Parse(reader, opcodeType);
 
 			switch (opcodeType)
 			{

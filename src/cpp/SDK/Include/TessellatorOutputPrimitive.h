@@ -11,4 +11,7 @@ namespace SlimShader
 		TriangleCw = 3,
 		TriangleCcw = 4
 	};
+
+	std::string ToStringShex(TessellatorOutputPrimitive value);
+	std::string ToStringStat(TessellatorOutputPrimitive value);
 };

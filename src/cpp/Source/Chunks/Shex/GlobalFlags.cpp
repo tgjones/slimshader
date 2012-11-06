@@ -8,7 +8,7 @@ using namespace SlimShader;
 
 void AppendGlobalFlag(string& result, string value)
 {
-	if (result.size() > 0)
+	if (!result.empty())
 		result += " | ";
 	result += value;
 }

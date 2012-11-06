@@ -67,7 +67,7 @@ ResourceDefinitionChunk::ResourceDefinitionChunk(ShaderVersion target)
 
 std::ostream& SlimShader::operator<<(std::ostream& out, const ResourceDefinitionChunk& value)
 {
-	if (value._constantBuffers.size() > 0)
+	if (!value._constantBuffers.empty())
 	{
 		out << "// Buffer Definitions: " << endl;
 		out << "//" << endl;
@@ -78,7 +78,7 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const ResourceDefinition
 		out << "//" << endl;
 	}
 
-	if (value._resourceBindings.size() > 0)
+	if (!value._resourceBindings.empty())
 	{
 		out << "// Resource Bindings:" << endl;
 		out << "//" << endl;

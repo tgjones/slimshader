@@ -15,9 +15,10 @@ namespace SlimShader
 		const Operand& GetOperand() const;
 
 	protected :
-		void SetOperand(Operand operand);
+		DeclarationToken(Operand operand);
+		DeclarationToken() { }
 
 	private :
-		Operand _operand;
+		const Operand _operand;
 	};
 };

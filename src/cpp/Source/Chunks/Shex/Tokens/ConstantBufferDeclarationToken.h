@@ -44,6 +44,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		ConstantBufferDeclarationToken(Operand operand);
+
 		ConstantBufferAccessPattern _accessPattern;
 	};
 };

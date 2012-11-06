@@ -72,6 +72,21 @@ namespace SlimShader
 	public :
 		static Operand Parse(BytecodeReader& reader, OpcodeType parentType);
 
+		Operand();
+
+		uint8_t GetNumComponents() const;
+		Operand4ComponentSelectionMode GetSelectionMode() const;
+		ComponentMask GetComponentMask() const;
+		const Operand4ComponentName* GetSwizzles() const;
+		OperandType GetOperandType() const;
+		OperandIndexDimension GetIndexDimension() const;
+		const OperandIndexRepresentation* GetIndexRepresentations() const;
+		bool IsExtended() const;
+		OperandModifier GetModifier() const;
+		const OperandIndex* GetIndices() const;
+		const Number* GetImmediateValues32() const;
+		const double* GetImmediateValues64() const;
+
 		friend std::ostream& operator<<(std::ostream& out, const Operand& value);
 
 	private :

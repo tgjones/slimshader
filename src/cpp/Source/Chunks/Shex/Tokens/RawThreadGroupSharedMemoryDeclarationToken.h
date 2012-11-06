@@ -33,6 +33,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		RawThreadGroupSharedMemoryDeclarationToken(Operand operand);
+
 		uint32_t _elementCount;
 	};
 };

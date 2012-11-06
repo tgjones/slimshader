@@ -65,12 +65,14 @@ namespace SlimShader
 		/// </summary>
 		bool HasOrderPreservingCounter() const;
 
-		uint32_t GetByteStride();
+		uint32_t GetByteStride() const;
 
 	protected :
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		StructuredUnorderedAccessViewDeclarationToken(UnorderedAccessViewCoherency coherency, Operand operand);
+
 		bool _hasOrderPreservingCounter;
 		uint32_t _byteStride;
 	};

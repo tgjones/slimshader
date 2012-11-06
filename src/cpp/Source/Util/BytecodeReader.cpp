@@ -23,9 +23,14 @@ BytecodeReader BytecodeReader::CopyAtOffset(const uint32_t offset) const
 	return result;
 }
 
-const bool BytecodeReader::IsEndOfBuffer()
+bool BytecodeReader::IsEndOfBuffer() const
 {
 	return _bytecode >= _end;
+}
+
+const uint8_t* BytecodeReader::GetCurrentPosition() const
+{
+	return _bytecode;
 }
 
 uint8_t BytecodeReader::ReadUInt8()

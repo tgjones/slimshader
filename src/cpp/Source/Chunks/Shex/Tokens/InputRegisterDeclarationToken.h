@@ -78,6 +78,8 @@ namespace SlimShader
 		SystemValueName GetSystemValueName() const;
 
 	protected :
+		InputRegisterDeclarationToken(Operand operand);
+
 		virtual void Print(std::ostream& out) const;
 
 	private :

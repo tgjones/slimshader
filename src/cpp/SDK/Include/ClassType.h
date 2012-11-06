@@ -11,7 +11,10 @@ namespace SlimShader
 		static ClassType Parse(const BytecodeReader& reader, BytecodeReader& classTypeReader);
 
 		std::string GetName() const;
+
 		uint32_t GetID() const;
+		void SetID(uint32_t id);
+
 		uint32_t GetConstantBufferStride() const;
 		uint32_t GetTexture() const;
 		uint32_t GetSampler() const;

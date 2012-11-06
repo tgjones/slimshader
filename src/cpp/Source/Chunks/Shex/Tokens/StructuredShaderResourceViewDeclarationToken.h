@@ -34,6 +34,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		StructuredShaderResourceViewDeclarationToken(Operand operand);
+
 		uint32_t _structByteSize;
 	};
 };

@@ -12,8 +12,8 @@ namespace SlimShader
 
 		BytecodeReader CopyAtOffset(const uint32_t offset) const;
 
-		const bool IsEndOfBuffer();
-		const long GetCurrentPosition();
+		bool IsEndOfBuffer() const;
+		const uint8_t* GetCurrentPosition() const;
 
 		uint8_t ReadUInt8();
 		uint16_t ReadUInt16();

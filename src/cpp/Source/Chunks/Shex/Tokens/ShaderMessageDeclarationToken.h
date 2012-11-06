@@ -73,6 +73,7 @@ namespace SlimShader
 		uint32_t _infoQueueMessageID;
 		ShaderMessageFormat _messageFormat;
 		uint32_t _numCharacters;
+		uint32_t _numOperands;
 		uint32_t _operandsLength;
 		void* _encodedOperands;
 		std::string _format;

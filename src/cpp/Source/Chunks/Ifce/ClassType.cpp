@@ -20,7 +20,10 @@ ClassType ClassType::Parse(const BytecodeReader& reader, BytecodeReader& classTy
 }
 
 std::string ClassType::GetName() const { return _name; }
+
 uint32_t ClassType::GetID() const { return _id; }
+void ClassType::SetID(uint32_t id) { _id = id; }
+
 uint32_t ClassType::GetConstantBufferStride() const { return _constantBufferStride; }
 uint32_t ClassType::GetTexture() const { return _texture; }
 uint32_t ClassType::GetSampler() const { return _sampler; }
@@ -31,7 +34,11 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const ClassType& value)
 	// Name                             ID CB Stride Texture Sampler");
 	// ------------------------------ ---- --------- ------- -------");
 	// cUnchangedColour                  0         0       0       0");
-	out << boost::format("%-30 %4 %9 %7 %7")
-		% value._name % value._id % value._constantBufferStride % value._texture % value._sampler;
+	out << boost::format("%-30s %4i %9i %7i %7i")
+		% value._name
+		% value._id
+		% value._constantBufferStride 
+		% value._texture 
+		% value._sampler;
 	return out;
 }

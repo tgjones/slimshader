@@ -45,18 +45,18 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const InterfaceSlot& val
 
 	stringstream typeIDsStream;
 	for (auto typeID : value._typeIDs)
-		typeIDsStream << boost::format("%-4 ") % typeID;
+		typeIDsStream << boost::format("%-4i ") % typeID;
 
 	stringstream tableIDsStream;
 	for (auto tableID : value._tableIDs)
-		tableIDsStream << boost::format("%-4 ") % tableID;
+		tableIDsStream << boost::format("%-4i ") % tableID;
 
-	out << boost::format("// | Type ID  |   {0}     |{1}")
+	out << (boost::format("// | Type ID  |   %i     |%s")
 		% value._id
-		% typeIDsStream
+		% typeIDsStream.str())
 		<< endl;
-	out << boost::format("// | Table ID |         |{0}")
-		% tableIDsStream
+	out << (boost::format("// | Table ID |         |%s")
+		% tableIDsStream.str())
 		<< endl;
 	out << "// +----------+---------+---------------------------------------" << endl;
 

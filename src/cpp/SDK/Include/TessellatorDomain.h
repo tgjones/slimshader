@@ -28,4 +28,7 @@ namespace SlimShader
 		/// </summary>
 		Quadrilateral = 3
 	};
+
+	std::string ToStringShex(TessellatorDomain value);
+	std::string ToStringStat(TessellatorDomain value);
 };

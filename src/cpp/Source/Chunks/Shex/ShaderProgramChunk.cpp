@@ -95,10 +95,9 @@ bool IsNestedSectionEnd(OpcodeType type)
 
 ostream& SlimShader::operator<<(ostream& out, const ShaderProgramChunk& value)
 {
-	out << boost::format("%s_%i_%i")
-		% ToString(value._version.GetProgramType())
-		% value._version.GetMajorVersion()
-		% value._version.GetMinorVersion()
+	out << ToString(value._version.GetProgramType()) << "_"
+		<< (uint32_t) value._version.GetMajorVersion() << "_"
+		<< (uint32_t) value._version.GetMinorVersion()
 		<< endl;
 
 	int indent = 0;
@@ -106,10 +105,16 @@ ostream& SlimShader::operator<<(ostream& out, const ShaderProgramChunk& value)
 	{
 		if (IsNestedSectionEnd(token->GetHeader().OpcodeType))
 			indent -= 2;
-		out << string(indent, ' ') << *token;
+		out << string(indent, ' ') << *token << endl;
 		if (IsNestedSectionStart(token->GetHeader().OpcodeType))
 			indent += 2;
 	}
 
 	return out;
+}
+
+ShaderProgramChunk::ShaderProgramChunk(ShaderVersion version)
+	: _version(version)
+{
+
 }

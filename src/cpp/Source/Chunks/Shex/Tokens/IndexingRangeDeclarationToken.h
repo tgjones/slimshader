@@ -42,6 +42,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		IndexingRangeDeclarationToken(Operand operand);
+
 		uint32_t _registerCount;
 	};
 };

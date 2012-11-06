@@ -410,6 +410,19 @@ NumberType SlimShader::GetNumberType(OpcodeType value)
 	}
 }
 
+bool SlimShader::IsConditionalInstruction(OpcodeType type)
+{
+	switch (type)
+	{
+	case OpcodeType::BreakC :
+	case OpcodeType::CallC :
+	case OpcodeType::If :
+		return true;
+	default :
+		return false;
+	}
+}
+
 bool SlimShader::IsDeclaration(OpcodeType type)
 {
 	return (type >= OpcodeType::DclResource && type <= OpcodeType::DclGlobalFlags)

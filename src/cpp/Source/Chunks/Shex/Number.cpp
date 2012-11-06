@@ -39,22 +39,25 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const Number& value)
 	case NumberType::Int:
 	NumberTypeInt :
 		if (value.AsInt() > hexThreshold)
-			out << "0x" << boost::format("%8x") % value.AsInt();
+			out << "0x" << boost::format("%08x") % value.AsInt();
 		else
 			out << value.AsInt();
+		break;
 	case NumberType::UInt:
 		if (value.AsUInt() > negThreshold)
 			out << value.AsInt();
 		else if (value.AsUInt() > hexThreshold)
-			out << "0x" << boost::format("%8x") % value.AsUInt();
+			out << "0x" << boost::format("%08x") % value.AsUInt();
 		else
 			out << value.AsUInt();
+		break;
 	case NumberType::Float:
 	NumberTypeFloat :
 		if (value.AsBytes()[0] == 0 && value.AsBytes()[1] == 0 && value.AsBytes()[2] == 0 && value.AsBytes()[3] == 128)
 			out << "-0.000000"; // "Negative" zero
 		else
 			out << boost::format("%6f") % ((double) value.AsFloat());
+		break;
 	case NumberType::Unknown:
 		// fxc.exe has some strange rules for formatting output of numbers of 
 		// unknown type - for example, as operands to the mov op. It only matters for string output -

@@ -34,6 +34,8 @@ namespace SlimShader
 		virtual void Print(std::ostream& out) const;
 
 	private :
+		SamplerDeclarationToken(Operand operand);
+
 		SamplerMode _samplerMode;
 	};
 };

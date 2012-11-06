@@ -75,7 +75,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 
 			var result = new OutputRegisterDeclarationToken
 			{
-				Operand = Operand.Parse(reader, token0.DecodeValue<OpcodeType>(0, 10))
+				Operand = Operand.Parse(reader, opcodeType)
 			};
 
 			switch (opcodeType)

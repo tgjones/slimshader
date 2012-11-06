@@ -2,6 +2,7 @@
 
 #include "PCH.h"
 #include "ImmediateDeclarationToken.h"
+#include "Number.h"
 
 namespace SlimShader
 {

@@ -9,7 +9,7 @@ string SlimShader::ToString(ResourceDimension value)
 	switch (value)
 	{
 	case ResourceDimension::Buffer :
-		return "constant";
+		return "buffer";
 	case ResourceDimension::Texture1D :
 		return "texture1d";
 	case ResourceDimension::Texture2D :

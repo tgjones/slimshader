@@ -27,6 +27,7 @@ shared_ptr<InterfacesChunk> InterfacesChunk::Parse(BytecodeReader& reader, uint3
 	for (uint32_t i = 0; i < classTypeCount; i++)
 	{
 		auto classType = ClassType::Parse(reader, availableClassReader);
+		classType.SetID(i); // TODO: Really??
 		result->_availableClassTypes.push_back(classType);
 	}
 
@@ -63,7 +64,7 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const InterfacesChunk& v
 
 	out << "//" << endl;
 
-	if (value._availableClassInstances.size() > 0)
+	if (!value._availableClassInstances.empty())
 	{
 		out << "// Available Class Instances:" << endl;
 		out << "//" << endl;
@@ -76,13 +77,13 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const InterfacesChunk& v
 		out << "//" << endl;
 	}
 
-	out << boost::format("// Interface slots, % total:") % value._interfaceSlots.size() << endl;
+	out << boost::format("// Interface slots, %i total:") % value._interfaceSlots.size() << endl;
 	out << "//" << endl;
 	out << "//             Slots" << endl;
 	out << "// +----------+---------+---------------------------------------" << endl;
 
 	for (auto& interfaceSlot : value._interfaceSlots)
-		out << interfaceSlot << endl;
+		out << interfaceSlot;
 
 	return out;
 }

@@ -88,6 +88,7 @@ Operand Operand::Parse(BytecodeReader& reader, OpcodeType parentType)
 	for (uint8_t i = 0; i < (uint8_t) operand._indexDimension; i++)
 	{
 		operand._indices[i].Register = nullptr;
+		operand._indices[i].Value = 0;
 		switch (operand._indexRepresentations[i])
 		{
 		case OperandIndexRepresentation::Immediate32:
@@ -128,6 +129,12 @@ label_default :
 	return operand;
 }
 
+ Operand::Operand()
+	 : _parentType((OpcodeType) -1), _modifier(OperandModifier::None), _componentMask(ComponentMask::None)
+ {
+
+ }
+
 string Wrap(OperandModifier modifier, string& valueToWrap)
 {
 	switch (modifier)
@@ -152,7 +159,7 @@ ostream& SlimShader::operator<<(ostream& out, const Operand& value)
 	case OperandType::Immediate32:
 	case OperandType::Immediate64:
 		{
-			out << (value._operandType == OperandType::Immediate64) ? "d(" : "l(";
+			out << ((value._operandType == OperandType::Immediate64) ? "d(" : "l(");
 			bool addSpaces = value._parentType != OpcodeType::Mov && value._parentType != OpcodeType::MovC;
 			for (int i = 0; i < value._numComponents; i++)
 			{
@@ -226,7 +233,7 @@ ostream& SlimShader::operator<<(ostream& out, const Operand& value)
 				default:
 					throw runtime_error("Unknown selection mode");
 				}
-				if (components.size() > 0)
+				if (!components.empty())
 					components = "." + components;
 			}
 
@@ -236,6 +243,28 @@ ostream& SlimShader::operator<<(ostream& out, const Operand& value)
 	}
 	return out;
 }
+
+Operand::Operand(OpcodeType parentType) :
+	_parentType(parentType),
+	_modifier(OperandModifier::None),
+	_selectionMode(Operand4ComponentSelectionMode::Mask),
+	_componentMask(ComponentMask::None)
+{
+
+}
+
+uint8_t Operand::GetNumComponents() const { return _numComponents; }
+Operand4ComponentSelectionMode Operand::GetSelectionMode() const { return _selectionMode; }
+ComponentMask Operand::GetComponentMask() const { return _componentMask; }
+const Operand4ComponentName* Operand::GetSwizzles() const { return _swizzles; }
+OperandType Operand::GetOperandType() const { return _operandType; }
+OperandIndexDimension Operand::GetIndexDimension() const { return _indexDimension; }
+const OperandIndexRepresentation* Operand::GetIndexRepresentations() const { return _indexRepresentations; }
+bool Operand::IsExtended() const { return _isExtended; }
+OperandModifier Operand::GetModifier() const { return _modifier; }
+const OperandIndex* Operand::GetIndices() const { return _indices; }
+const Number* Operand::GetImmediateValues32() const { return _immediateValues32; }
+const double* Operand::GetImmediateValues64() const { return _immediateValues64; }
 
 /// <summary>
 /// Extended Instruction Operand Format (OperandToken1)

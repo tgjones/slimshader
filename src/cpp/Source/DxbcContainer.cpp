@@ -10,6 +10,7 @@
 #include "ShaderProgramChunk.h"
 #include "StatisticsChunk.h"
 
+using namespace boolinq;
 using namespace std;
 using namespace SlimShader;
 
@@ -37,13 +38,14 @@ DxbcContainer DxbcContainer::Parse(BytecodeReader& reader)
 }
 
 template <class T>
-const shared_ptr<T> FindChunk(std::vector<std::shared_ptr<DxbcChunk>> chunks, ChunkType type1, ChunkType type2 = ChunkType::Unknown)
+const shared_ptr<T> FindChunk(vector<shared_ptr<DxbcChunk>> chunks, ChunkType type1, ChunkType type2 = ChunkType::Unknown)
 {
 	// Not quite as nice as chunks.OfType<ResourceDefinitionChunk>().FirstOrDefault(), but never mind...
-	auto it = find_if(chunks.begin(), chunks.end(),
-		[type1, type2](shared_ptr<DxbcChunk> chunk) { return chunk->GetChunkType() == type1 || chunk->GetChunkType() == type2; });
-	if (it != chunks.end())
-		return dynamic_pointer_cast<T>(it[0]);
+	auto matchingChunks = from(chunks)
+		.where([type1, type2](shared_ptr<DxbcChunk> chunk) { return chunk->GetChunkType() == type1 || chunk->GetChunkType() == type2; })
+		.toVector();
+	if (!matchingChunks.empty())
+		return dynamic_pointer_cast<T>(matchingChunks[0]);
 	return nullptr;
 }
 
@@ -116,7 +118,7 @@ ostream& SlimShader::operator<<(ostream &out, const DxbcContainer &container)
 		out << *container.GetInterfaces();
 
 	if (container.GetShader() != nullptr)
-		out << container.GetShader();
+		out << *container.GetShader();
 
 	out << "// Approximately " << container.GetStatistics()->GetInstructionCount() << " instruction slots used";
 

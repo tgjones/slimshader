@@ -36,7 +36,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 
 		public override string ToString()
 		{
-			return string.Format("{0} s{1}, {2}", TypeDescription, Operand.Indices[0].Value,
+			return string.Format("{0} {1}, {2}", TypeDescription, Operand,
 				SamplerMode.GetDescription());
 		}
 	}

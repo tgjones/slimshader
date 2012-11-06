@@ -268,5 +268,6 @@ namespace SlimShader
 
 	NumberType GetNumberType(OpcodeType value);
 	std::string ToString(OpcodeType value);
+	bool IsConditionalInstruction(OpcodeType type);
 	bool IsDeclaration(OpcodeType type);
 };

@@ -132,7 +132,7 @@ ostream& SlimShader::operator<<(ostream& out, const SignatureParameterDescriptio
 	}
 	else
 	{
-		out << boost::format("%-20s %5i   %5s %8s %8s %6s   %4s")
+		out << boost::format("%-20s %5i   %4s %8s %8s %6s   %4s")
 			% value._semanticName % value._semanticIndex
 			% "N/A"
 			% GetRegisterName(value._systemValueType)

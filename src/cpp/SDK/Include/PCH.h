@@ -11,4 +11,8 @@
 #include <vector>
 
 // Boost includes
+#include "boost/algorithm/string/join.hpp"
 #include "boost/format.hpp"
+
+// Boolinq include
+#include "boolinq-all.h"

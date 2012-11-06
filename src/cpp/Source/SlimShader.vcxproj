@@ -50,7 +50,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Dependencies\Boost.1.51.0\include;.;Chunks;Chunks\Common;Chunks\Ifce;Chunks\Rdef;Chunks\Sdbg;Chunks\Sfi0;Chunks\Shex;Chunks\Shex\Tokens;Chunks\Stat;Chunks\Xsgn;Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Dependencies\Boost.1.51.0\include;..\Dependencies\boolinq\include;.;Chunks;Chunks\Common;Chunks\Ifce;Chunks\Rdef;Chunks\Sdbg;Chunks\Sfi0;Chunks\Shex;Chunks\Shex\Tokens;Chunks\Stat;Chunks\Xsgn;Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -206,9 +206,14 @@ copy Util\*.h ..\SDK\Include</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chunks\Common\ComponentMask.cpp" />
+    <ClCompile Include="Chunks\Common\Primitive.cpp" />
+    <ClCompile Include="Chunks\Common\PrimitiveTopology.cpp" />
     <ClCompile Include="Chunks\Common\ProgramType.cpp" />
     <ClCompile Include="Chunks\Common\ResourceReturnType.cpp" />
     <ClCompile Include="Chunks\Common\ShaderVersion.cpp" />
+    <ClCompile Include="Chunks\Common\TessellatorDomain.cpp" />
+    <ClCompile Include="Chunks\Common\TessellatorOutputPrimitive.cpp" />
+    <ClCompile Include="Chunks\Common\TessellatorPartitioning.cpp" />
     <ClCompile Include="Chunks\DxbcChunk.cpp" />
     <ClCompile Include="Chunks\Ifce\ClassInstance.cpp" />
     <ClCompile Include="Chunks\Ifce\ClassType.cpp" />
@@ -240,11 +245,49 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClCompile Include="Chunks\Shex\ShaderProgramChunk.cpp" />
     <ClCompile Include="Chunks\Shex\SyncFlags.cpp" />
     <ClCompile Include="Chunks\Shex\SystemValueName.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ConstantBufferDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ControlPointCountDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\CustomDataToken.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\DeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\FunctionBodyDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\FunctionTableDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\GeometryShaderInputPrimitiveDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\GeometryShaderInstanceCountDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\GeometryShaderMaxOutputVertexCountDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\GeometryShaderOutputPrimitiveTopologyDeclarationToken.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\GlobalFlagsDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\HullShaderForkPhaseInstanceCountDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\HullShaderMaxTessFactorDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ImmediateConstantBufferDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ImmediateDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\IndexableTempRegisterDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\IndexingRangeDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\InputRegisterDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\InstructionToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\InterfaceDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\NameToken.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\OpcodeToken.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\Operand.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\OperandIndex.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\OutputRegisterDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\PixelShaderInputRegisterDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\RawShaderResourceViewDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\RawThreadGroupSharedMemoryDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\RawUnorderedAccessViewDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ResourceDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ResourceReturnTypeToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\SamplerDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ShaderMessageDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\StructuredShaderResourceViewDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\StructuredThreadGroupSharedMemoryDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\StructuredUnorderedAccessViewDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\TempRegisterDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\TessellatorDomainDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\TessellatorOutputPrimitiveDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\TessellatorPartitioningDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\ThreadGroupDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\TypedUnorderedAccessViewDeclarationToken.cpp" />
+    <ClCompile Include="Chunks\Shex\Tokens\UnorderedAccessViewDeclarationTokenBase.cpp" />
     <ClCompile Include="Chunks\Stat\StatisticsChunk.cpp" />
     <ClCompile Include="Chunks\Xsgn\InputOutputSignatureChunk.cpp" />
     <ClCompile Include="Chunks\Xsgn\InputSignatureChunk.cpp" />

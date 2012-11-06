@@ -58,13 +58,7 @@ ostream& SlimShader::operator<<(ostream& out, const ShaderTypeMember& value)
 	declarationLines[declarationLines.size() - 1] = (boost::format("%-40s// Offset: %4i")
 		% declarationLines[declarationLines.size() - 1]
 		% (value._parentOffset + value._offset)).str();
-	
-	for (size_t i = 0; i < declarationLines.size(); i++)
-	{
-		out << declarationLines[i];
-		if (i < declarationLines.size() - 1)
-			out << endl;
-	}
+	out << boost::algorithm::join(declarationLines, "\n");
 
 	return out;
 }

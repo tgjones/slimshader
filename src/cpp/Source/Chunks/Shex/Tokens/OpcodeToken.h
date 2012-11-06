@@ -15,7 +15,7 @@ namespace SlimShader
 
 	protected :
 		std::string GetTypeDescription() const;
-		virtual void Print(std::ostream& out) const = 0;
+		virtual void Print(std::ostream& out) const;
 
 	private :
 		OpcodeHeader _header;
