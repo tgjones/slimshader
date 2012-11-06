@@ -86,10 +86,6 @@ void CompareAssemblyOutput(string file, DxbcContainer& container)
 			+ "But was:  \"" + decompiledAsmText.substr(differIndex - numContextCharacters, numContextCharacters * 2) + "\"";
 		throw runtime_error("Decompiled version does not match fxc.exe output.\n\n" + message);
 	}
-	else
-	{
-		cout << "File " << file << ": success" << endl;
-	}
 }
 
 void TestFile(string file)

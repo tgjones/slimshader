@@ -55,7 +55,8 @@ shared_ptr<StatisticsChunk> StatisticsChunk::Parse(BytecodeReader& reader, const
 		return result;
 
 	// Unknown.
-	assert(reader.ReadUInt32() == 0); // TODO
+	auto unknown = reader.ReadUInt32();
+	assert(unknown == 0); // TODO
 
 	result->_controlPoints = reader.ReadUInt32();
 	result->_hullShaderOutputPrimitive = static_cast<TessellatorOutputPrimitive>(reader.ReadUInt32());

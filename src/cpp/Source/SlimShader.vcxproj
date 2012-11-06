@@ -43,6 +43,10 @@
     <OutDir>..\SDK\Library\$(Configuration)\</OutDir>
     <IntDir>Bin\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>Bin\$(Configuration)\</IntDir>
+    <OutDir>..\SDK\Library\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -80,6 +84,8 @@ copy Util\*.h ..\SDK\Include</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Dependencies\Boost.1.51.0\include;..\Dependencies\boolinq\include;.;Chunks;Chunks\Common;Chunks\Ifce;Chunks\Rdef;Chunks\Sdbg;Chunks\Sfi0;Chunks\Shex;Chunks\Shex\Tokens;Chunks\Stat;Chunks\Xsgn;Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -302,6 +308,7 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClCompile Include="Util\Decoder.cpp" />
     <ClCompile Include="Util\PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

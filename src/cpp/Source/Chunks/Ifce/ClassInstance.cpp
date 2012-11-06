@@ -11,7 +11,8 @@ ClassInstance ClassInstance::Parse(const BytecodeReader& reader, BytecodeReader&
 	auto name = nameReader.ReadString();
 
 	auto type = classInstanceReader.ReadUInt16();
-	assert(classInstanceReader.ReadUInt16() == 1); // Unknown, perhaps the class instance type?
+	auto unknown = classInstanceReader.ReadUInt16();
+	assert(unknown == 1); // Unknown, perhaps the class instance type?
 
 	ClassInstance result;
 

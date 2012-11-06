@@ -6,6 +6,7 @@ using namespace SlimShader;
 
 shared_ptr<Sfi0Chunk> Sfi0Chunk::Parse(BytecodeReader& reader)
 {
-	assert(reader.ReadInt32() == 2); // TODO: Unknown
+	auto unknown = reader.ReadInt32();
+	assert(unknown == 2); // TODO: Unknown
 	return shared_ptr<Sfi0Chunk>(new Sfi0Chunk());
 }
