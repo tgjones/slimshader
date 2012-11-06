@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
 		TestFile("HlslCrossCompiler/ps4/fxaa");
 		TestFile("HlslCrossCompiler/ps4/primID");
 		TestFile("HlslCrossCompiler/ps5/conservative_depth_ge");
+		TestFile("HlslCrossCompiler/ps5/interface_arrays");
 		TestFile("HlslCrossCompiler/ps5/interfaces");
 		TestFile("HlslCrossCompiler/ps5/sample");
 		TestFile("HlslCrossCompiler/vs4/mov");

@@ -38,8 +38,11 @@ void InterfaceDeclarationToken::Print(std::ostream& out) const
 	auto functionTableIdentifiers = from(_functionTableIdentifiers)
 		.select([](uint32_t x) -> string { return "ft" + to_string(x); })
 		.toVector();
-	out << boost::format("%s fp%i[%i][%i] = {%s}")
-		% GetTypeDescription() % _identifier % _arrayLength
+	out << boost::format("%s%s fp%i[%i][%i] = {%s}")
+		% GetTypeDescription()
+		% ((_isDynamicallyIndexed) ? "_dynamicindexed" : "")
+		% _identifier
+		% _arrayLength
 		% _expectedFunctionTableLength
 		% boost::algorithm::join(functionTableIdentifiers, ", ");
 }

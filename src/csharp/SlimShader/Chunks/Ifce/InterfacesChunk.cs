@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
+
 using System.Linq;
 using System.Text;
 using SlimShader.Util;
@@ -8,6 +8,7 @@ namespace SlimShader.Chunks.Ifce
 {
 	public class InterfacesChunk : DxbcChunk
 	{
+		public uint InterfaceSlotCount { get; private set; }
 		public List<ClassType> AvailableClassTypes { get; private set; }
 		public List<ClassInstance> AvailableClassInstances { get; private set; }
 		public List<InterfaceSlot> InterfaceSlots { get; private set; }
@@ -27,9 +28,10 @@ namespace SlimShader.Chunks.Ifce
 
 			var classInstanceCount = headerReader.ReadUInt32();
 			var classTypeCount = headerReader.ReadUInt32();
-			var interfaceSlotCount = headerReader.ReadUInt32();
+			var interfaceSlotRecordCount = headerReader.ReadUInt32();
 
-			Debug.Assert(headerReader.ReadUInt32() == interfaceSlotCount); // Unknown
+			// Will be same as interfaceSlotRecordCount unless there are interface arrays.
+			result.InterfaceSlotCount = headerReader.ReadUInt32();
 
 			headerReader.ReadUInt32(); // Think this is offset to start of interface slot info, but we don't need it.
 
@@ -52,11 +54,14 @@ namespace SlimShader.Chunks.Ifce
 				result.AvailableClassInstances.Add(classInstance);
 			}
 
-			for (uint i = 0; i < interfaceSlotCount; i++)
+			uint startSlot = 0;
+			for (uint i = 0; i < interfaceSlotRecordCount; i++)
 			{
 				var interfaceSlot = InterfaceSlot.Parse(reader, interfaceSlotReader);
-				interfaceSlot.ID = i; // Really??
+				interfaceSlot.StartSlot = startSlot; // Really??
 				result.InterfaceSlots.Add(interfaceSlot);
+
+				startSlot += interfaceSlot.SlotSpan;
 			}
 
 			return result;
@@ -90,7 +95,7 @@ namespace SlimShader.Chunks.Ifce
 				sb.AppendLine("//");
 			}
 
-			sb.AppendLine(string.Format("// Interface slots, {0} total:", InterfaceSlots.Count));
+			sb.AppendLine(string.Format("// Interface slots, {0} total:", InterfaceSlotCount));
 			sb.AppendLine("//");
 			sb.AppendLine("//             Slots");
 			sb.AppendLine("// +----------+---------+---------------------------------------");

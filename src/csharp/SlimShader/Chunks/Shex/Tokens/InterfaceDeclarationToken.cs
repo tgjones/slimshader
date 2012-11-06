@@ -87,7 +87,10 @@ namespace SlimShader.Chunks.Shex.Tokens
 
 		public override string ToString()
 		{
-			return string.Format("{0} fp{1}[{2}][{3}] = {{{4}}}", TypeDescription, Identifier, ArrayLength,
+			return string.Format("{0}{1} fp{2}[{3}][{4}] = {{{5}}}",
+				TypeDescription,
+				(DynamicallyIndexed) ? "_dynamicindexed" : string.Empty,
+				Identifier, ArrayLength,
 				ExpectedFunctionTableLength, string.Join(", ", FunctionTableIdentifiers.Select(x => "ft" + x)));
 		}
 	}

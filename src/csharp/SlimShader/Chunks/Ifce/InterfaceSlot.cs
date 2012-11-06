@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SlimShader.Util;
@@ -8,7 +7,8 @@ namespace SlimShader.Chunks.Ifce
 {
 	public class InterfaceSlot
 	{
-		public uint ID { get; set; }
+		public uint StartSlot { get; set; }
+		public uint SlotSpan { get; private set; }
 		public List<uint> TypeIDs { get; private set; }
 		public List<uint> TableIDs { get; private set; }
 
@@ -20,7 +20,7 @@ namespace SlimShader.Chunks.Ifce
 
 		public static InterfaceSlot Parse(BytecodeReader reader, BytecodeReader interfaceSlotReader)
 		{
-			Debug.Assert(interfaceSlotReader.ReadUInt32() == 1); // Unknown
+			var slotSpan = interfaceSlotReader.ReadUInt32();
 
 			var count = interfaceSlotReader.ReadUInt32();
 
@@ -30,7 +30,10 @@ namespace SlimShader.Chunks.Ifce
 			var tableIDsOffset = interfaceSlotReader.ReadUInt32();
 			var tableIDsReader = reader.CopyAtOffset((int) tableIDsOffset);
 
-			var result = new InterfaceSlot();
+			var result = new InterfaceSlot
+			{
+				SlotSpan = slotSpan
+			};
 
 			for (int i = 0; i < count; i++)
 			{
@@ -49,7 +52,11 @@ namespace SlimShader.Chunks.Ifce
 			// +----------+---------+---------------------------------------
 
 			var sb = new StringBuilder();
-			sb.AppendLine(string.Format("// | Type ID  |   {0}     |{1}", ID, 
+
+			string slotSpan = (SlotSpan == 1) 
+				? StartSlot.ToString() : 
+				string.Format("{0}-{1}", StartSlot, StartSlot + SlotSpan - 1);
+			sb.AppendLine(string.Format("// | Type ID  |   {0,-5} |{1}", slotSpan, 
 				string.Join(" ", TypeIDs.Select(x => string.Format("{0,-4}", x)))));
 			sb.AppendLine(string.Format("// | Table ID |         |{0}",
 				string.Join(" ", TableIDs.Select(x => string.Format("{0,-4}", x)))));

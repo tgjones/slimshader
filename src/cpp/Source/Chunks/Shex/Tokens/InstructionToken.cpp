@@ -126,10 +126,9 @@ void InstructionToken::Print(ostream& out) const
 
 	if (GetHeader().OpcodeType == OpcodeType::InterfaceCall)
 	{
-		out << boost::format("fp%i[%i][%i]") 
-			% _operands[0].GetIndices()[0].Value
-			% _operands[0].GetIndices()[1].Value
-			% _functionIndex;
+		out << "fp" << _operands[0].GetIndices()[0].Value
+			<< "[" << _operands[0].GetIndices()[1] << "]"
+			<< "[" << _functionIndex << "]";
 	}
 	else
 	{

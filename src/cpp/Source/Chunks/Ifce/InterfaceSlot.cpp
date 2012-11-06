@@ -8,7 +8,7 @@ using namespace SlimShader;
 
 InterfaceSlot InterfaceSlot::Parse(const BytecodeReader& reader, BytecodeReader& interfaceSlotReader)
 {
-	assert(interfaceSlotReader.ReadUInt32() == 1); // Unknown
+	auto slotSpan = interfaceSlotReader.ReadUInt32();
 
 	auto count = interfaceSlotReader.ReadUInt32();
 
@@ -19,6 +19,7 @@ InterfaceSlot InterfaceSlot::Parse(const BytecodeReader& reader, BytecodeReader&
 	auto tableIDsReader = reader.CopyAtOffset(tableIDsOffset);
 
 	InterfaceSlot result;
+	result._slotSpan = slotSpan;
 
 	vector<uint32_t> typeIDs, tableIDs;
 	for (uint32_t i = 0; i < count; i++)
@@ -30,8 +31,10 @@ InterfaceSlot InterfaceSlot::Parse(const BytecodeReader& reader, BytecodeReader&
 	return result;
 }
 
-const uint32_t InterfaceSlot::GetID() const { return _id; }
-void InterfaceSlot::SetID(uint32_t id) { _id = id; }
+uint32_t InterfaceSlot::GetStartSlot() const { return _startSlot; }
+void InterfaceSlot::SetStartSlot(uint32_t startSlot) { _startSlot = startSlot; }
+
+uint32_t InterfaceSlot::GetSlotSpan() const { return _slotSpan; }
 
 const std::vector<uint32_t>& InterfaceSlot::GetTypeIDs() const { return _typeIDs; }
 const std::vector<uint32_t>& InterfaceSlot::GetTableIDs() const { return _tableIDs; }
@@ -51,8 +54,12 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const InterfaceSlot& val
 	for (auto tableID : value._tableIDs)
 		tableIDsStream << boost::format("%-4i ") % tableID;
 
-	out << (boost::format("// | Type ID  |   %i     |%s")
-		% value._id
+	string slotSpan = (value._slotSpan == 1) 
+		? to_string(value._startSlot)
+		: to_string(value._startSlot) + "-" + to_string(value._startSlot + value._slotSpan - 1);
+
+	out << (boost::format("// | Type ID  |   %-5i |%s")
+		% slotSpan
 		% typeIDsStream.str())
 		<< endl;
 	out << (boost::format("// | Table ID |         |%s")

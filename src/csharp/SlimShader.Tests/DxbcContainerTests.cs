@@ -89,6 +89,7 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/HlslCrossCompiler/ps4/fxaa")]
 		[TestCase("Shaders/HlslCrossCompiler/ps4/primID")]
 		[TestCase("Shaders/HlslCrossCompiler/ps5/conservative_depth_ge")]
+		[TestCase("Shaders/HlslCrossCompiler/ps5/interface_arrays")]
 		[TestCase("Shaders/HlslCrossCompiler/ps5/interfaces")]
 		[TestCase("Shaders/HlslCrossCompiler/ps5/sample")]
 		[TestCase("Shaders/HlslCrossCompiler/vs4/mov")]
@@ -190,7 +191,7 @@ namespace SlimShader.Tests
 			Assert.AreEqual(shaderReflection.ConversionInstructionCount, container.Statistics.ConversionInstructionCount);
 			//Assert.AreEqual(shaderReflection.GeometryShaderSInputPrimitive, actual.g); // TODO
 			Assert.AreEqual(shaderReflection.InterfaceSlotCount, (container.Interfaces != null)
-				? container.Interfaces.InterfaceSlots.Count
+				? container.Interfaces.InterfaceSlotCount
 				: 0);
 			Assert.AreEqual(shaderReflection.IsSampleFrequencyShader, false); // TODO
 			Assert.AreEqual(shaderReflection.MoveInstructionCount, container.Statistics.MovInstructionCount);

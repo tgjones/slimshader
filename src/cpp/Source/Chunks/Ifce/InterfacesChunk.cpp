@@ -12,9 +12,10 @@ shared_ptr<InterfacesChunk> InterfacesChunk::Parse(BytecodeReader& reader, uint3
 
 	auto classInstanceCount = headerReader.ReadUInt32();
 	auto classTypeCount = headerReader.ReadUInt32();
-	auto interfaceSlotCount = headerReader.ReadUInt32();
+	auto interfaceSlotRecordCount = headerReader.ReadUInt32();
 
-	assert(headerReader.ReadUInt32() == interfaceSlotCount); // Unknown
+	// Will be same as interfaceSlotRecordCount unless there are interface arrays.
+	result->_interfaceSlotCount = headerReader.ReadUInt32();
 
 	headerReader.ReadUInt32(); // Think this is offset to start of interface slot info, but we don't need it.
 
@@ -37,16 +38,20 @@ shared_ptr<InterfacesChunk> InterfacesChunk::Parse(BytecodeReader& reader, uint3
 		result->_availableClassInstances.push_back(classInstance);
 	}
 
-	for (uint32_t i = 0; i < interfaceSlotCount; i++)
+	uint32_t startSlot = 0;
+	for (uint32_t i = 0; i < interfaceSlotRecordCount; i++)
 	{
 		auto interfaceSlot = InterfaceSlot::Parse(reader, interfaceSlotReader);
-		interfaceSlot.SetID(i); // TODO: Really??
+		interfaceSlot.SetStartSlot(startSlot); // TODO: Really??
 		result->_interfaceSlots.push_back(interfaceSlot);
+
+		startSlot += interfaceSlot.GetSlotSpan();
 	}
 
 	return result;
 }
 
+uint32_t InterfacesChunk::GetInterfaceSlotCount() const { return _interfaceSlotCount; }
 const std::vector<ClassType>& InterfacesChunk::GetAvailableClassTypes() const { return _availableClassTypes; }
 const std::vector<ClassInstance>& InterfacesChunk::GetAvailableClassInstances() const { return _availableClassInstances; }
 const std::vector<InterfaceSlot>& InterfacesChunk::GetInterfaceSlots() const { return _interfaceSlots; }
@@ -77,7 +82,7 @@ std::ostream& SlimShader::operator<<(std::ostream& out, const InterfacesChunk& v
 		out << "//" << endl;
 	}
 
-	out << boost::format("// Interface slots, %i total:") % value._interfaceSlots.size() << endl;
+	out << boost::format("// Interface slots, %i total:") % value._interfaceSlotCount << endl;
 	out << "//" << endl;
 	out << "//             Slots" << endl;
 	out << "// +----------+---------+---------------------------------------" << endl;
