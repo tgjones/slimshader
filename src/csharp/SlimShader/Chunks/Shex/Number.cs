@@ -4,32 +4,14 @@ using SlimShader.Util;
 
 namespace SlimShader.Chunks.Shex
 {
-	///// <summary>
-	///// Represents four Numbers, or two doubles.
-	///// </summary>
-	//[StructLayout(LayoutKind.Explicit, Size = sizeof(byte) * 16)]
-	//public struct Number4
-	//{
-	//	private readonly byte _byte0;
-	//	private readonly byte _byte1;
-	//	private readonly byte _byte2;
-	//	private readonly byte _byte3;
-
-	//	public static Number4 FromRawBytes(byte[] rawBytes)
-	//	{
-
-	//	}
-
-	//	Number Numbers[4];
-	//	double Doubles[2];
-	//};
-
 	/// <summary>
 	/// Represents an int, float or uint.
 	/// </summary>
-	[StructLayout(LayoutKind.Explicit, Size = sizeof(byte) * 4 + sizeof(int))]
+	[StructLayout(LayoutKind.Explicit, Size = SizeInBytes)]
 	public struct Number
 	{
+		public const int SizeInBytes = sizeof(byte) * 4 + sizeof(int);
+
 		[FieldOffset(0)]
 		public byte Byte0;
 

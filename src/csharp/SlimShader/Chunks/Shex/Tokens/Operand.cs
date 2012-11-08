@@ -71,8 +71,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 		public bool IsExtended { get; internal set; }
 		public OperandModifier Modifier { get; internal set; }
 		public OperandIndex[] Indices { get; private set; }
-		public Number[] ImmediateValues32 { get; private set; }
-		public double[] ImmediateValues64 { get; private set; }
+		public Number4 ImmediateValues { get; private set; }
 
 		public Operand(OpcodeType parentType)
 		{
@@ -86,8 +85,6 @@ namespace SlimShader.Chunks.Shex.Tokens
 			};
 			IndexRepresentations = new OperandIndexRepresentation[3];
 			Indices = new OperandIndex[3];
-			ImmediateValues32 = new Number[4];
-			ImmediateValues64 = new double[4];
 		}
 
 		public static Operand Parse(BytecodeReader reader, OpcodeType parentType)
@@ -188,17 +185,19 @@ namespace SlimShader.Chunks.Shex.Tokens
 			}
 
 			var numberType = parentType.GetNumberType();
+			var immediateValues = new Number4();
 			switch (operand.OperandType)
 			{
 				case OperandType.Immediate32:
 					for (var i = 0; i < operand.NumComponents; i++)
-						operand.ImmediateValues32[i] = Number.Parse(reader, numberType);
+						immediateValues.SetNumber(i, Number.Parse(reader, numberType));
 					break;
 				case OperandType.Immediate64:
 					for (var i = 0; i < operand.NumComponents; i++)
-						operand.ImmediateValues64[i] = reader.ReadDouble();
+						immediateValues.SetDouble(i, reader.ReadDouble());
 					break;
 			}
+			operand.ImmediateValues = immediateValues;
 
 			return operand;
 		}
@@ -256,8 +255,8 @@ namespace SlimShader.Chunks.Shex.Tokens
 						for (int i = 0; i < NumComponents; i++)
 						{
 							result += (OperandType == OperandType.Immediate64)
-								? ImmediateValues64[i].ToString()
-								: ImmediateValues32[i].ToString();
+								? ImmediateValues.GetDouble(i).ToString()
+								: ImmediateValues.GetNumber(i).ToString();
 
 							if (i < NumComponents - 1)
 							{
