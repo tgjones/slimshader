@@ -182,6 +182,7 @@
     <ClInclude Include="Chunks\Shex\Tokens\TessellatorPartitioningDeclarationToken.h" />
     <ClInclude Include="Chunks\Shex\Tokens\ThreadGroupDeclarationToken.h" />
     <ClInclude Include="Chunks\Shex\Tokens\TypedUnorderedAccessViewDeclarationToken.h" />
+    <ClInclude Include="VirtualMachine\VirtualMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chunks\DxbcChunk.cpp">
@@ -288,5 +289,6 @@
     <ClCompile Include="Chunks\Shex\Tokens\TessellatorPartitioningDeclarationToken.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\ThreadGroupDeclarationToken.cpp" />
     <ClCompile Include="Chunks\Shex\Tokens\TypedUnorderedAccessViewDeclarationToken.cpp" />
+    <ClCompile Include="VirtualMachine\VirtualMachine.cpp" />
   </ItemGroup>
 </Project>

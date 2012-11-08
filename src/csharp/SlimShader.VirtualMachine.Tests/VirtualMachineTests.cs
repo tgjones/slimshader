@@ -29,10 +29,10 @@ namespace SlimShader.VirtualMachine.Tests
 			vm.Execute();
 
 			// Assert.
-			Assert.That(vm.OutputRegisters[0].Values[0].AsFloat, Is.EqualTo(1.0f));
-			Assert.That(vm.OutputRegisters[0].Values[1].AsFloat, Is.EqualTo(0.5f));
-			Assert.That(vm.OutputRegisters[0].Values[2].AsFloat, Is.EqualTo(0.4f));
-			Assert.That(vm.OutputRegisters[0].Values[3].AsFloat, Is.EqualTo(1.0f));
+			Assert.That(vm.OutputRegisters[0].Values[0].Float, Is.EqualTo(1.0f));
+			Assert.That(vm.OutputRegisters[0].Values[1].Float, Is.EqualTo(0.5f));
+			Assert.That(vm.OutputRegisters[0].Values[2].Float, Is.EqualTo(0.4f));
+			Assert.That(vm.OutputRegisters[0].Values[3].Float, Is.EqualTo(1.0f));
 		}
 	}
 }

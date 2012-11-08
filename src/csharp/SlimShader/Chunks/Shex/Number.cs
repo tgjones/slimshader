@@ -1,57 +1,79 @@
 using System;
+using System.Runtime.InteropServices;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Shex
 {
+	///// <summary>
+	///// Represents four Numbers, or two doubles.
+	///// </summary>
+	//[StructLayout(LayoutKind.Explicit, Size = sizeof(byte) * 16)]
+	//public struct Number4
+	//{
+	//	private readonly byte _byte0;
+	//	private readonly byte _byte1;
+	//	private readonly byte _byte2;
+	//	private readonly byte _byte3;
+
+	//	public static Number4 FromRawBytes(byte[] rawBytes)
+	//	{
+
+	//	}
+
+	//	Number Numbers[4];
+	//	double Doubles[2];
+	//};
+
 	/// <summary>
 	/// Represents an int, float or uint.
 	/// </summary>
+	[StructLayout(LayoutKind.Explicit, Size = sizeof(byte) * 4 + sizeof(int))]
 	public struct Number
 	{
-		private readonly NumberType _type;
-		private readonly byte _byte0;
-		private readonly byte _byte1;
-		private readonly byte _byte2;
-		private readonly byte _byte3;
+		[FieldOffset(0)]
+		public byte Byte0;
 
-		public NumberType Type
-		{
-			get { return _type; }
-		}
+		[FieldOffset(1)]
+		public byte Byte1;
+
+		[FieldOffset(2)]
+		public byte Byte2;
+
+		[FieldOffset(3)]
+		public byte Byte3;
+
+		[FieldOffset(0)]
+		public int Int;
+
+		[FieldOffset(0)]
+		public uint UInt;
+
+		[FieldOffset(0)]
+		public float Float;
+
+		[FieldOffset(4)]
+		public NumberType Type;
 
 		public byte[] RawBytes
 		{
-			get { return new[] { _byte0, _byte1, _byte2, _byte3 }; }
-		}
-
-		public int AsInt
-		{
-			get { return BitConverter.ToInt32(RawBytes, 0); }
-		}
-
-		public uint AsUInt
-		{
-			get { return BitConverter.ToUInt32(RawBytes, 0); }
-		}
-
-		public float AsFloat
-		{
-			get { return BitConverter.ToSingle(RawBytes, 0); }
+			get { return new[] { Byte0, Byte1, Byte2, Byte3 }; }
 		}
 
 		public Number(byte[] rawBytes, NumberType type)
+			: this()
 		{
-			_byte0 = rawBytes[0];
-			_byte1 = rawBytes[1];
-			_byte2 = rawBytes[2];
-			_byte3 = rawBytes[3];
-			_type = type;
+			Type = type;
+			Byte0 = rawBytes[0];
+			Byte1 = rawBytes[1];
+			Byte2 = rawBytes[2];
+			Byte3 = rawBytes[3];
 		}
 
 		public Number(float value)
-			: this(BitConverter.GetBytes(value), NumberType.Float)
+			: this()
 		{
-
+			Type = NumberType.Float;
+			Float = value;
 		}
 
 		public static Number Parse(BytecodeReader reader, NumberType type)
@@ -72,19 +94,19 @@ namespace SlimShader.Chunks.Shex
 			switch (Type)
 			{
 				case NumberType.Int:
-					if (AsInt > hexThreshold)
-						return "0x" + AsInt.ToString("x8");
-					return AsInt.ToString();
+					if (Int > hexThreshold)
+						return "0x" + Int.ToString("x8");
+					return Int.ToString();
 				case NumberType.UInt:
-					if (AsUInt > negThreshold)
-						return AsInt.ToString();
-					if (AsUInt > hexThreshold)
-						return "0x" + AsUInt.ToString("x8");
-					return AsUInt.ToString();
+					if (UInt > negThreshold)
+						return Int.ToString();
+					if (UInt > hexThreshold)
+						return "0x" + UInt.ToString("x8");
+					return UInt.ToString();
 				case NumberType.Float:
 					if (RawBytes[0] == 0 && RawBytes[1] == 0 && RawBytes[2] == 0 && RawBytes[3] == 128)
 						return "-0.000000"; // "Negative" zero
-					return ((double) AsFloat).ToString("F6");
+					return ((double) Float).ToString("F6");
 				case NumberType.Unknown:
 					// fxc.exe has some strange rules for formatting output of numbers of 
 					// unknown type - for example, as operands to the mov op. It only matters for string output -
@@ -92,7 +114,7 @@ namespace SlimShader.Chunks.Shex
 					// move bytes around without interpreting them - this is from the mov doc page:
 					// "The modifiers, other than swizzle, assume the data is floating point. The absence of modifiers 
 					// just moves data without altering bits."
-					if (AsInt < floatThresholdNeg || AsInt > floatThresholdPos)
+					if (Int < floatThresholdNeg || Int > floatThresholdPos)
 						goto case NumberType.Float;
 					goto case NumberType.Int;
 				default:

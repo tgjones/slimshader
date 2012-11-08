@@ -9,13 +9,12 @@ namespace SlimShader
 	/// <summary>
 	/// Represents an int, float or uint.
 	/// </summary>
-	struct Number
+	class Number
 	{
 	public :
 		static Number Parse(BytecodeReader& reader, NumberType type);
-
-		Number(uint8_t rawBytes[4], NumberType type);
-		Number() { }
+		static Number FromRawBytes(uint8_t rawBytes[4], NumberType type);
+		static Number FromFloat(float value);
 
 		NumberType GetType() const;
 
@@ -35,5 +34,18 @@ namespace SlimShader
 			uint32_t u;
 			float f;
 		} _value;
+	};
+
+	/// <summary>
+	/// Represents four Numbers, or two doubles.
+	/// </summary>
+	union Number4
+	{
+	public :
+		static Number4 FromRawBytes(uint8_t rawBytes[16]);
+
+		uint8_t RawBytes[16];
+		Number Numbers[4];
+		double Doubles[2];
 	};
 };

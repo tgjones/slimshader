@@ -40,6 +40,8 @@ namespace SlimShader
 	public :
 		static std::shared_ptr<InstructionToken> Parse(BytecodeReader& reader, const OpcodeHeader& header);
 
+		const Operand& GetOperand(uint8_t index) const;
+
 	protected :
 		virtual void Print(std::ostream& out) const;
 

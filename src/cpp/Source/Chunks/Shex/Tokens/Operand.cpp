@@ -118,11 +118,11 @@ label_default :
 	{
 	case OperandType::Immediate32:
 		for (auto i = 0; i < operand._numComponents; i++)
-			operand._immediateValues32[i] = Number::Parse(reader, numberType);
+			operand._immediateValues.Numbers[i] = Number::Parse(reader, numberType);
 		break;
 	case OperandType::Immediate64:
 		for (auto i = 0; i < operand._numComponents; i++)
-			operand._immediateValues64[i] = reader.ReadDouble();
+			operand._immediateValues.Doubles[i] = reader.ReadDouble();
 		break;
 	}
 
@@ -164,9 +164,9 @@ ostream& SlimShader::operator<<(ostream& out, const Operand& value)
 			for (int i = 0; i < value._numComponents; i++)
 			{
 				if (value._operandType == OperandType::Immediate64)
-					out << value._immediateValues64[i];
+					out << value._immediateValues.Doubles[i];
 				else
-					out << value._immediateValues32[i];
+					out << value._immediateValues.Numbers[i];
 
 				if (i < value._numComponents - 1)
 				{
@@ -263,8 +263,7 @@ const OperandIndexRepresentation* Operand::GetIndexRepresentations() const { ret
 bool Operand::IsExtended() const { return _isExtended; }
 OperandModifier Operand::GetModifier() const { return _modifier; }
 const OperandIndex* Operand::GetIndices() const { return _indices; }
-const Number* Operand::GetImmediateValues32() const { return _immediateValues32; }
-const double* Operand::GetImmediateValues64() const { return _immediateValues64; }
+const Number4& Operand::GetImmediateValues() const { return _immediateValues; }
 
 /// <summary>
 /// Extended Instruction Operand Format (OperandToken1)

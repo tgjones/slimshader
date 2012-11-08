@@ -10,16 +10,18 @@ Number Number::Parse(BytecodeReader& reader, NumberType type)
 	uint8_t bytes[byteCount];
 	for (int i = 0; i < byteCount; i++)
 		bytes[i] = reader.ReadUInt8();
-	return Number(bytes, type);
+	return FromRawBytes(bytes, type);
 }
 
-Number::Number(uint8_t rawBytes[4], NumberType type)
-	: _type(type)
+Number Number::FromRawBytes(uint8_t rawBytes[4], NumberType type)
 {
-	_value.b[0] = rawBytes[0];
-	_value.b[1] = rawBytes[1];
-	_value.b[2] = rawBytes[2];
-	_value.b[3] = rawBytes[3];
+	Number result;
+	result._type = type;
+	result._value.b[0] = rawBytes[0];
+	result._value.b[1] = rawBytes[1];
+	result._value.b[2] = rawBytes[2];
+	result._value.b[3] = rawBytes[3];
+	return result;
 }
 
 NumberType Number::GetType() const { return _type; }

@@ -624,6 +624,7 @@
 		Sync,
 
 		[NumberType(NumberType.Double)]
+		[Description("dadd")]
 		DAdd,
 
 		[NumberType(NumberType.Double)]

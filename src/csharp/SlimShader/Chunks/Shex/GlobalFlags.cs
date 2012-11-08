@@ -14,6 +14,7 @@ namespace SlimShader.Chunks.Shex
 		/// <summary>
 		/// Enable double precision float ops.
 		/// </summary>
+		[Description("enableDoublePrecisionFloatOps")]
 		EnableDoublePrecisionFloatOps = 2,
 
 		/// <summary>

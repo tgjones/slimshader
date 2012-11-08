@@ -209,6 +209,7 @@ copy Util\*.h ..\SDK\Include</Command>
     <ClInclude Include="Util\BytecodeReader.h" />
     <ClInclude Include="Util\Decoder.h" />
     <ClInclude Include="Util\PCH.h" />
+    <ClInclude Include="VirtualMachine\VirtualMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chunks\Common\ComponentMask.cpp" />
@@ -310,6 +311,7 @@ copy Util\*.h ..\SDK\Include</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VirtualMachine\VirtualMachine.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

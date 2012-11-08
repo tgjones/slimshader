@@ -84,8 +84,7 @@ namespace SlimShader
 		bool IsExtended() const;
 		OperandModifier GetModifier() const;
 		const OperandIndex* GetIndices() const;
-		const Number* GetImmediateValues32() const;
-		const double* GetImmediateValues64() const;
+		const Number4& GetImmediateValues() const;
 
 		friend std::ostream& operator<<(std::ostream& out, const Operand& value);
 
@@ -106,7 +105,6 @@ namespace SlimShader
 		bool _isExtended;
 		OperandModifier _modifier;
 		OperandIndex _indices[3];
-		Number _immediateValues32[4];
-		double _immediateValues64[4];
+		Number4 _immediateValues;
 	};
 };
