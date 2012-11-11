@@ -34,18 +34,17 @@ namespace SlimShader.Chunks.Shex
 			}
 		}
 
-		public static Number Saturate(Number value)
+		private static float Saturate(float value)
 		{
-			switch (value.Type)
-			{
-				case NumberType.Float:
-					return FromFloat(Math.Min(1.0f, Math.Max(0.0f, value.Float)));
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+			return Math.Min(1.0f, Math.Max(0.0f, value));
 		}
 
-		public static Number FromFloat(float value)
+		public static Number FromFloat(float value, bool saturate)
+		{
+			return FromFloat((saturate) ? Saturate(value) : value);
+		}
+
+		private static Number FromFloat(float value)
 		{
 			return new Number
 			{

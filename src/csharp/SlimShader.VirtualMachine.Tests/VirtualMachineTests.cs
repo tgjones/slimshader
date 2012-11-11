@@ -29,10 +29,10 @@ namespace SlimShader.VirtualMachine.Tests
 			vm.Execute();
 
 			// Assert.
-			Assert.That(vm.Threads[0].Output[0].Number0.Float, Is.EqualTo(1.0f));
-			Assert.That(vm.Threads[0].Output[0].Number1.Float, Is.EqualTo(0.5f));
-			Assert.That(vm.Threads[0].Output[0].Number2.Float, Is.EqualTo(0.4f));
-			Assert.That(vm.Threads[0].Output[0].Number3.Float, Is.EqualTo(1.0f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number0.Float, Is.EqualTo(1.0f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number1.Float, Is.EqualTo(0.5f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number2.Float, Is.EqualTo(0.4f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number3.Float, Is.EqualTo(1.0f));
 		}
 
 		[Test]
@@ -45,10 +45,10 @@ namespace SlimShader.VirtualMachine.Tests
 			vm.Execute();
 
 			// Assert.
-			Assert.That(vm.Threads[0].Output[0].Number0.Float, Is.EqualTo(1.0f));
-			Assert.That(vm.Threads[0].Output[0].Number1.Float, Is.EqualTo(0.5f));
-			Assert.That(vm.Threads[0].Output[0].Number2.Float, Is.EqualTo(0.4f));
-			Assert.That(vm.Threads[0].Output[0].Number3.Float, Is.EqualTo(1.0f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number0.Float, Is.EqualTo(1.0f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number1.Float, Is.EqualTo(0.5f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number2.Float, Is.EqualTo(0.4f));
+			Assert.That(vm.GlobalMemory.Outputs[0].Number3.Float, Is.EqualTo(1.0f));
 		}
 	}
 }

@@ -12,6 +12,9 @@ namespace SlimShader.VirtualMachine
 		private readonly DxbcContainer _bytecode;
 		private readonly DeclarationToken[] _declarations;
 		private readonly InstructionToken[] _instructions;
+
+		private readonly GlobalMemory _globalMemory;
+
 		private readonly VirtualMachineThread[] _threads;
 		private readonly UnorderedAccessView[] _unorderedAccessViews;
 
@@ -19,67 +22,28 @@ namespace SlimShader.VirtualMachine
 
 		private int _programCounter;
 
-		public VirtualMachineThread[] Threads
+		public GlobalMemory GlobalMemory
 		{
-			get { return _threads; }
+			get { return _globalMemory; }
 		}
 
-		public VirtualMachine(DxbcContainer bytecode, int numThreads)
+		public VirtualMachine(DxbcContainer bytecode, int numContexts)
 		{
 			_bytecode = bytecode;
+
 			_declarations = bytecode.Shader.Tokens.OfType<DeclarationToken>().ToArray();
 			_instructions = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
-			_threads = new VirtualMachineThread[numThreads];
+
+			_globalMemory = new GlobalMemory(bytecode.Shader.RegisterCounts, numContexts,
+				bytecode.InputSignature.Parameters.Count,
+				bytecode.OutputSignature.Parameters.Count);
+
+			_threads = new VirtualMachineThread[numContexts];
+
 			_unorderedAccessViews = new UnorderedAccessView[64];
 
-			SetRegisterCounts();
-		}
-
-		private void SetRegisterCounts()
-		{
-			int inputCount = 0, outputCount = 0, resourceCount = 0, samplerCount = 0, tempCount = 0;
-			var constantBufferCounts = new List<int>();
-			var indexableTempCounts = new List<int>();
-			foreach (var token in _declarations)
-			{
-				switch (token.Header.OpcodeType)
-				{
-					case OpcodeType.DclConstantBuffer :
-						constantBufferCounts.Add((int) token.Operand.Indices[1].Value);
-						break;
-					case OpcodeType.DclGlobalFlags:
-						break;
-					case OpcodeType.DclIndexableTemp :
-						indexableTempCounts.Add((int) ((IndexableTempRegisterDeclarationToken) token).RegisterCount);
-						break;
-					case OpcodeType.DclInput :
-					case OpcodeType.DclInputPs :
-					case OpcodeType.DclInputPsSgv :
-					case OpcodeType.DclInputPsSiv :
-					case OpcodeType.DclInputSgv :
-					case OpcodeType.DclInputSiv :
-						inputCount++;
-						break;
-					case OpcodeType.DclOutput:
-						outputCount++;
-						break;
-					case OpcodeType.DclResource :
-						resourceCount++;
-						break;
-					case OpcodeType.DclSampler :
-						samplerCount++;
-						break;
-					case OpcodeType.DclTemps :
-						tempCount = (int) ((TempRegisterDeclarationToken) token).TempCount;
-						break;
-					default:
-						throw new InvalidOperationException(token.Header.OpcodeType + " is not yet supported.");
-				}
-			}
 			for (int i = 0; i < _threads.Length; i++)
-				_threads[i] = new VirtualMachineThread(
-					constantBufferCounts.ToArray(), indexableTempCounts.ToArray(),
-					inputCount, outputCount, resourceCount, samplerCount, tempCount);
+				_threads[i] = new VirtualMachineThread(i, _globalMemory, bytecode.Shader.RegisterCounts);
 		}
 
 		public void SetUnorderedAccessViews(int startSlot, UnorderedAccessView[] unorderedAccessViews)

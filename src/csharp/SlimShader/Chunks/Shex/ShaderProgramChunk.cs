@@ -14,17 +14,15 @@ namespace SlimShader.Chunks.Shex
 		public uint Length { get; private set; }
 		public List<OpcodeToken> Tokens { get; private set; }
 
-		/* for ifs, the insn number of the else or endif if there is no else
-   * for elses, the insn number of the endif
-   * for endifs, the insn number of the if
-   * for loops, the insn number of the endloop
-   * for endloops, the insn number of the loop
-   * for all others, -1
-   */
-		public List<int> LinkedInstructions { get; private set; }
+		public IEnumerable<DeclarationToken> DeclarationTokens
+		{
+			get { return Tokens.OfType<DeclarationToken>(); }
+		}
 
-		public bool LabelsFound { get; private set; }
-		public List<int> LabelToInstructionNum { get; private set; }
+		public RegisterCounts RegisterCounts
+		{
+			get { return new RegisterCounts(DeclarationTokens); }
+		}
 
 		public ShaderProgramChunk()
 		{

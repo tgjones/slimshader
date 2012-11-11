@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SlimShader.Chunks.Common;
 
 namespace SlimShader.Chunks.Shex
 {
@@ -176,23 +177,16 @@ namespace SlimShader.Chunks.Shex
 			}
 		}
 
-		public void Saturate()
+		public void WriteMaskedValue(Number4 value, ComponentMask mask)
 		{
-			switch (Type)
-			{
-				case Number4Type.Number:
-					Number0 = Number.Saturate(Number0);
-					Number1 = Number.Saturate(Number1);
-					Number2 = Number.Saturate(Number2);
-					Number3 = Number.Saturate(Number3);
-					break;
-				case Number4Type.Double:
-					Double0 = Math.Min(1.0f, Math.Max(0.0f, Double0));
-					Double1 = Math.Min(1.0f, Math.Max(0.0f, Double1));
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+			if (mask.HasFlag(ComponentMask.X))
+				Number0 = value.Number0;
+			if (mask.HasFlag(ComponentMask.Y))
+				Number1 = value.Number1;
+			if (mask.HasFlag(ComponentMask.Z))
+				Number2 = value.Number2;
+			if (mask.HasFlag(ComponentMask.W))
+				Number3 = value.Number3;
 		}
 	}
 }
