@@ -185,19 +185,19 @@ namespace SlimShader.Chunks.Shex.Tokens
 			}
 
 			var numberType = parentType.GetNumberType();
-			var immediateValues = new Number4();
 			switch (operand.OperandType)
 			{
 				case OperandType.Immediate32:
+					operand.ImmediateValues = new Number4();
 					for (var i = 0; i < operand.NumComponents; i++)
-						immediateValues.SetNumber(i, Number.Parse(reader, numberType));
+						operand.ImmediateValues.SetNumber(i, Number.Parse(reader, numberType));
 					break;
 				case OperandType.Immediate64:
+					operand.ImmediateValues = new Number4();
 					for (var i = 0; i < operand.NumComponents; i++)
-						immediateValues.SetDouble(i, reader.ReadDouble());
+						operand.ImmediateValues.SetDouble(i, reader.ReadDouble());
 					break;
 			}
-			operand.ImmediateValues = immediateValues;
 
 			return operand;
 		}

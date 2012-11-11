@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SlimShader.Chunks.Common;
@@ -12,6 +13,18 @@ namespace SlimShader.Chunks.Shex
 		public ShaderVersion Version { get; private set; }
 		public uint Length { get; private set; }
 		public List<OpcodeToken> Tokens { get; private set; }
+
+		/* for ifs, the insn number of the else or endif if there is no else
+   * for elses, the insn number of the endif
+   * for endifs, the insn number of the if
+   * for loops, the insn number of the endloop
+   * for endloops, the insn number of the loop
+   * for all others, -1
+   */
+		public List<int> LinkedInstructions { get; private set; }
+
+		public bool LabelsFound { get; private set; }
+		public List<int> LabelToInstructionNum { get; private set; }
 
 		public ShaderProgramChunk()
 		{
@@ -74,7 +87,54 @@ namespace SlimShader.Chunks.Shex
 				program.Tokens.Add(opcodeToken);
 			}
 
+			program.LinkControlFlowInstructions();
+
 			return program;
+		}
+
+		private void LinkControlFlowInstructions()
+		{
+			var stack = new Stack<int>();
+			var breakTokenIndices = new List<int>();
+			for (int instructionIndex = 0; instructionIndex < Tokens.Count; instructionIndex++)
+			{
+				var token = Tokens[instructionIndex] as InstructionToken;
+				if (token == null)
+					continue;
+
+				switch (token.Header.OpcodeType)
+				{
+					case OpcodeType.If:
+					case OpcodeType.Switch:
+					case OpcodeType.Loop:
+						stack.Push(instructionIndex);
+						break;
+					case OpcodeType.Break :
+					case OpcodeType.BreakC :
+						breakTokenIndices.Add(instructionIndex);
+						break;
+					case OpcodeType.EndSwitch:
+					case OpcodeType.EndIf:
+					case OpcodeType.EndLoop:
+						int v = stack.Pop();
+
+						// Link End[If/Switch/Loop] to [If/Switch/Loop]
+						token.LinkedInstructionOffset = v - instructionIndex;
+
+						// Link [If/Switch/Loop] to End[If/Switch/Loop]
+						((InstructionToken) Tokens[v]).LinkedInstructionOffset = instructionIndex - v;
+
+						if (token.Header.OpcodeType != OpcodeType.EndIf)
+						{
+							// Link [Break/BreakC] to End[Switch/Loop]
+							foreach (var breakTokenIndex in breakTokenIndices)
+								((InstructionToken) Tokens[breakTokenIndex]).LinkedInstructionOffset = instructionIndex - breakTokenIndex;
+							breakTokenIndices.Clear();
+						}
+						break;
+				}
+			}
+			Debug.Assert(stack.Count == 0);
 		}
 
 		public override string ToString()

@@ -154,7 +154,7 @@
 		IShr,
 
 		[Description("itof")]
-		IToF,
+		ItoF,
 
 		[Description("label")]
 		Label,
@@ -314,7 +314,7 @@
 		UShr,
 
 		[Description("utof")]
-		UTof,
+		Utof,
 
 		[NumberType(NumberType.UInt)]
 		[Description("xor")]

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Resources;
@@ -8,22 +10,76 @@ namespace SlimShader.VirtualMachine
 	public class VirtualMachine
 	{
 		private readonly DxbcContainer _bytecode;
+		private readonly DeclarationToken[] _declarations;
+		private readonly InstructionToken[] _instructions;
+		private readonly VirtualMachineThread[] _threads;
 		private readonly UnorderedAccessView[] _unorderedAccessViews;
 
-		private readonly Register<Number>[] _outputRegisters;
+		private readonly Stack<int> _divergenceStack;
 
-		public Register<Number>[] OutputRegisters
+		private int _programCounter;
+
+		public VirtualMachineThread[] Threads
 		{
-			get { return _outputRegisters; }
+			get { return _threads; }
 		}
 
-		public VirtualMachine(DxbcContainer bytecode)
+		public VirtualMachine(DxbcContainer bytecode, int numThreads)
 		{
 			_bytecode = bytecode;
+			_declarations = bytecode.Shader.Tokens.OfType<DeclarationToken>().ToArray();
+			_instructions = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
+			_threads = new VirtualMachineThread[numThreads];
 			_unorderedAccessViews = new UnorderedAccessView[64];
-			_outputRegisters = new Register<Number>[8];
-			for (int i = 0; i < 8; i++)
-				_outputRegisters[i] = new Register<Number>(4);
+
+			SetRegisterCounts();
+		}
+
+		private void SetRegisterCounts()
+		{
+			int inputCount = 0, outputCount = 0, resourceCount = 0, samplerCount = 0, tempCount = 0;
+			var constantBufferCounts = new List<int>();
+			var indexableTempCounts = new List<int>();
+			foreach (var token in _declarations)
+			{
+				switch (token.Header.OpcodeType)
+				{
+					case OpcodeType.DclConstantBuffer :
+						constantBufferCounts.Add((int) token.Operand.Indices[1].Value);
+						break;
+					case OpcodeType.DclGlobalFlags:
+						break;
+					case OpcodeType.DclIndexableTemp :
+						indexableTempCounts.Add((int) ((IndexableTempRegisterDeclarationToken) token).RegisterCount);
+						break;
+					case OpcodeType.DclInput :
+					case OpcodeType.DclInputPs :
+					case OpcodeType.DclInputPsSgv :
+					case OpcodeType.DclInputPsSiv :
+					case OpcodeType.DclInputSgv :
+					case OpcodeType.DclInputSiv :
+						inputCount++;
+						break;
+					case OpcodeType.DclOutput:
+						outputCount++;
+						break;
+					case OpcodeType.DclResource :
+						resourceCount++;
+						break;
+					case OpcodeType.DclSampler :
+						samplerCount++;
+						break;
+					case OpcodeType.DclTemps :
+						tempCount = (int) ((TempRegisterDeclarationToken) token).TempCount;
+						break;
+					default:
+						throw new InvalidOperationException(token.Header.OpcodeType + " is not yet supported.");
+				}
+			}
+			for (int i = 0; i < _threads.Length; i++)
+				_threads[i] = new VirtualMachineThread(
+					constantBufferCounts.ToArray(), indexableTempCounts.ToArray(),
+					inputCount, outputCount, resourceCount, samplerCount, tempCount);
 		}
 
 		public void SetUnorderedAccessViews(int startSlot, UnorderedAccessView[] unorderedAccessViews)
@@ -32,58 +88,105 @@ namespace SlimShader.VirtualMachine
 				_unorderedAccessViews[startSlot + i] = unorderedAccessViews[i];
 		}
 
+		/// <summary>
+		/// http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter34.html
+		/// http://people.maths.ox.ac.uk/gilesm/pp10/lec2_2x2.pdf
+		/// http://stackoverflow.com/questions/10119796/how-does-cuda-compiler-know-the-divergence-behaviour-of-warps
+		/// http://www.istc-cc.cmu.edu/publications/papers/2011/SIMD.pdf
+		/// http://hal.archives-ouvertes.fr/docs/00/62/26/54/PDF/collange_sympa2011_en.pdf
+		/// </summary>
 		public void Execute()
 		{
-			foreach (var token in _bytecode.Shader.Tokens)
+			for (_programCounter = 0; _programCounter < _instructions.Length; _programCounter++)
 			{
+				InstructionToken token = _instructions[_programCounter];
 				switch (token.Header.OpcodeType)
 				{
-					case OpcodeType.DclGlobalFlags :
+					case OpcodeType.Add:
+						Execute(t => t.ExecuteAdd(token));
 						break;
-					case OpcodeType.DclOutput :
+					case OpcodeType.BreakC:
+					{
+						// If all threads have "breaked", we can continue executing after the loop / switch.
+						bool allBroke = false;
+						Execute(t => allBroke = allBroke && t.ExecuteBreakC(token));
+						if (allBroke)
+							_programCounter += token.LinkedInstructionOffset;
 						break;
-					case OpcodeType.Mov :
-						ExecuteMov((InstructionToken) token);
+					}
+					case OpcodeType.Div:
+						Execute(t => t.ExecuteDiv(token));
+						break;
+					case OpcodeType.Dp2:
+						Execute(t => t.ExecuteDp2(token));
+						break;
+					case OpcodeType.Dp3:
+						Execute(t => t.ExecuteDp3(token));
+						break;
+					case OpcodeType.Dp4:
+						Execute(t => t.ExecuteDp4(token));
+						break;
+					case OpcodeType.EndSwitch :
+						break;
+					case OpcodeType.ILt:
+						Execute(t => t.ExecuteILt(token));
+						break;
+					case OpcodeType.EndLoop :
+						_programCounter += token.LinkedInstructionOffset;
+						break;
+					case OpcodeType.If:
+					{
+						// If all threads have followed the same branch, we can continue executing after the loop / switch.
+						bool allBroke = false;
+						Execute(t => allBroke = allBroke && t.ExecuteBreakC(token));
+						if (allBroke)
+							_programCounter += token.LinkedInstructionOffset;
+						break;
+					}
+					case OpcodeType.ItoF:
+						Execute(t => t.ExecuteItoF(token));
+						break;
+					case OpcodeType.FtoI:
+						Execute(t => t.ExecuteFtoI(token));
+						break;
+					case OpcodeType.FtoU :
+						Execute(t => t.ExecuteFtoU(token));
+						break;
+					case OpcodeType.Loop:
+						break;
+					case OpcodeType.Lt:
+						Execute(t => t.ExecuteLt(token));
+						break;
+					case OpcodeType.Mov:
+						Execute(t => t.ExecuteMov(token));
+						break;
+					case OpcodeType.Mul:
+						Execute(t => t.ExecuteMul(token));
 						break;
 					case OpcodeType.Ret :
-						return;
-					default :
-						throw new ArgumentOutOfRangeException();
+						break;
+					case OpcodeType.Sqrt:
+						Execute(t => t.ExecuteSqrt(token));
+						break;
+					case OpcodeType.Utof:
+						Execute(t => t.ExecuteUtoF(token));
+						break;
+					case OpcodeType.Xor:
+						Execute(t => t.ExecuteXor(token));
+						break;
+					default:
+						throw new InvalidOperationException(token.Header.OpcodeType + " is not yet supported.");
 				}
 			}
 		}
 
-		private void ExecuteMov(InstructionToken token)
+		private void Execute(Action<VirtualMachineThread> callback)
 		{
-			var destination = token.Operands[0];
-			var source = token.Operands[1];
-
-			switch (destination.OperandType)
+			foreach (var thread in _threads)
 			{
-				case OperandType.Output:
-					_outputRegisters[destination.Indices[0].Value].Values[0] = source.ImmediateValues.GetNumber(0);
-					_outputRegisters[destination.Indices[0].Value].Values[1] = source.ImmediateValues.GetNumber(1);
-					_outputRegisters[destination.Indices[0].Value].Values[2] = source.ImmediateValues.GetNumber(2);
-					_outputRegisters[destination.Indices[0].Value].Values[3] = source.ImmediateValues.GetNumber(3);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+				if (thread.PerThreadProgramCounter == _programCounter)
+					callback(thread);
 			}
-		}
-	}
-
-	public class Register<T>
-	{
-		private readonly T[] _values;
-
-		public T[] Values
-		{
-			get { return _values; }
-		}
-
-		public Register(int dimension)
-		{
-			_values = new T[dimension];
 		}
 	}
 }

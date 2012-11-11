@@ -23,16 +23,32 @@ namespace SlimShader.VirtualMachine.Tests
 		public void CanExecutePixelShader()
 		{
 			// Arrange.
-			var vm = new VirtualMachine(DxbcContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")));
+			var vm = new VirtualMachine(DxbcContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")), 1);
 
 			// Act.
 			vm.Execute();
 
 			// Assert.
-			Assert.That(vm.OutputRegisters[0].Values[0].Float, Is.EqualTo(1.0f));
-			Assert.That(vm.OutputRegisters[0].Values[1].Float, Is.EqualTo(0.5f));
-			Assert.That(vm.OutputRegisters[0].Values[2].Float, Is.EqualTo(0.4f));
-			Assert.That(vm.OutputRegisters[0].Values[3].Float, Is.EqualTo(1.0f));
+			Assert.That(vm.Threads[0].Output[0].Number0.Float, Is.EqualTo(1.0f));
+			Assert.That(vm.Threads[0].Output[0].Number1.Float, Is.EqualTo(0.5f));
+			Assert.That(vm.Threads[0].Output[0].Number2.Float, Is.EqualTo(0.4f));
+			Assert.That(vm.Threads[0].Output[0].Number3.Float, Is.EqualTo(1.0f));
+		}
+
+		[Test]
+		public void CanExecuteFxDisPixelShader()
+		{
+			// Arrange.
+			var vm = new VirtualMachine(DxbcContainer.Parse(File.ReadAllBytes("../../../../../shaders/FxDis/test.o")), 1);
+
+			// Act.
+			vm.Execute();
+
+			// Assert.
+			Assert.That(vm.Threads[0].Output[0].Number0.Float, Is.EqualTo(1.0f));
+			Assert.That(vm.Threads[0].Output[0].Number1.Float, Is.EqualTo(0.5f));
+			Assert.That(vm.Threads[0].Output[0].Number2.Float, Is.EqualTo(0.4f));
+			Assert.That(vm.Threads[0].Output[0].Number3.Float, Is.EqualTo(1.0f));
 		}
 	}
 }

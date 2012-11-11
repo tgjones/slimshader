@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +40,7 @@
     <Compile Include="Chunks\Sdbg\DebuggingChunk.cs" />
     <Compile Include="Chunks\Sfi0\Sfi0Chunk.cs" />
     <Compile Include="Chunks\Shex\Number4.cs" />
+    <Compile Include="Chunks\Shex\Number4Type.cs" />
     <Compile Include="Chunks\Shex\SyncFlags.cs" />
     <Compile Include="Chunks\Xsgn\PatchConstantSignatureChunk.cs" />
     <Compile Include="Chunks\Stat\StatisticsChunk.cs" />

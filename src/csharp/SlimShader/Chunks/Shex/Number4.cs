@@ -7,8 +7,55 @@ namespace SlimShader.Chunks.Shex
 	/// Represents four Numbers, or two doubles.
 	/// </summary>
 	[StructLayout(LayoutKind.Explicit, Size = Number.SizeInBytes * 4)]
-	public struct Number4
+	public class Number4
 	{
+		public static Number4 Abs(Number4 original)
+		{
+			switch (original.Type)
+			{
+				case Number4Type.Number:
+					return new Number4(
+						Number.Abs(original.Number0),
+						Number.Abs(original.Number1),
+						Number.Abs(original.Number2),
+						Number.Abs(original.Number3));
+				case Number4Type.Double:
+					return new Number4(
+						Math.Abs(original.Double0),
+						Math.Abs(original.Double1));
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public static Number4 Negate(Number4 original)
+		{
+			switch (original.Type)
+			{
+				case Number4Type.Number:
+					return new Number4(
+						Number.Negate(original.Number0),
+						Number.Negate(original.Number1),
+						Number.Negate(original.Number2),
+						Number.Negate(original.Number3));
+				case Number4Type.Double:
+					return new Number4(
+						-original.Double0,
+						-original.Double1);
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public static Number4 Swizzle(Number4 original, Operand4ComponentName[] swizzles)
+		{
+			return new Number4(
+				original.GetNumber((int) swizzles[0]),
+				original.GetNumber((int) swizzles[1]),
+				original.GetNumber((int) swizzles[2]),
+				original.GetNumber((int) swizzles[3]));
+		}
+
 		[FieldOffset(0)]
 		public Number Number0;
 
@@ -27,13 +74,47 @@ namespace SlimShader.Chunks.Shex
 		[FieldOffset(sizeof(double))]
 		public double Double1;
 
+		[FieldOffset(Number.SizeInBytes * 3)]
+		public Number4Type Type;
+
+		public bool AllZero
+		{
+			get { return Number0.UInt == 0 && Number1.UInt == 0 && Number2.UInt == 0 && Number3.UInt == 0; }
+		}
+
+		public bool AnyNonZero
+		{
+			get { return Number0.UInt != 0 || Number1.UInt != 0 || Number2.UInt != 0 || Number3.UInt != 0; }
+		}
+
+		public Number4(Number number0, Number number1, Number number2, Number number3)
+		{
+			Type = Number4Type.Number;
+			Number0 = number0;
+			Number1 = number1;
+			Number2 = number2;
+			Number3 = number3;
+		}
+
+		public Number4(double double0, double double1)
+		{
+			Type = Number4Type.Double;
+			Double0 = double0;
+			Double1 = double1;
+		}
+
+		public Number4()
+		{
+			
+		}
+
 		public double GetDouble(int i)
 		{
 			switch (i)
 			{
 				case 0:
 					return Double0;
-				case 1:
+				case 2:
 					return Double1;
 				default:
 					throw new ArgumentOutOfRangeException("i");
@@ -59,6 +140,7 @@ namespace SlimShader.Chunks.Shex
 
 		public void SetNumber(int i, Number value)
 		{
+			Type = Number4Type.Number;
 			switch (i)
 			{
 				case 0:
@@ -80,6 +162,7 @@ namespace SlimShader.Chunks.Shex
 
 		public void SetDouble(int i, double value)
 		{
+			Type = Number4Type.Double;
 			switch (i)
 			{
 				case 0:
@@ -90,6 +173,25 @@ namespace SlimShader.Chunks.Shex
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("i");
+			}
+		}
+
+		public void Saturate()
+		{
+			switch (Type)
+			{
+				case Number4Type.Number:
+					Number0 = Number.Saturate(Number0);
+					Number1 = Number.Saturate(Number1);
+					Number2 = Number.Saturate(Number2);
+					Number3 = Number.Saturate(Number3);
+					break;
+				case Number4Type.Double:
+					Double0 = Math.Min(1.0f, Math.Max(0.0f, Double0));
+					Double1 = Math.Min(1.0f, Math.Max(0.0f, Double1));
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 	}

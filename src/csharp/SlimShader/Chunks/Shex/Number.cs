@@ -10,6 +10,77 @@ namespace SlimShader.Chunks.Shex
 	[StructLayout(LayoutKind.Explicit, Size = SizeInBytes)]
 	public struct Number
 	{
+		public static Number Abs(Number value)
+		{
+			switch (value.Type)
+			{
+				case NumberType.Float:
+					return FromFloat(Math.Abs(value.Float));
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public static Number Negate(Number value)
+		{
+			switch (value.Type)
+			{
+				case NumberType.Int:
+					return FromInt(-value.Int);
+				case NumberType.Float:
+					return FromFloat(-value.Float);
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public static Number Saturate(Number value)
+		{
+			switch (value.Type)
+			{
+				case NumberType.Float:
+					return FromFloat(Math.Min(1.0f, Math.Max(0.0f, value.Float)));
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public static Number FromFloat(float value)
+		{
+			return new Number
+			{
+				Type = NumberType.Float,
+				Float = value
+			};
+		}
+
+		public static Number FromInt(int value)
+		{
+			return new Number
+			{
+				Type = NumberType.Int,
+				Int = value
+			};
+		}
+
+		public static Number FromUInt(uint value)
+		{
+			return new Number
+			{
+				Type = NumberType.UInt,
+				UInt = value
+			};
+		}
+
+		public static Number Parse(BytecodeReader reader, NumberType type)
+		{
+			const int byteCount = 4;
+			var bytes = new byte[byteCount];
+			for (int i = 0; i < byteCount; i++)
+				bytes[i] = reader.ReadByte();
+			return new Number(bytes, type);
+		}
+
 		public const int SizeInBytes = sizeof(byte) * 4 + sizeof(int);
 
 		[FieldOffset(0)]
@@ -51,20 +122,11 @@ namespace SlimShader.Chunks.Shex
 			Byte3 = rawBytes[3];
 		}
 
-		public Number(float value)
-			: this()
+		public Number ConvertToType(NumberType type)
 		{
-			Type = NumberType.Float;
-			Float = value;
-		}
-
-		public static Number Parse(BytecodeReader reader, NumberType type)
-		{
-			const int byteCount = 4;
-			var bytes = new byte[byteCount];
-			for (int i = 0; i < byteCount; i++)
-				bytes[i] = reader.ReadByte();
-			return new Number(bytes, type);
+			var result = this;
+			result.Type = type;
+			return result;
 		}
 
 		public override string ToString()

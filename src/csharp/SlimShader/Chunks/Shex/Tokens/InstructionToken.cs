@@ -40,6 +40,11 @@ namespace SlimShader.Chunks.Shex.Tokens
 		public ResourceReturnType[] ResourceReturnTypes { get; private set; }
 
 		/// <summary>
+		/// Not stored in the shader bytecode; derived from a post-parsing pass.
+		/// </summary>
+		public int LinkedInstructionOffset { get; internal set; }
+
+		/// <summary>
 		/// Gets the function index to call in the function table specified for the given interface.
 		/// Only relevant for OpcodeType.InterfaceCall instructions.
 		/// </summary>
