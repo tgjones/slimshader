@@ -35,9 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chunks\Sdbg\DebuggingChunk.cs" />
+    <Compile Include="Chunks\Spdb\DebuggingChunk.cs" />
     <Compile Include="Chunks\Sfi0\Sfi0Chunk.cs" />
     <Compile Include="Chunks\Shex\Number4.cs" />
     <Compile Include="Chunks\Shex\Number4Type.cs" />

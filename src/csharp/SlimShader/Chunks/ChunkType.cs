@@ -35,7 +35,7 @@ namespace SlimShader.Chunks
 		Rdef,
 
 		/// <summary>
-		/// Shader debugging info
+		/// Shader debugging info (old-style)
 		/// </summary>
 		Sdbg,
 
@@ -53,6 +53,11 @@ namespace SlimShader.Chunks
 		/// Shader (SM 5.0)
 		/// </summary>
 		Shex,
+
+		/// <summary>
+		/// Shader debugging info (new-style)
+		/// </summary>
+		Spdb,
 
 		/// <summary>
 		/// Statistics

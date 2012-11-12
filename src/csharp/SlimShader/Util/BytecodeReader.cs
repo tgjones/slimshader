@@ -31,6 +31,11 @@ namespace SlimShader.Util
 			return _reader.ReadByte();
 		}
 
+		public byte[] ReadBytes(int count)
+		{
+			return _reader.ReadBytes(count);
+		}
+
 		public float ReadSingle()
 		{
 			return _reader.ReadSingle();

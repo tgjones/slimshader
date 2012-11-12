@@ -186,6 +186,7 @@ namespace SlimShader.Tests
 			var shaderReflection = new ShaderReflection(shaderBytecode);
 
 			//string disassembledCode = shaderBytecode.Disassemble(DisassemblyFlags.EnableInstructionCycle);
+			//var debugInfo = shaderBytecode.GetPart(ShaderBytecodePart.DebugInformation);
 
 			var desc = shaderReflection.Description;
 
