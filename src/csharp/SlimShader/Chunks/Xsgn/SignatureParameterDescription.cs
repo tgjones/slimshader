@@ -122,17 +122,17 @@ namespace SlimShader.Chunks.Xsgn
 		public override string ToString()
 		{
 			// For example:
-			// Name                 Index   Mask Register SysValue Format   Used
-			// TEXCOORD                 0   xyzw        0     NONE  float   xyzw
-			// SV_DepthGreaterEqual     0    N/A oDepthGE  DEPTHGE  float    YES
+			// Name                 Index   Mask Register SysValue  Format   Used
+			// TEXCOORD                 0   xyzw        0     NONE   float   xyzw
+			// SV_DepthGreaterEqual     0    N/A oDepthGE  DEPTHGE   float    YES
 			if (SystemValueType.RequiresMask())
 			{
-				return string.Format("{0,-20} {1,5}   {2,-4} {3,8} {4,8} {5,6}   {6,-4}", SemanticName, SemanticIndex,
+				return string.Format("{0,-20} {1,5}   {2,-4} {3,8} {4,8} {5,7}   {6,-4}", SemanticName, SemanticIndex,
 					Shex.EnumExtensions.GetDescription(Mask),
 					Register, SystemValueType.GetDescription(),
 					ComponentType.GetDescription(), ReadWriteMask.GetDescription());
 			}
-			return string.Format("{0,-20} {1,5}   {2,4} {3,8} {4,8} {5,6}   {6,4}", SemanticName, SemanticIndex,
+			return string.Format("{0,-20} {1,5}   {2,4} {3,8} {4,8} {5,7}   {6,4}", SemanticName, SemanticIndex,
 				"N/A", SystemValueType.GetRegisterName(), SystemValueType.GetDescription(),
 				ComponentType.GetDescription(), "YES");
 		}

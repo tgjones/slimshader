@@ -620,7 +620,7 @@ void CSTessellationIndices( uint3 DTid : SV_DispatchThreadID, uint3 Gid : SV_Gro
 
             tessed_indices = pt;
         }
-
+		
         TessedIndicesOut.Store(id*4, tessed_indices);
     }       
 }

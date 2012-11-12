@@ -65,8 +65,8 @@ namespace SlimShader.Chunks.Xsgn
 		{
 			var sb = new StringBuilder();
 
-			sb.AppendLine("// Name                 Index   Mask Register SysValue Format   Used");
-			sb.AppendLine("// -------------------- ----- ------ -------- -------- ------ ------");
+			sb.AppendLine("// Name                 Index   Mask Register SysValue  Format   Used");
+			sb.AppendLine("// -------------------- ----- ------ -------- -------- ------- ------");
 
 			foreach (var parameter in Parameters)
 				sb.AppendLine("// " + parameter);

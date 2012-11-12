@@ -33,12 +33,12 @@ namespace SlimShader.Tests
 
 			// Assert.
 			Assert.That(container.Header.FourCc, Is.EqualTo(1128421444));
-			Assert.That(container.Header.UniqueKey[0], Is.EqualTo(2210296095));
-			Assert.That(container.Header.UniqueKey[1], Is.EqualTo(678178285));
-			Assert.That(container.Header.UniqueKey[2], Is.EqualTo(4191542541));
-			Assert.That(container.Header.UniqueKey[3], Is.EqualTo(1829059345));
+			Assert.That(container.Header.UniqueKey[0], Is.EqualTo(2110186052));
+			Assert.That(container.Header.UniqueKey[1], Is.EqualTo(3258504054));
+			Assert.That(container.Header.UniqueKey[2], Is.EqualTo(2726684584));
+			Assert.That(container.Header.UniqueKey[3], Is.EqualTo(1141670464));
 			Assert.That(container.Header.One, Is.EqualTo(1));
-			Assert.That(container.Header.TotalSize, Is.EqualTo(5864));
+			Assert.That(container.Header.TotalSize, Is.EqualTo(5144));
 			Assert.That(container.Header.ChunkCount, Is.EqualTo(5));
 
 			Assert.That(container.Chunks.Count, Is.EqualTo(5));
@@ -49,7 +49,7 @@ namespace SlimShader.Tests
 			Assert.That(container.Chunks[2].FourCc, Is.EqualTo(1313297231));
 			Assert.That(container.Chunks[2].ChunkSize, Is.EqualTo(44));
 			Assert.That(container.Chunks[3].FourCc, Is.EqualTo(1380206675));
-			Assert.That(container.Chunks[3].ChunkSize, Is.EqualTo(4964));
+			Assert.That(container.Chunks[3].ChunkSize, Is.EqualTo(4244));
 			Assert.That(container.Chunks[3].ChunkType, Is.EqualTo(ChunkType.Shdr));
 			Assert.That(container.Chunks[4].FourCc, Is.EqualTo(1413567571));
 			Assert.That(container.Chunks[4].ChunkSize, Is.EqualTo(116));
@@ -58,9 +58,9 @@ namespace SlimShader.Tests
 			Assert.That(shaderProgram.Version.MajorVersion, Is.EqualTo(4));
 			Assert.That(shaderProgram.Version.MinorVersion, Is.EqualTo(0));
 			Assert.That(shaderProgram.Version.ProgramType, Is.EqualTo(ProgramType.PixelShader));
-			Assert.That(shaderProgram.Length, Is.EqualTo(1241));
+			Assert.That(shaderProgram.Length, Is.EqualTo(1061));
 
-			Assert.That(shaderProgram.Tokens, Has.Count.EqualTo(213));
+			Assert.That(shaderProgram.Tokens, Has.Count.EqualTo(176));
 
 			Assert.That(shaderProgram.Tokens[3], Is.InstanceOf<ResourceDeclarationToken>());
 			var resourceToken1 = (ResourceDeclarationToken) shaderProgram.Tokens[3];
@@ -84,7 +84,6 @@ namespace SlimShader.Tests
 
 		[TestCase("Shaders/FxDis/test")]
 		[TestCase("Shaders/HlslCrossCompiler/ds5/basic")]
-		[TestCase("Shaders/HlslCrossCompiler/gs4/CubeMap_Inst")]
 		[TestCase("Shaders/HlslCrossCompiler/hs5/basic")]
 		[TestCase("Shaders/HlslCrossCompiler/ps4/fxaa")]
 		[TestCase("Shaders/HlslCrossCompiler/ps4/primID")]
@@ -102,25 +101,30 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/HlslCrossCompiler/vs5/sincos")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_EdgeFactorCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_NumVerticesIndicesCS")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_ScatterIDCS")]
+		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_ScatterIDCS_Index")]
+		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_ScatterIDCS_Vertex")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateIndicesCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateVerticesCS")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11Double")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLPS")] // Can't parse SDBG chunk type yet.
-		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLVS")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Raw")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Raw_Double")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Structured")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Structured_Double")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSL_PS")]
+		[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSL_VS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC6HDecode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
-		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode")]
+		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode_02")]
+		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode_137")]
+		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode_456")]
 		[TestCase("Shaders/Sdk/Direct3D11/DynamicShaderLinkage11/DynamicShaderLinkage11_PS")]
 		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/NBodyGravityCS11")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDrawGS")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDrawPS")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDrawVS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11DS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11HS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11PS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11VS")]
+		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDraw_GS")]
+		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDraw_PS")]
+		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDraw_VS")]
+		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_DS")]
+		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_HS")]
+		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_PS")]
+		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_VS")]
 		public void CanParseShader(string file)
 		{
 			file = "../../../../../" + file;
@@ -141,38 +145,15 @@ namespace SlimShader.Tests
 		{
 			// Arrange.
 			string asmFile = file + ".asm";
-			var asmFileText = GetAsmText(asmFile);
+			var asmFileText = string.Join(Environment.NewLine, File.ReadAllLines(asmFile).Select(x => x.Trim()));
 
 			// Act.
+			var decompiledAsmText = string.Join(Environment.NewLine, container.ToString()
+				.Split(new[] { Environment.NewLine}, StringSplitOptions.None)
+				.Select(x => x.Trim()));
 
 			// Assert.
-			// Ignore first 5 lines - they contain the compiler-specific headers.
-			var decompiledAsmText = string.Join(Environment.NewLine, container.ToString()
-				.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
-				.Skip(5).Select(x => x.Trim()));
 			Assert.That(decompiledAsmText, Is.EqualTo(asmFileText));
-		}
-
-		private static string GetAsmText(string asmFile)
-		{
-			var asmFileLines = File.ReadAllLines(asmFile);
-
-			/* The first 5 or 6 lines contain something like:
-			
-			//
-			// Generated by Microsoft (R) HLSL Shader Compiler 9.29.952.3111
-			//
-			//
-			//   fxc /T vs_4_0 /Fo multiple_const_buffers.o /Fc multiple_const_buffers.asm
-			//    multiple_const_buffers
-			*/
-
-			// We want to skip all that, because we can't accurately recreate the fxc command-line, and so we
-			// aren't able to do a string comparison on these lines.
-			int skip = 5;
-			while (asmFileLines[skip] != "//")
-				skip++;
-			return string.Join(Environment.NewLine, asmFileLines.Skip(skip).Select(x => x.Trim()));
 		}
 
 		/// <summary>

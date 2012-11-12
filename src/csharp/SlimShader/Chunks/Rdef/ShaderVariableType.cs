@@ -57,7 +57,10 @@ namespace SlimShader.Chunks.Rdef
 		InterfacePointer = 37,
 
 		ComputeShader = 38,
+
+		[Description("double")]
 		Double = 39,
+
 		ReadWriteTexture1D,
 		ReadWriteTexture1DArray,
 		ReadWriteTexture2D,

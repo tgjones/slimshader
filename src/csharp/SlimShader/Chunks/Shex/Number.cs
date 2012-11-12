@@ -134,6 +134,7 @@ namespace SlimShader.Chunks.Shex
 			const uint negThreshold = 0xFFFFFFF0; // TODO: Work out the actual negative threshold.
 			const int floatThresholdPos = 0x00700000; // TODO: Work out the actual float threshold.
 			const int floatThresholdNeg = -0x00700000; // TODO: Work out the actual float threshold.
+			const uint uintThresholdPos = 0xfff00000; // TODO: Work out the actual float threshold.
 			switch (Type)
 			{
 				case NumberType.Int:
@@ -149,7 +150,12 @@ namespace SlimShader.Chunks.Shex
 				case NumberType.Float:
 					if (RawBytes[0] == 0 && RawBytes[1] == 0 && RawBytes[2] == 0 && RawBytes[3] == 128)
 						return "-0.000000"; // "Negative" zero
-					return ((double) Float).ToString("F6");
+					if (Math.Abs(Float) > 10000000000000000.0) // TODO: Threshold is guessed
+						return DoubleConverter.ToExactString(Float);
+					var result = ((double) Float).ToString("F6");
+					if (!result.StartsWith("-") && Float < 0.0f)
+						result = "-" + result;
+					return result;
 				case NumberType.Unknown:
 					// fxc.exe has some strange rules for formatting output of numbers of 
 					// unknown type - for example, as operands to the mov op. It only matters for string output -
@@ -157,6 +163,8 @@ namespace SlimShader.Chunks.Shex
 					// move bytes around without interpreting them - this is from the mov doc page:
 					// "The modifiers, other than swizzle, assume the data is floating point. The absence of modifiers 
 					// just moves data without altering bits."
+					if (UInt > uintThresholdPos)
+						goto case NumberType.UInt;
 					if (Int < floatThresholdNeg || Int > floatThresholdPos)
 						goto case NumberType.Float;
 					goto case NumberType.Int;

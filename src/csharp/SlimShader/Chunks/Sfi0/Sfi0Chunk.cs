@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Sfi0
@@ -12,11 +13,32 @@ namespace SlimShader.Chunks.Sfi0
 	/// </summary>
 	public class Sfi0Chunk : DxbcChunk
 	{
+		public bool RequiresDoublePrecisionFloatingPoint { get; private set; }
+
 		public static Sfi0Chunk Parse(BytecodeReader reader)
 		{
-			var unknown = reader.ReadInt32();
-			Debug.Assert(unknown == 1 || unknown == 2); // TODO: Unknown
-			return new Sfi0Chunk();
+			var flags = reader.ReadInt32();
+			Debug.Assert(flags == 1 || flags == 2); // TODO: Unknown
+
+			var result = new Sfi0Chunk();
+
+			if (flags == 1)
+				result.RequiresDoublePrecisionFloatingPoint = true;
+			
+			return result;
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			if (RequiresDoublePrecisionFloatingPoint)
+			{
+				sb.AppendLine("// Note: shader requires additional functionality:");
+				sb.AppendLine("//       Double-precision floating point");
+				sb.AppendLine("//");
+				sb.AppendLine("//");
+			}
+			return sb.ToString();
 		}
 	}
 }

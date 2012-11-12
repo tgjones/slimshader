@@ -104,15 +104,16 @@ namespace SlimShader.Chunks.Rdef
 				// https://github.com/mirrors/wine/blob/master/dlls/d3dcompiler_43/reflection.c#L1362
 			}
 
+			var name = nameReader.ReadString();
 			var result = new ShaderVariable
 			{
 				Member = new ShaderTypeMember(0)
 				{
-					Name = nameReader.ReadString(),
+					Name = name,
 					Offset = startOffset,
 					Type = shaderType
 				},
-				BaseType = nameReader.ReadString(),
+				BaseType = name,
 				Size = size,
 				Flags = flags
 			};
