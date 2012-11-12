@@ -63,12 +63,11 @@ namespace SlimShader.Util
 
 		public string ReadString()
 		{
-			var nextCharacter = _reader.ReadChar();
 			var sb = new StringBuilder();
-			while (nextCharacter != 0)
+			char nextCharacter;
+			while (!EndOfBuffer && (nextCharacter = _reader.ReadChar()) != 0)
 			{
 				sb.Append(nextCharacter);
-				nextCharacter = _reader.ReadChar();
 			}
 			return sb.ToString();
 		}

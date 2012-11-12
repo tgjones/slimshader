@@ -56,9 +56,24 @@ namespace SlimShader.Chunks.Rdef
 		/// </summary>
 		public object DefaultValue { get; private set; }
 
+		/// <summary>
+		/// First texture index (or -1 if no textures used).
+		/// </summary>
 		public int StartTexture { get; private set; }
+
+		/// <summary>
+		/// Number of texture slots possibly used.
+		/// </summary>
 		public int TextureSize { get; private set; }
+		
+		/// <summary>
+		/// First sampler index (or -1 if no textures used)
+		/// </summary>
 		public int StartSampler { get; private set; }
+
+		/// <summary>
+		/// Number of sampler slots possibly used.
+		/// </summary>
 		public int SamplerSize { get; private set; }
 
 		///// <summary>

@@ -107,7 +107,7 @@ namespace SlimShader.Tests
 		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateVerticesCS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11")]
 		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11Double")]
-		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLPS")] // Can't parse SDBG chunk type yet.
+		[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLPS")] // Can't parse SDBG chunk type yet.
 		//[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSLVS")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC6HDecode")]
 		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
@@ -184,6 +184,8 @@ namespace SlimShader.Tests
 		{
 			var shaderBytecode = ShaderBytecode.FromStream(new MemoryStream(binaryFileBytes));
 			var shaderReflection = new ShaderReflection(shaderBytecode);
+
+			//string disassembledCode = shaderBytecode.Disassemble(DisassemblyFlags.EnableInstructionCycle);
 
 			var desc = shaderReflection.Description;
 
