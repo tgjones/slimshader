@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>GeminiWpf</id>
+    <version>0.1.2</version>
+    <title>Gemini</title>
+    <authors>Tim Jones</authors>
+    <owners>Tim Jones</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/roastedamoeba/gemini</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Gemini is an application shell similar in concept to the Visual Studio Shell. It uses AvalonDock and has an MVVM architecture based on Caliburn Micro.</description>
+    <tags>.net40 WPF MVVM AvalonDock Caliburn Micro Visual Studio IDE Shell</tags>
+    <dependencies>
+      <dependency id="AvalonDock" version="[2.0.1114]" />
+      <dependency id="Caliburn.Micro" version="1.3.1" />
+      <dependency id="Extended.Wpf.Toolkit" version="1.7.0" />
+      <dependency id="Rx-Linq" version="2.0.20823" />
+    </dependencies>
+  </metadata>
+</package>

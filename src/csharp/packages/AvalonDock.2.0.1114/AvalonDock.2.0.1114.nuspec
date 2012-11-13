@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>AvalonDock</id>
+    <version>2.0.1114</version>
+    <title />
+    <authors>Adolfo Marinucci</authors>
+    <owners>Adolfo Marinucci</owners>
+    <licenseUrl>http://avalondock.codeplex.com/license</licenseUrl>
+    <projectUrl>http://avalondock.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>AvalonDock is a WPF controls library which can be used to create a docking layout system like that is present in VisualStudio. It supports fly-out panes, floating windows, multiple docking manager in same window, styles and themes and it can host WinForms controls.</description>
+    <releaseNotes>Please note that this is a BETA release.</releaseNotes>
+    <copyright>Copyright (c) 2007-2012, Adolfo Marinucci</copyright>
+    <tags>WPF Docking</tags>
+  </metadata>
+</package>
