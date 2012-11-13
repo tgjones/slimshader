@@ -49,7 +49,7 @@ namespace SlimShader.Chunks.Rdef
 						return "byte";
 					default:
 						throw new ArgumentOutOfRangeException("shaderInputType", 
-							"Shader input type '" + shaderInputType + "' is not supported.");
+							string.Format("Shader input type '{0}' is not supported.", shaderInputType));
 				}
 			}
 			return value.GetDescription();

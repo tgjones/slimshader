@@ -50,7 +50,7 @@ namespace SlimShader.Util
 		public static sbyte DecodeSigned4BitValue(this uint token, byte start, byte end)
 		{
 			if (end - start != 3)
-				throw new ArgumentOutOfRangeException();
+				throw new ParseException("DecodeSigned4BitValue can only be called for 4-bit intervals");
 			var value = token.DecodeValue<sbyte>(start, end);
 			if (value > 7)
 				return (sbyte) (value - 16);
@@ -60,7 +60,7 @@ namespace SlimShader.Util
 		public static uint ToFourCc(this string fourCc)
 		{
 			if (string.IsNullOrEmpty(fourCc) || fourCc.Length != 4)
-				throw new ArgumentOutOfRangeException("fourCc");
+				throw new ArgumentOutOfRangeException("fourCc", "Invalid FOURCC: " + fourCc);
 			var a = (byte) fourCc[0];
 			var b = (byte) fourCc[1];
 			var c = (byte) fourCc[2];

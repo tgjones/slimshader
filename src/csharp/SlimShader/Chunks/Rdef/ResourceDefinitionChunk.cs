@@ -7,8 +7,6 @@ using SlimShader.Util;
 namespace SlimShader.Chunks.Rdef
 {
 	/// <summary>
-	/// Most of this was adapted from 
-	/// https://devel.nuclex.org/framework/browser/graphics/Nuclex.Graphics.Native/trunk/Source/Introspection/HlslShaderReflector.cpp?rev=1743
 	/// Roughly corresponds to the D3D11_SHADER_DESC structure.
 	/// </summary>
 	public class ResourceDefinitionChunk : BytecodeChunk
@@ -40,15 +38,12 @@ namespace SlimShader.Chunks.Rdef
 			var creatorReader = reader.CopyAtOffset((int) creatorOffset);
 			var creator = creatorReader.ReadString();
 
-			// TODO: Parse Direct3D 11 resource definition stuff.
-			// https://github.com/mirrors/wine/blob/master/dlls/d3dcompiler_43/reflection.c#L1429
-
 			if (target.MajorVersion >= 5)
 			{
 				string rd11 = headerReader.ReadUInt32().ToFourCcString();
 				if (rd11 != "RD11")
 					throw new ParseException("Expected RD11.");
-				var unknown1 = headerReader.ReadUInt32();
+				var unknown1 = headerReader.ReadUInt32(); // TODO
 				var unknown2 = headerReader.ReadUInt32();
 				var unknown3 = headerReader.ReadUInt32();
 				var unknown4 = headerReader.ReadUInt32();

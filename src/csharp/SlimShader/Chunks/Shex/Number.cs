@@ -17,7 +17,7 @@ namespace SlimShader.Chunks.Shex
 				case NumberType.Float:
 					return FromFloat(Math.Abs(value.Float));
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", value.Type));
 			}
 		}
 
@@ -30,7 +30,7 @@ namespace SlimShader.Chunks.Shex
 				case NumberType.Float:
 					return FromFloat(-value.Float);
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", value.Type));
 			}
 		}
 
@@ -169,7 +169,7 @@ namespace SlimShader.Chunks.Shex
 						goto case NumberType.Float;
 					goto case NumberType.Int;
 				default:
-					throw new ArgumentException("Type '" + Type + "' is not supported.");
+					throw new InvalidOperationException(string.Format("Type '{0}' is not supported.", Type));
 			}
 		}
 	}

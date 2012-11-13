@@ -37,7 +37,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 					token = ShaderMessageDeclarationToken.Parse(reader);
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new ParseException("Unknown custom data class: " + customDataClass);
 			}
 
 			token.CustomDataClass = customDataClass;

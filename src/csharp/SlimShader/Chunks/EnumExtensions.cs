@@ -43,8 +43,7 @@ namespace SlimShader.Chunks
 
 			var attributeValues = attributeValuesForType[attributeType];
 			if (!attributeValues.ContainsKey(value))
-				throw new ArgumentOutOfRangeException("value",
-					string.Format("Could not find attribute value for type '{0}' and value '{1}'.", type, value));
+				throw new ArgumentException(string.Format("Could not find attribute value for type '{0}' and value '{1}'.", type, value));
 			return getValueCallback((TAttribute[]) attributeValues[value], value);
 		}
 

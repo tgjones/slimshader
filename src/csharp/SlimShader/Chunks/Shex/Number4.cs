@@ -25,7 +25,7 @@ namespace SlimShader.Chunks.Shex
 						Math.Abs(original.Double0),
 						Math.Abs(original.Double1));
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", original.Type));
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace SlimShader.Chunks.Shex
 						-original.Double0,
 						-original.Double1);
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new InvalidOperationException(string.Format("Negate is not a valid operation for number type '{0}'.", original.Type));
 			}
 		}
 
@@ -118,7 +118,7 @@ namespace SlimShader.Chunks.Shex
 				case 2:
 					return Double1;
 				default:
-					throw new ArgumentOutOfRangeException("i");
+					throw new ArgumentOutOfRangeException("i", string.Format("Index '{0}' is out of range.", i));
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace SlimShader.Chunks.Shex
 				case 3:
 					return Number3;
 				default:
-					throw new ArgumentOutOfRangeException("i");
+					throw new ArgumentOutOfRangeException("i", string.Format("Index '{0}' is out of range.", i));
 			}
 		}
 
@@ -157,7 +157,7 @@ namespace SlimShader.Chunks.Shex
 					Number3 = value;
 					break;
 				default :
-					throw new ArgumentOutOfRangeException("i");
+					throw new ArgumentOutOfRangeException("i", string.Format("Index '{0}' is out of range.", i));
 			}
 		}
 
@@ -173,7 +173,7 @@ namespace SlimShader.Chunks.Shex
 					Double1 = value;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException("i");
+					throw new ArgumentOutOfRangeException("i", string.Format("Index '{0}' is out of range.", i));
 			}
 		}
 

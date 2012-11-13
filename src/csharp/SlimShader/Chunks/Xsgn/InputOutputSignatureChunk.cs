@@ -33,7 +33,7 @@ namespace SlimShader.Chunks.Xsgn
 					result = new PatchConstantSignatureChunk();
 					break;
 				default :
-					throw new ArgumentOutOfRangeException("chunkType");
+					throw new ArgumentOutOfRangeException("chunkType", "Unrecognised chunk type: " + chunkType);
 			}
 
 			var chunkReader = reader.CopyAtCurrentPosition();
@@ -52,7 +52,7 @@ namespace SlimShader.Chunks.Xsgn
 					elementSize = SignatureElementSize._6;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException("chunkType");
+					throw new ArgumentOutOfRangeException("chunkType", "Unrecognised chunk type: " + chunkType);
 			}
 
 			for (int i = 0; i < elementCount; i++)

@@ -41,7 +41,7 @@ namespace SlimShader.Chunks.Xsgn
 				case Name.DepthLessEqual:
 					return OperandType.OutputDepthLessEqual.GetDescription();
 				default:
-					throw new ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException("value", "Unrecognised name: " + value);
 			}
 		}
 	}

@@ -158,7 +158,7 @@ namespace SlimShader.Chunks.Rdef
 						break;
 					}
 				default:
-					throw new ArgumentOutOfRangeException("Variable class '" + VariableClass + "' is not currently supported.");
+					throw new InvalidOperationException(string.Format("Variable class '{0}' is not currently supported.", VariableClass));
 			}
 			return sb.ToString();
 		}

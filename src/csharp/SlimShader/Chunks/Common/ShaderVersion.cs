@@ -54,7 +54,7 @@ namespace SlimShader.Chunks.Common
 					programType = ProgramType.ComputeShader;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(string.Format("Unknown program type: 0x{0:X}", programTypeValue));
+					throw new ParseException(string.Format("Unknown program type: 0x{0:X}", programTypeValue));
 			}
 
 			return new ShaderVersion

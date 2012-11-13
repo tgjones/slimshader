@@ -82,8 +82,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 				case OpcodeType.DclStream :
 					return StreamDeclarationToken.Parse(reader);
 				default:
-					throw new ArgumentOutOfRangeException("opcodeType",
-						"OpcodeType '" + opcodeType + "' is not supported.");
+					throw new ParseException("OpcodeType '" + opcodeType + "' is not supported.");
 			}
 		}
 	}

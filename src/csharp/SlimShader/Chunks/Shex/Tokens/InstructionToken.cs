@@ -104,7 +104,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 						instructionToken.ResourceReturnTypes[3] = extendedToken.DecodeValue<ResourceReturnType>(18, 21);
 						break;
 					default:
-						throw new ArgumentOutOfRangeException();
+						throw new ParseException("Unrecognised extended type: " + extendedType);
 				}
 			}
 

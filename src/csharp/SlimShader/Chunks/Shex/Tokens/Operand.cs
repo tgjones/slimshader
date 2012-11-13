@@ -136,14 +136,14 @@ namespace SlimShader.Chunks.Shex.Tokens
 								}
 							default:
 								{
-									throw new ArgumentException("Unrecognized selection method: " + operand.SelectionMode);
+									throw new ParseException("Unrecognized selection method: " + operand.SelectionMode);
 								}
 						}
 						break;
 					}
 				case OperandNumComponents.N:
 					{
-						throw new ArgumentException("OperandNumComponents.N is not currently supported.");
+						throw new ParseException("OperandNumComponents.N is not currently supported.");
 					}
 			}
 
@@ -180,7 +180,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 						operand.Indices[i].Value = reader.ReadUInt64();
 						goto case OperandIndexRepresentation.Relative;
 					default:
-						throw new ArgumentOutOfRangeException();
+						throw new ParseException("Unrecognised index representation: " + operand.IndexRepresentations[i]);
 				}
 			}
 
@@ -315,7 +315,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 									components = Swizzles[0].GetDescription();
 									break;
 								default:
-									throw new ArgumentOutOfRangeException();
+									throw new InvalidOperationException("Unrecognised selection mode: " + SelectionMode);
 							}
 							if (!string.IsNullOrEmpty(components))
 								components = "." + components;

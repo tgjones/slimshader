@@ -93,7 +93,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 					};
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new ParseException("Unrecognised opcode type: " + opcodeType);
 			}
 
 			result.Operand = Operand.Parse(reader, opcodeType);

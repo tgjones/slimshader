@@ -45,7 +45,7 @@ namespace SlimShader.Chunks
 			if (KnownChunkTypes.ContainsKey(fourCc))
 				chunkType = KnownChunkTypes[fourCc];
 			else
-				throw new NotSupportedException("Chunk type '" + fourCc.ToFourCcString() + "' is not yet supported.");
+				throw new ParseException("Chunk type '" + fourCc.ToFourCcString() + "' is not yet supported.");
 
 			var chunkContentReader = chunkReader.CopyAtCurrentPosition((int) chunkSize);
 			BytecodeChunk chunk;
@@ -79,7 +79,7 @@ namespace SlimShader.Chunks
 					chunk = StatisticsChunk.Parse(chunkContentReader, chunkSize);
 					break;
 				default :
-					throw new ArgumentOutOfRangeException();
+					throw new ParseException("Invalid chunk type: " + chunkType);
 			}
 
 			chunk.FourCc = fourCc;

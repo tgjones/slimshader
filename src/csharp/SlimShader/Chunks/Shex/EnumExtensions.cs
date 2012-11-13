@@ -35,7 +35,7 @@ namespace SlimShader.Chunks.Shex
 				case Operand4ComponentName.W:
 					return "w";
 				default:
-					throw new ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException("value", "Unrecognised value:" + value);
 			}
 		}
 
@@ -55,7 +55,6 @@ namespace SlimShader.Chunks.Shex
 			return result;
 		}
 
-		// TODO: Could use this for other flags-style enums?
 		public static string GetDescription(this GlobalFlags value)
 		{
 			string result = string.Empty;
@@ -137,7 +136,7 @@ namespace SlimShader.Chunks.Shex
 				case OperandModifier.AbsNeg:
 					return "-|" + valueToWrap + "|";
 				default:
-					throw new ArgumentOutOfRangeException("modifier");
+					throw new ArgumentOutOfRangeException("modifier", "Unrecognised modifier:" + modifier);
 			}
 		}
 
