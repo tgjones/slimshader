@@ -8,6 +8,14 @@ namespace SlimShader.Studio.Modules.ShaderViewer
 	[Export(typeof(IEditorProvider))]
 	public class EditorProvider : IEditorProvider
 	{
+		private readonly IPropertyGrid _propertyGrid;
+
+		[ImportingConstructor]
+		public EditorProvider(IPropertyGrid propertyGrid)
+		{
+			_propertyGrid = propertyGrid;
+		}
+
 		public bool Handles(string path)
 		{
 			return true;
@@ -15,7 +23,7 @@ namespace SlimShader.Studio.Modules.ShaderViewer
 
 		public IDocument Create(string path)
 		{
-			var editor = new EditorViewModel();
+			var editor = new EditorViewModel(_propertyGrid);
 			editor.Open(path);
 			return editor;
 		}

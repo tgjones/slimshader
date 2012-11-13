@@ -1,10 +1,15 @@
-﻿using System.IO;
+﻿using System.ComponentModel.Composition;
+using System.IO;
 using Gemini.Framework;
+using Gemini.Framework.Services;
 
 namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 {
+	[Export]
 	public class EditorViewModel : Document
 	{
+		private readonly IPropertyGrid _propertyGrid;
+
 		private string _path;
 		private string _fileName;
 		private BytecodeContainer _bytecodeContainer;
@@ -25,6 +30,11 @@ namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 			}
 		}
 
+		public EditorViewModel(IPropertyGrid propertyGrid)
+		{
+			_propertyGrid = propertyGrid;
+		}
+
 		public void Open(string path)
 		{
 			_path = path;
@@ -37,6 +47,12 @@ namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 		{
 			var other = obj as EditorViewModel;
 			return other != null && string.Compare(_path, other._path) == 0;
+		}
+
+		protected override void OnActivate()
+		{
+			_propertyGrid.SelectedObject = _bytecodeContainer.Statistics;
+			base.OnActivate();
 		}
 	}
 }
