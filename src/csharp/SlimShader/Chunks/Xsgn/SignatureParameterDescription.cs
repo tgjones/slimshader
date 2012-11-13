@@ -84,15 +84,12 @@ namespace SlimShader.Chunks.Xsgn
 			result.Mask = mask.DecodeValue<ComponentMask>(0, 7);
 			result.ReadWriteMask = mask.DecodeValue<ComponentMask>(8, 15);
 
-			// Maybe something in the higher order of mask that indicates used or unused...
-
-			// TODO: This is completely made up by me...
+			// This is my guesswork, but it works so far...
 			if (chunkType == ChunkType.Osg5 || chunkType == ChunkType.Osgn
 				|| (chunkType == ChunkType.Pcsg && programType == ProgramType.HullShader))
 				result.ReadWriteMask = (ComponentMask) (ComponentMask.All - result.ReadWriteMask);
 
-			// Vertex and pixel shaders need special handling for SystemValueType in the output signature (thanks Wine!)
-			// http://source.winehq.org/source/dlls/d3dcompiler_43/reflection.c
+			// Vertex and pixel shaders need special handling for SystemValueType in the output signature.
 			if ((programType == ProgramType.PixelShader || programType == ProgramType.VertexShader)
 				&& (chunkType == ChunkType.Osg5 || chunkType == ChunkType.Osgn))
 			{

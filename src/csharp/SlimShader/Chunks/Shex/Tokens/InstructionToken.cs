@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using SlimShader.Chunks.Common;
 using SlimShader.Util;

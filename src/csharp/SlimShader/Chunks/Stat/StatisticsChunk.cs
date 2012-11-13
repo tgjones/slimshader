@@ -1,14 +1,12 @@
 using System.Diagnostics;
 using System.Text;
 using SlimShader.Chunks.Common;
-using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Stat
 {
 	/// <summary>
-	/// Statistics chunk. Thanks to Wine for the hard work in decoding this.
-	/// http://source.winehq.org/source/dlls/d3dcompiler_43/reflection.c#L1061
+	/// Statistics chunk
 	/// Based on D3D11_SHADER_DESC.
 	/// </summary>
 	public class StatisticsChunk : BytecodeChunk
@@ -224,7 +222,8 @@ namespace SlimShader.Chunks.Stat
 				return result;
 
 			// Unknown.
-			Debug.Assert(reader.ReadUInt32() == 0); // TODO
+			var unknown = reader.ReadUInt32();
+			Debug.Assert(unknown == 0); // TODO
 
 			result.ControlPoints = reader.ReadUInt32();
 			result.HullShaderOutputPrimitive = (TessellatorOutputPrimitive) reader.ReadUInt32();
