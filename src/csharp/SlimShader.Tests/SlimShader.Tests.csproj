@@ -35,13 +35,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.4.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.2.0\lib\net20\SharpDX.dll</HintPath>
+      <HintPath>..\packages\SharpDX.2.4.0\lib\net40\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.4.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.2.0\lib\net20\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.0\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
