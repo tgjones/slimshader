@@ -9,7 +9,7 @@ namespace SlimShader.VirtualMachine
 {
 	public class VirtualMachine
 	{
-		private readonly DxbcContainer _bytecode;
+		private readonly BytecodeContainer _bytecode;
 		private readonly DeclarationToken[] _declarations;
 		private readonly InstructionToken[] _instructions;
 
@@ -27,7 +27,7 @@ namespace SlimShader.VirtualMachine
 			get { return _globalMemory; }
 		}
 
-		public VirtualMachine(DxbcContainer bytecode, int numContexts)
+		public VirtualMachine(BytecodeContainer bytecode, int numContexts)
 		{
 			_bytecode = bytecode;
 

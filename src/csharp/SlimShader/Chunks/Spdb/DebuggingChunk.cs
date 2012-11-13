@@ -5,7 +5,7 @@ namespace SlimShader.Chunks.Spdb
 	/// <summary>
 	/// Contains debugging info in PDB format.
 	/// </summary>
-	public class DebuggingChunk : DxbcChunk
+	public class DebuggingChunk : BytecodeChunk
 	{
 		/// <summary>
 		/// Raw PDB bytes that can be read with a PDB parser.

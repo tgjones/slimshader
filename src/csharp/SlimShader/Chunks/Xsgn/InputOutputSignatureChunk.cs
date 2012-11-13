@@ -7,7 +7,7 @@ using SlimShader.Util;
 
 namespace SlimShader.Chunks.Xsgn
 {
-	public abstract class InputOutputSignatureChunk : DxbcChunk
+	public abstract class InputOutputSignatureChunk : BytecodeChunk
 	{
 		public List<SignatureParameterDescription> Parameters { get; private set; }
 

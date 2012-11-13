@@ -6,7 +6,7 @@ using SlimShader.Util;
 
 namespace SlimShader.Chunks.Ifce
 {
-	public class InterfacesChunk : DxbcChunk
+	public class InterfacesChunk : BytecodeChunk
 	{
 		public uint InterfaceSlotCount { get; private set; }
 		public List<ClassType> AvailableClassTypes { get; private set; }

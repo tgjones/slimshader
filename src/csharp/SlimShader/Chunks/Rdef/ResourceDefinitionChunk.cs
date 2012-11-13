@@ -11,7 +11,7 @@ namespace SlimShader.Chunks.Rdef
 	/// https://devel.nuclex.org/framework/browser/graphics/Nuclex.Graphics.Native/trunk/Source/Introspection/HlslShaderReflector.cpp?rev=1743
 	/// Roughly corresponds to the D3D11_SHADER_DESC structure.
 	/// </summary>
-	public class ResourceDefinitionChunk : DxbcChunk
+	public class ResourceDefinitionChunk : BytecodeChunk
 	{
 		public List<ConstantBuffer> ConstantBuffers { get; private set; }
 		public List<ResourceBinding> ResourceBindings { get; private set; }

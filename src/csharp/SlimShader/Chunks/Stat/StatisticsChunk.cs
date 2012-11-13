@@ -11,7 +11,7 @@ namespace SlimShader.Chunks.Stat
 	/// http://source.winehq.org/source/dlls/d3dcompiler_43/reflection.c#L1061
 	/// Based on D3D11_SHADER_DESC.
 	/// </summary>
-	public class StatisticsChunk : DxbcChunk
+	public class StatisticsChunk : BytecodeChunk
 	{
 		/// <summary>
 		/// The number of intermediate-language instructions in the compiled shader.

@@ -8,7 +8,7 @@ using SlimShader.Util;
 
 namespace SlimShader.Chunks.Shex
 {
-	public class ShaderProgramChunk : DxbcChunk
+	public class ShaderProgramChunk : BytecodeChunk
 	{
 		public ShaderVersion Version { get; private set; }
 		public uint Length { get; private set; }

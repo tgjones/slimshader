@@ -2,17 +2,17 @@ using SlimShader.Util;
 
 namespace SlimShader
 {
-	public class DxbcContainerHeader
+	public class BytecodeContainerHeader
 	{
-		public uint FourCc { get; internal set; }
-		public uint[] UniqueKey { get; internal set; }
-		public uint One { get; internal set; }
-		public uint TotalSize { get; internal set; }
-		public uint ChunkCount { get; internal set; }
+		public uint FourCc { get; private set; }
+		public uint[] UniqueKey { get; private set; }
+		public uint One { get; private set; }
+		public uint TotalSize { get; private set; }
+		public uint ChunkCount { get; private set; }
 
-		public static DxbcContainerHeader Parse(BytecodeReader reader)
+		public static BytecodeContainerHeader Parse(BytecodeReader reader)
 		{
-			uint fourCc = reader.ReadUInt32();
+			var fourCc = reader.ReadUInt32();
 			if (fourCc != "DXBC".ToFourCc())
 				throw new ParseException("Invalid FourCC");
 
@@ -22,7 +22,7 @@ namespace SlimShader
 			uniqueKey[2] = reader.ReadUInt32();
 			uniqueKey[3] = reader.ReadUInt32();
 
-			return new DxbcContainerHeader
+			return new BytecodeContainerHeader
 			{
 				FourCc = fourCc,
 				UniqueKey = uniqueKey,

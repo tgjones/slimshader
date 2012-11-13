@@ -12,10 +12,10 @@ using SlimShader.Util;
 
 namespace SlimShader
 {
-	public class DxbcContainer
+	public class BytecodeContainer
 	{
-		public DxbcContainerHeader Header { get; private set; }
-		public List<DxbcChunk> Chunks { get; private set; }
+		public BytecodeContainerHeader Header { get; private set; }
+		public List<BytecodeChunk> Chunks { get; private set; }
 
 		public ResourceDefinitionChunk ResourceDefinition
 		{
@@ -57,27 +57,27 @@ namespace SlimShader
 			get { return Chunks.OfType<InterfacesChunk>().SingleOrDefault(); }
 		}
 
-		public DxbcContainer()
+		public BytecodeContainer()
 		{
-			Chunks = new List<DxbcChunk>();
+			Chunks = new List<BytecodeChunk>();
 		}
 
-		public static DxbcContainer Parse(byte[] bytes)
+		public static BytecodeContainer Parse(byte[] bytes)
 		{
 			return Parse(new BytecodeReader(bytes, 0, bytes.Length));
 		}
 
-		public static DxbcContainer Parse(BytecodeReader reader)
+		public static BytecodeContainer Parse(BytecodeReader reader)
 		{
-			var container = new DxbcContainer();
+			var container = new BytecodeContainer();
 
-			container.Header = DxbcContainerHeader.Parse(reader);
+			container.Header = BytecodeContainerHeader.Parse(reader);
 
 			for (uint i = 0; i < container.Header.ChunkCount; i++)
 			{
 				uint chunkOffset = reader.ReadUInt32();
 				var chunkReader = reader.CopyAtOffset((int) chunkOffset);
-				container.Chunks.Add(DxbcChunk.ParseChunk(chunkReader, container));
+				container.Chunks.Add(BytecodeChunk.ParseChunk(chunkReader, container));
 			}
 
 			return container;

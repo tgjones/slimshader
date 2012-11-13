@@ -48,9 +48,9 @@
     <Compile Include="Chunks\Xsgn\PatchConstantSignatureChunk.cs" />
     <Compile Include="Chunks\Stat\StatisticsChunk.cs" />
     <Compile Include="Chunks\ChunkType.cs" />
-    <Compile Include="Chunks\DxbcChunk.cs" />
-    <Compile Include="DxbcContainer.cs" />
-    <Compile Include="DxbcContainerHeader.cs" />
+    <Compile Include="Chunks\BytecodeChunk.cs" />
+    <Compile Include="BytecodeContainer.cs" />
+    <Compile Include="BytecodeContainerHeader.cs" />
     <Compile Include="Chunks\EnumExtensions.cs" />
     <Compile Include="Chunks\Xsgn\EnumExtensions.cs" />
     <Compile Include="Chunks\Xsgn\InputOutputSignatureChunk.cs" />

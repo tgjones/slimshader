@@ -10,7 +10,7 @@ using SlimShader.Chunks.Xsgn;
 namespace SlimShader.Tests
 {
 	[TestFixture]
-	public class DxbcContainerTests
+	public class BytecodeContainerTests
 	{
 		private static IEnumerable<string> TestShaders
 		{
@@ -33,7 +33,7 @@ namespace SlimShader.Tests
 				File.ReadAllLines(file + ".asm").Select(x => x.Trim()));
 
 			// Act.
-			var container = DxbcContainer.Parse(File.ReadAllBytes(file + ".o"));
+			var container = BytecodeContainer.Parse(File.ReadAllBytes(file + ".o"));
 			var decompiledAsmText = string.Join(Environment.NewLine, container.ToString()
 				.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
 				.Select(x => x.Trim()));
@@ -56,7 +56,7 @@ namespace SlimShader.Tests
 				var desc = shaderReflection.Description;
 
 				// Act.
-				var container = DxbcContainer.Parse(binaryFileBytes);
+				var container = BytecodeContainer.Parse(binaryFileBytes);
 
 				// Assert.
 				//Assert.AreEqual(shaderReflection.BitwiseInstructionCount, 2); // TODO

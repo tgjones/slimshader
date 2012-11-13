@@ -11,7 +11,7 @@ namespace SlimShader.Chunks.Sfi0
 	/// 
 	/// When shader includes enableDoublePrecisionFloatOps global flag, then value is 1.
 	/// </summary>
-	public class Sfi0Chunk : DxbcChunk
+	public class Sfi0Chunk : BytecodeChunk
 	{
 		public bool RequiresDoublePrecisionFloatingPoint { get; private set; }
 

@@ -11,7 +11,7 @@ using SlimShader.Util;
 
 namespace SlimShader.Chunks
 {
-	public abstract class DxbcChunk
+	public abstract class BytecodeChunk
 	{
 		private static readonly Dictionary<uint, ChunkType> KnownChunkTypes = new Dictionary<uint, ChunkType>
 		{
@@ -29,11 +29,11 @@ namespace SlimShader.Chunks
 			{ "STAT".ToFourCc(), ChunkType.Stat }
 		};
 
-		public uint FourCc { get; internal set; }
-		public ChunkType ChunkType { get; internal set; }
-		public uint ChunkSize { get; internal set; }
+		public uint FourCc { get; private set; }
+		public ChunkType ChunkType { get; private set; }
+		public uint ChunkSize { get; private set; }
 
-		public static DxbcChunk ParseChunk(BytecodeReader chunkReader, DxbcContainer container)
+		public static BytecodeChunk ParseChunk(BytecodeReader chunkReader, BytecodeContainer container)
 		{
 			// Type of chunk this is.
 			uint fourCc = chunkReader.ReadUInt32();
@@ -48,7 +48,7 @@ namespace SlimShader.Chunks
 				throw new NotSupportedException("Chunk type '" + fourCc.ToFourCcString() + "' is not yet supported.");
 
 			var chunkContentReader = chunkReader.CopyAtCurrentPosition((int) chunkSize);
-			DxbcChunk chunk;
+			BytecodeChunk chunk;
 			switch (chunkType)
 			{
 				case ChunkType.Ifce :
