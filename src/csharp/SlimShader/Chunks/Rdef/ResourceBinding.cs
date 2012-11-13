@@ -68,10 +68,13 @@ namespace SlimShader.Chunks.Rdef
 		public override string ToString()
 		{
 			string returnType = ReturnType.GetDescription(Type);
-			if (ReturnType != ResourceReturnType.NotApplicable && ReturnType != ResourceReturnType.Mixed)
+			if (Flags.HasFlag(ShaderInputFlags.TextureComponent0) && Flags.HasFlag(ShaderInputFlags.TextureComponent1))
 				returnType += "4";
+			string typeDescription = Type.GetDescription();
+			if (Flags.HasFlag(ShaderInputFlags.ComparisonSampler))
+				typeDescription += "_c";
 			return string.Format("// {0,-30} {1,10} {2,7} {3,11} {4,4} {5,8}",
-				Name, Type.GetDescription(), returnType,
+				Name, typeDescription, returnType,
 				Dimension.GetDescription(Type, ReturnType) + (Dimension.IsMultiSampled() ? NumSamples.ToString() : string.Empty),
 				BindPoint, BindCount);
 		}

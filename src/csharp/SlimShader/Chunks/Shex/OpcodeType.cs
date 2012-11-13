@@ -440,13 +440,29 @@
 		InterfaceCall,
 
 		Bufinfo,
+
+		[Description("deriv_rtx_coarse")]
 		RtxCoarse,
+
+		[Description("deriv_rtx_fine")]
 		RtxFine,
+
+		[Description("deriv_rty_coarse")]
 		RtyCoarse,
+
+		[Description("deriv_rty_fine")]
 		RtyFine,
+
+		[Description("gather4_c")]
 		Gather4C,
+
+		[Description("gather4_po")]
 		Gather4Po,
+
+		[Description("gather4_po_c")]
 		Gather4PoC,
+
+		[Description("rcp")]
 		Rcp,
 
 		[NumberType(NumberType.Float)]
@@ -489,6 +505,8 @@
 
 		[Description("swapc")]
 		SwapC,
+
+		[Description("dcl_stream")]
 		DclStream,
 
 		[Description("dcl_function_body")]
@@ -514,6 +532,8 @@
 
 		[Description("dcl_tessellator_output_primitive")]
 		DclTessOutputPrimitive,
+
+		[Description("dcl_hs_max_tessfactor")]
 		DclHsMaxTessFactor,
 
 		[Description("dcl_hs_fork_phase_instance_count")]

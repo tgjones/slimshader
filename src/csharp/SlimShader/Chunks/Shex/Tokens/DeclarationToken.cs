@@ -79,6 +79,8 @@ namespace SlimShader.Chunks.Shex.Tokens
 					return RawShaderResourceViewDeclarationToken.Parse(reader);
 				case OpcodeType.DclResourceStructured:
 					return StructuredShaderResourceViewDeclarationToken.Parse(reader);
+				case OpcodeType.DclStream :
+					return StreamDeclarationToken.Parse(reader);
 				default:
 					throw new ArgumentOutOfRangeException("opcodeType",
 						"OpcodeType '" + opcodeType + "' is not supported.");

@@ -26,6 +26,7 @@ namespace SlimShader.Chunks.Xsgn
 					result = new InputSignatureChunk();
 					break;
 				case ChunkType.Osgn :
+				case ChunkType.Osg5 :
 					result = new OutputSignatureChunk();
 					break;
 				case ChunkType.Pcsg :

@@ -5,10 +5,10 @@
 		[Description("mode_default")]
 		Default = 0,
 
-		[Description("comparison")]
+		[Description("mode_comparison")]
 		Comparison = 1,
 
-		[Description("mono")]
+		[Description("mode_mono")]
 		Mono = 2
 	}
 }

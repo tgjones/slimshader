@@ -1,155 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SharpDX.D3DCompiler;
-using SlimShader.Chunks;
-using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Rdef;
-using SlimShader.Chunks.Shex;
-using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.Chunks.Xsgn;
-using SlimShader.Util;
-using ConstantBuffer = SharpDX.D3DCompiler.ConstantBuffer;
-using ResourceDimension = SlimShader.Chunks.Shex.ResourceDimension;
-using ResourceReturnType = SlimShader.Chunks.Common.ResourceReturnType;
 
 namespace SlimShader.Tests
 {
-	/// <summary>
-	/// Using documentation from d3d11tokenizedprogramformat.hpp.
-	/// </summary>
 	[TestFixture]
 	public class DxbcContainerTests
 	{
-		[Test]
-		public void CanLoadShaderBytecode()
+		private static IEnumerable<string> TestShaders
 		{
-			// Arrange.
-			var fileBytes = File.ReadAllBytes("../../../../../Shaders/FxDis/test.o");
-
-			// Act.
-			var container = DxbcContainer.Parse(new BytecodeReader(fileBytes, 0, fileBytes.Length));
-
-			// Assert.
-			Assert.That(container.Header.FourCc, Is.EqualTo(1128421444));
-			Assert.That(container.Header.UniqueKey[0], Is.EqualTo(2110186052));
-			Assert.That(container.Header.UniqueKey[1], Is.EqualTo(3258504054));
-			Assert.That(container.Header.UniqueKey[2], Is.EqualTo(2726684584));
-			Assert.That(container.Header.UniqueKey[3], Is.EqualTo(1141670464));
-			Assert.That(container.Header.One, Is.EqualTo(1));
-			Assert.That(container.Header.TotalSize, Is.EqualTo(5144));
-			Assert.That(container.Header.ChunkCount, Is.EqualTo(5));
-
-			Assert.That(container.Chunks.Count, Is.EqualTo(5));
-			Assert.That(container.Chunks[0].FourCc, Is.EqualTo(1178944594));
-			Assert.That(container.Chunks[0].ChunkSize, Is.EqualTo(544));
-			Assert.That(container.Chunks[1].FourCc, Is.EqualTo(1313297225));
-			Assert.That(container.Chunks[1].ChunkSize, Is.EqualTo(104));
-			Assert.That(container.Chunks[2].FourCc, Is.EqualTo(1313297231));
-			Assert.That(container.Chunks[2].ChunkSize, Is.EqualTo(44));
-			Assert.That(container.Chunks[3].FourCc, Is.EqualTo(1380206675));
-			Assert.That(container.Chunks[3].ChunkSize, Is.EqualTo(4244));
-			Assert.That(container.Chunks[3].ChunkType, Is.EqualTo(ChunkType.Shdr));
-			Assert.That(container.Chunks[4].FourCc, Is.EqualTo(1413567571));
-			Assert.That(container.Chunks[4].ChunkSize, Is.EqualTo(116));
-
-			var shaderProgram = (ShaderProgramChunk) container.Chunks[3];
-			Assert.That(shaderProgram.Version.MajorVersion, Is.EqualTo(4));
-			Assert.That(shaderProgram.Version.MinorVersion, Is.EqualTo(0));
-			Assert.That(shaderProgram.Version.ProgramType, Is.EqualTo(ProgramType.PixelShader));
-			Assert.That(shaderProgram.Length, Is.EqualTo(1061));
-
-			Assert.That(shaderProgram.Tokens, Has.Count.EqualTo(176));
-
-			Assert.That(shaderProgram.Tokens[3], Is.InstanceOf<ResourceDeclarationToken>());
-			var resourceToken1 = (ResourceDeclarationToken) shaderProgram.Tokens[3];
-			Assert.That(resourceToken1.Header.IsExtended, Is.False);
-			Assert.That(resourceToken1.Header.Length, Is.EqualTo(4));
-			Assert.That(resourceToken1.Header.OpcodeType, Is.EqualTo(OpcodeType.DclResource));
-			Assert.That(resourceToken1.ResourceDimension, Is.EqualTo(ResourceDimension.Texture2D));
-			Assert.That(resourceToken1.ReturnType.X, Is.EqualTo(ResourceReturnType.Float));
-			Assert.That(resourceToken1.ReturnType.Y, Is.EqualTo(ResourceReturnType.Float));
-			Assert.That(resourceToken1.ReturnType.Z, Is.EqualTo(ResourceReturnType.Float));
-			Assert.That(resourceToken1.ReturnType.W, Is.EqualTo(ResourceReturnType.Float));
-			Assert.That(resourceToken1.SampleCount, Is.EqualTo(0));
-			Assert.That(resourceToken1.Operand.OperandType, Is.EqualTo(OperandType.Resource));
-			Assert.That(resourceToken1.Operand.Modifier, Is.EqualTo(OperandModifier.None));
-			Assert.That(resourceToken1.Operand.IsExtended, Is.False);
-			Assert.That(resourceToken1.Operand.ComponentMask, Is.EqualTo(ComponentMask.None));
-			Assert.That(resourceToken1.Operand.IndexDimension, Is.EqualTo(OperandIndexDimension._1D));
-			Assert.That(resourceToken1.Operand.IndexRepresentations[0], Is.EqualTo(OperandIndexRepresentation.Immediate32));
-			Assert.That(resourceToken1.Operand.Indices[0].Value, Is.EqualTo(0));
-		}
-
-		[TestCase("Shaders/FxDis/test")]
-		[TestCase("Shaders/HlslCrossCompiler/ds5/basic")]
-		[TestCase("Shaders/HlslCrossCompiler/hs5/basic")]
-		[TestCase("Shaders/HlslCrossCompiler/ps4/fxaa")]
-		[TestCase("Shaders/HlslCrossCompiler/ps4/primID")]
-		[TestCase("Shaders/HlslCrossCompiler/ps5/conservative_depth_ge")]
-		[TestCase("Shaders/HlslCrossCompiler/ps5/interface_arrays")]
-		[TestCase("Shaders/HlslCrossCompiler/ps5/interfaces")]
-		[TestCase("Shaders/HlslCrossCompiler/ps5/sample")]
-		[TestCase("Shaders/HlslCrossCompiler/vs4/mov")]
-		[TestCase("Shaders/HlslCrossCompiler/vs4/multiple_const_buffers")]
-		[TestCase("Shaders/HlslCrossCompiler/vs4/switch")]
-		[TestCase("Shaders/HlslCrossCompiler/vs5/any")]
-		[TestCase("Shaders/HlslCrossCompiler/vs5/const_temp")]
-		[TestCase("Shaders/HlslCrossCompiler/vs5/mad_imm")]
-		[TestCase("Shaders/HlslCrossCompiler/vs5/mov")]
-		[TestCase("Shaders/HlslCrossCompiler/vs5/sincos")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_EdgeFactorCS")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_NumVerticesIndicesCS")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_ScatterIDCS_Index")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_ScatterIDCS_Vertex")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateIndicesCS")]
-		[TestCase("Shaders/Sdk/Direct3D11/AdaptiveTessellationCS40/TessellatorCS40_TessellateVerticesCS")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Raw")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Raw_Double")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Structured")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicCompute11/BasicCompute11_Structured_Double")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSL_PS")]
-		[TestCase("Shaders/Sdk/Direct3D11/BasicHLSL11/BasicHLSL_VS")]
-		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC6HDecode")]
-		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Decode")]
-		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode_02")]
-		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode_137")]
-		[TestCase("Shaders/Sdk/Direct3D11/BC6HBC7EncoderDecoder11/BC7Encode_456")]
-		[TestCase("Shaders/Sdk/Direct3D11/DynamicShaderLinkage11/DynamicShaderLinkage11_PS")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/NBodyGravityCS11")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDraw_GS")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDraw_PS")]
-		[TestCase("Shaders/Sdk/Direct3D11/NBodyGravityCS11/ParticleDraw_VS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_DS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_HS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_PS")]
-		[TestCase("Shaders/Sdk/Direct3D11/SimpleBezier11/SimpleBezier11_VS")]
-		public void CanParseShader(string file)
-		{
-			file = "../../../../../" + file;
-			string binaryFile = file + ".o";
-			var binaryFileBytes = File.ReadAllBytes(binaryFile);
-			var container = DxbcContainer.Parse(binaryFileBytes);
-
-			CompareAssemblyOutput(file, container);
-			CompareDirect3DReflection(binaryFileBytes, container);
+			get
+			{
+				const string shadersDirectory = @"..\..\..\..\..\shaders";
+				return Directory.GetFiles(shadersDirectory, "*.o", SearchOption.AllDirectories)
+					.Select(x => Path.GetDirectoryName(x) + @"\" + Path.GetFileNameWithoutExtension(x));
+			}
 		}
 
 		/// <summary>
 		/// Compare ASM output produced by fxc.exe and SlimShader.
 		/// </summary>
-		/// <param name="file"></param>
-		/// <param name="container"></param>
-		private static void CompareAssemblyOutput(string file, DxbcContainer container)
+		[TestCaseSource("TestShaders")]
+		public void ParsedShaderOutputMatchesFxcOutput(string file)
 		{
 			// Arrange.
-			string asmFile = file + ".asm";
-			var asmFileText = string.Join(Environment.NewLine, File.ReadAllLines(asmFile).Select(x => x.Trim()));
+			var asmFileText = string.Join(Environment.NewLine,
+				File.ReadAllLines(file + ".asm").Select(x => x.Trim()));
 
 			// Act.
+			var container = DxbcContainer.Parse(File.ReadAllBytes(file + ".o"));
 			var decompiledAsmText = string.Join(Environment.NewLine, container.ToString()
-				.Split(new[] { Environment.NewLine}, StringSplitOptions.None)
+				.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
 				.Select(x => x.Trim()));
 
 			// Assert.
@@ -159,93 +45,96 @@ namespace SlimShader.Tests
 		/// <summary>
 		/// Compare with actual Direct3D reflected objects.
 		/// </summary>
-		/// <param name="binaryFileBytes"> </param>
-		/// <param name="container"></param>
-		private static void CompareDirect3DReflection(byte[] binaryFileBytes, DxbcContainer container)
+		[TestCaseSource("TestShaders")]
+		public void ShaderReflectionMatchesDirect3DReflection(string file)
 		{
-			var shaderBytecode = ShaderBytecode.FromStream(new MemoryStream(binaryFileBytes));
-			var shaderReflection = new ShaderReflection(shaderBytecode);
+			// Arrange.
+			var binaryFileBytes = File.ReadAllBytes(file + ".o");
+			using (var shaderBytecode = ShaderBytecode.FromStream(new MemoryStream(binaryFileBytes)))
+			using (var shaderReflection = new ShaderReflection(shaderBytecode))
+			{
+				var desc = shaderReflection.Description;
 
-			//string disassembledCode = shaderBytecode.Disassemble(DisassemblyFlags.EnableInstructionCycle);
-			//var debugInfo = shaderBytecode.GetPart(ShaderBytecodePart.DebugInformation);
+				// Act.
+				var container = DxbcContainer.Parse(binaryFileBytes);
 
-			var desc = shaderReflection.Description;
+				// Assert.
+				//Assert.AreEqual(shaderReflection.BitwiseInstructionCount, 2); // TODO
+				Assert.AreEqual(shaderReflection.ConditionalMoveInstructionCount, container.Statistics.MovCInstructionCount);
+				Assert.AreEqual(shaderReflection.ConversionInstructionCount, container.Statistics.ConversionInstructionCount);
+				//Assert.AreEqual(shaderReflection.GeometryShaderSInputPrimitive, actual.g); // TODO
+				Assert.AreEqual(shaderReflection.InterfaceSlotCount, (container.Interfaces != null)
+					? container.Interfaces.InterfaceSlotCount
+					: 0);
+				Assert.AreEqual(shaderReflection.IsSampleFrequencyShader, false); // TODO
+				Assert.AreEqual(shaderReflection.MoveInstructionCount, container.Statistics.MovInstructionCount);
 
-			//Assert.AreEqual(shaderReflection.BitwiseInstructionCount, 2); // TODO
-			Assert.AreEqual(shaderReflection.ConditionalMoveInstructionCount, container.Statistics.MovCInstructionCount);
-			Assert.AreEqual(shaderReflection.ConversionInstructionCount, container.Statistics.ConversionInstructionCount);
-			//Assert.AreEqual(shaderReflection.GeometryShaderSInputPrimitive, actual.g); // TODO
-			Assert.AreEqual(shaderReflection.InterfaceSlotCount, (container.Interfaces != null)
-				? container.Interfaces.InterfaceSlotCount
-				: 0);
-			Assert.AreEqual(shaderReflection.IsSampleFrequencyShader, false); // TODO
-			Assert.AreEqual(shaderReflection.MoveInstructionCount, container.Statistics.MovInstructionCount);
+				Assert.AreEqual(desc.ArrayInstructionCount, container.Statistics.ArrayInstructionCount);
+				Assert.AreEqual(desc.BarrierInstructions, container.Statistics.BarrierInstructions);
+				Assert.AreEqual(desc.BoundResources, container.ResourceDefinition.ResourceBindings.Count);
+				Assert.AreEqual(desc.ConstantBuffers, container.ResourceDefinition.ConstantBuffers.Count);
+				Assert.AreEqual(desc.ControlPoints, container.Statistics.ControlPoints);
+				Assert.AreEqual(desc.Creator, container.ResourceDefinition.Creator);
+				Assert.AreEqual(desc.CutInstructionCount, container.Statistics.CutInstructionCount);
+				Assert.AreEqual(desc.DeclarationCount, container.Statistics.DeclarationCount);
+				Assert.AreEqual(desc.DefineCount, container.Statistics.DefineCount);
+				Assert.AreEqual(desc.DynamicFlowControlCount, container.Statistics.DynamicFlowControlCount);
+				Assert.AreEqual(desc.EmitInstructionCount, container.Statistics.EmitInstructionCount);
+				Assert.AreEqual((int) desc.Flags, (int) container.ResourceDefinition.Flags);
+				Assert.AreEqual(desc.FloatInstructionCount, container.Statistics.FloatInstructionCount);
+				Assert.AreEqual(desc.GeometryShaderInstanceCount, container.Statistics.GeometryShaderInstanceCount);
+				Assert.AreEqual(desc.GeometryShaderMaxOutputVertexCount, container.Statistics.GeometryShaderMaxOutputVertexCount);
+				Assert.AreEqual((int) desc.GeometryShaderOutputTopology, (int) container.Statistics.GeometryShaderOutputTopology);
+				Assert.AreEqual((int) desc.HullShaderOutputPrimitive, (int) container.Statistics.HullShaderOutputPrimitive);
+				Assert.AreEqual((int) desc.HullShaderPartitioning, (int) container.Statistics.HullShaderPartitioning);
+				Assert.AreEqual(desc.InputParameters, container.InputSignature.Parameters.Count);
+				Assert.AreEqual((int) desc.InputPrimitive, (int) container.Statistics.InputPrimitive);
+				Assert.AreEqual(desc.InstructionCount, container.Statistics.InstructionCount);
+				Assert.AreEqual(desc.InterlockedInstructions, container.Statistics.InterlockedInstructions);
+				Assert.AreEqual(desc.IntInstructionCount, container.Statistics.IntInstructionCount);
+				Assert.AreEqual(desc.MacroInstructionCount, container.Statistics.MacroInstructionCount);
+				Assert.AreEqual(desc.OutputParameters, container.OutputSignature.Parameters.Count);
+				Assert.AreEqual(desc.PatchConstantParameters, (container.PatchConstantSignature != null)
+					? container.PatchConstantSignature.Parameters.Count
+					: 0);
+				Assert.AreEqual(desc.StaticFlowControlCount, container.Statistics.StaticFlowControlCount);
+				Assert.AreEqual(desc.TempArrayCount, container.Statistics.TempArrayCount);
+				Assert.AreEqual(desc.TempRegisterCount, container.Statistics.TempRegisterCount);
+				Assert.AreEqual((int) desc.TessellatorDomain, (int) container.Statistics.TessellatorDomain);
+				Assert.AreEqual(desc.TextureBiasInstructions, container.Statistics.TextureBiasInstructions);
+				Assert.AreEqual(desc.TextureCompInstructions, container.Statistics.TextureCompInstructions);
+				Assert.AreEqual(desc.TextureGradientInstructions, container.Statistics.TextureGradientInstructions);
+				Assert.AreEqual(desc.TextureLoadInstructions, container.Statistics.TextureLoadInstructions);
+				Assert.AreEqual(desc.TextureNormalInstructions, container.Statistics.TextureNormalInstructions);
+				Assert.AreEqual(desc.TextureStoreInstructions, container.Statistics.TextureStoreInstructions);
+				Assert.AreEqual(desc.UintInstructionCount, container.Statistics.UIntInstructionCount);
+				//Assert.AreEqual(desc.Version, container.ResourceDefinition.Target); // TODO
 
-			Assert.AreEqual(desc.ArrayInstructionCount, container.Statistics.ArrayInstructionCount);
-			Assert.AreEqual(desc.BarrierInstructions, container.Statistics.BarrierInstructions);
-			Assert.AreEqual(desc.BoundResources, container.ResourceDefinition.ResourceBindings.Count);
-			Assert.AreEqual(desc.ConstantBuffers, container.ResourceDefinition.ConstantBuffers.Count);
-			Assert.AreEqual(desc.ControlPoints, container.Statistics.ControlPoints);
-			Assert.AreEqual(desc.Creator, container.ResourceDefinition.Creator);
-			Assert.AreEqual(desc.CutInstructionCount, container.Statistics.CutInstructionCount);
-			Assert.AreEqual(desc.DeclarationCount, container.Statistics.DeclarationCount);
-			Assert.AreEqual(desc.DefineCount, container.Statistics.DefineCount);
-			Assert.AreEqual(desc.DynamicFlowControlCount, container.Statistics.DynamicFlowControlCount);
-			Assert.AreEqual(desc.EmitInstructionCount, container.Statistics.EmitInstructionCount);
-			Assert.AreEqual((int) desc.Flags, (int) container.ResourceDefinition.Flags);
-			Assert.AreEqual(desc.FloatInstructionCount, container.Statistics.FloatInstructionCount);
-			Assert.AreEqual(desc.GeometryShaderInstanceCount, container.Statistics.GeometryShaderInstanceCount);
-			Assert.AreEqual(desc.GeometryShaderMaxOutputVertexCount, container.Statistics.GeometryShaderMaxOutputVertexCount);
-			Assert.AreEqual((int) desc.GeometryShaderOutputTopology, (int) container.Statistics.GeometryShaderOutputTopology);
-			Assert.AreEqual((int) desc.HullShaderOutputPrimitive, (int) container.Statistics.HullShaderOutputPrimitive);
-			Assert.AreEqual((int) desc.HullShaderPartitioning, (int) container.Statistics.HullShaderPartitioning);
-			Assert.AreEqual(desc.InputParameters, container.InputSignature.Parameters.Count);
-			Assert.AreEqual((int) desc.InputPrimitive, (int) container.Statistics.InputPrimitive);
-			Assert.AreEqual(desc.InstructionCount, container.Statistics.InstructionCount);
-			Assert.AreEqual(desc.InterlockedInstructions, container.Statistics.InterlockedInstructions);
-			Assert.AreEqual(desc.IntInstructionCount, container.Statistics.IntInstructionCount);
-			Assert.AreEqual(desc.MacroInstructionCount, container.Statistics.MacroInstructionCount);
-			Assert.AreEqual(desc.OutputParameters, container.OutputSignature.Parameters.Count);
-			Assert.AreEqual(desc.PatchConstantParameters, (container.PatchConstantSignature != null)
-				? container.PatchConstantSignature.Parameters.Count
-				: 0);
-			Assert.AreEqual(desc.StaticFlowControlCount, container.Statistics.StaticFlowControlCount);
-			Assert.AreEqual(desc.TempArrayCount, container.Statistics.TempArrayCount);
-			Assert.AreEqual(desc.TempRegisterCount, container.Statistics.TempRegisterCount);
-			Assert.AreEqual((int) desc.TessellatorDomain, (int) container.Statistics.TessellatorDomain);
-			Assert.AreEqual(desc.TextureBiasInstructions, container.Statistics.TextureBiasInstructions);
-			Assert.AreEqual(desc.TextureCompInstructions, container.Statistics.TextureCompInstructions);
-			Assert.AreEqual(desc.TextureGradientInstructions, container.Statistics.TextureGradientInstructions);
-			Assert.AreEqual(desc.TextureLoadInstructions, container.Statistics.TextureLoadInstructions);
-			Assert.AreEqual(desc.TextureNormalInstructions, container.Statistics.TextureNormalInstructions);
-			Assert.AreEqual(desc.TextureStoreInstructions, container.Statistics.TextureStoreInstructions);
-			Assert.AreEqual(desc.UintInstructionCount, container.Statistics.UIntInstructionCount);
-			//Assert.AreEqual(desc.Version, container.ResourceDefinition.Target); // TODO
+				for (int i = 0; i < shaderReflection.Description.ConstantBuffers; i++)
+					CompareConstantBuffer(shaderReflection.GetConstantBuffer(i),
+						container.ResourceDefinition.ConstantBuffers[i]);
 
-			for (int i = 0; i < shaderReflection.Description.ConstantBuffers; i++)
-				CompareConstantBuffer(shaderReflection.GetConstantBuffer(i),
-					container.ResourceDefinition.ConstantBuffers[i]);
+				for (int i = 0; i < shaderReflection.Description.BoundResources; i++)
+					CompareResourceBinding(shaderReflection.GetResourceBindingDescription(i),
+						container.ResourceDefinition.ResourceBindings[i]);
 
-			for (int i = 0; i < shaderReflection.Description.BoundResources; i++)
-				CompareResourceBinding(shaderReflection.GetResourceBindingDescription(i),
-					container.ResourceDefinition.ResourceBindings[i]);
+				for (int i = 0; i < shaderReflection.Description.InputParameters; i++)
+					CompareParameter(shaderReflection.GetInputParameterDescription(i),
+						container.InputSignature.Parameters[i]);
 
-			for (int i = 0; i < shaderReflection.Description.InputParameters; i++)
-				CompareParameter(shaderReflection.GetInputParameterDescription(i),
-					container.InputSignature.Parameters[i]);
+				for (int i = 0; i < shaderReflection.Description.OutputParameters; i++)
+					CompareParameter(shaderReflection.GetOutputParameterDescription(i),
+						container.OutputSignature.Parameters[i]);
 
-			for (int i = 0; i < shaderReflection.Description.OutputParameters; i++)
-				CompareParameter(shaderReflection.GetOutputParameterDescription(i),
-					container.OutputSignature.Parameters[i]);
+				for (int i = 0; i < shaderReflection.Description.PatchConstantParameters; i++)
+					CompareParameter(shaderReflection.GetPatchConstantParameterDescription(i),
+						container.PatchConstantSignature.Parameters[i]);
 
-			for (int i = 0; i < shaderReflection.Description.PatchConstantParameters; i++)
-				CompareParameter(shaderReflection.GetPatchConstantParameterDescription(i),
-					container.PatchConstantSignature.Parameters[i]);
-
-			//shaderReflection.GetThreadGroupSize(); // TODO
+				//shaderReflection.GetThreadGroupSize(); // TODO
+			}
 		}
 
-		private static void CompareConstantBuffer(ConstantBuffer expected, Chunks.Rdef.ConstantBuffer actual)
+		private static void CompareConstantBuffer(SharpDX.D3DCompiler.ConstantBuffer expected, Chunks.Rdef.ConstantBuffer actual)
 		{
 			Assert.AreEqual((int) expected.Description.Flags, (int) actual.Flags);
 			Assert.AreEqual(expected.Description.Name, actual.Name);

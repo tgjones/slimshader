@@ -141,14 +141,14 @@ namespace SlimShader.Chunks.Shex.Tokens
 			if (Header.OpcodeType == OpcodeType.Sync)
 				result += SyncFlags.GetDescription();
 
+			if (ExtendedTypes.Contains(InstructionTokenExtendedType.SampleControls))
+				result += "_aoffimmi";
+
 			if (ExtendedTypes.Contains(InstructionTokenExtendedType.ResourceDim))
 				result += "_indexable";
 
 			if (ExtendedTypes.Contains(InstructionTokenExtendedType.SampleControls))
-			{
-				result += "_aoffimmi";
 				result += string.Format("({0},{1},{2})", SampleOffsets[0], SampleOffsets[1], SampleOffsets[2]);
-			}
 
 			if (ExtendedTypes.Contains(InstructionTokenExtendedType.ResourceDim))
 			{

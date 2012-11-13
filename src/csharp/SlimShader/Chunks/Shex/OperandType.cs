@@ -74,6 +74,7 @@
 		/// <summary>
 		/// Input primitive ID
 		/// </summary>
+		[Description("vPrim")]
 		InputPrimitiveID = 11,
 
 		/// <summary>
@@ -104,6 +105,7 @@
 		/// <summary>
 		/// Reference to GS stream output resource
 		/// </summary>
+		[Description("m")]
 		Stream = 16,
 
 		/// <summary>
@@ -135,6 +137,7 @@
 		/// <summary>
 		/// HS Control Point phase input saying which output control point ID this is
 		/// </summary>
+		[Description("vOutputControlPointID")]
 		OutputControlPointID = 22,
 
 		/// <summary>
@@ -162,6 +165,7 @@
 		/// <summary>
 		/// DS+HSJoin Input Patch Constants (array of them)
 		/// </summary>
+		[Description("vpc")]
 		InputPatchConstant = 27,
 
 		/// <summary>

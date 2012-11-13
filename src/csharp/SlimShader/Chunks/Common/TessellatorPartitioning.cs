@@ -11,9 +11,11 @@
 		Pow2 = 2,
 
 		[Description("partitioning_fractional_odd", ChunkType.Shex)]
+		[Description("Odd Fractional", ChunkType.Stat)]
 		FractionalOdd = 3,
 
 		[Description("partitioning_fractional_even", ChunkType.Shex)]
+		[Description("Even Fractional", ChunkType.Stat)]
 		FractionalEven = 4
 	}
 }

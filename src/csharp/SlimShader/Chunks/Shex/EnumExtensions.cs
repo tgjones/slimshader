@@ -75,6 +75,7 @@ namespace SlimShader.Chunks.Shex
 			{
 				case OpcodeType.BreakC :
 				case OpcodeType.CallC :
+				case OpcodeType.Discard :
 				case OpcodeType.If :
 					return true;
 				default :

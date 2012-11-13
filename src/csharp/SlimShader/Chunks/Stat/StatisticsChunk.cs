@@ -259,7 +259,7 @@ namespace SlimShader.Chunks.Stat
 				sb.AppendLine("// ------------------------------ ------------------");
 				sb.AppendLine(string.Format("// {0,-30} {1,-18}", 
 					HullShaderOutputPrimitive.GetDescription(ChunkType.Stat),
-					HullShaderPartitioning.GetDescription()));
+					HullShaderPartitioning.GetDescription(ChunkType.Stat)));
 				sb.AppendLine("//");
 			}
 			return sb.ToString();

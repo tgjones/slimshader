@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using SlimShader.Chunks.Common;
+using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Rdef
@@ -54,7 +58,7 @@ namespace SlimShader.Chunks.Rdef
 		/// <summary>
 		/// The default value for initializing the variable.
 		/// </summary>
-		public object DefaultValue { get; private set; }
+		public List<Number> DefaultValue { get; private set; }
 
 		/// <summary>
 		/// First texture index (or -1 if no textures used).
@@ -97,16 +101,21 @@ namespace SlimShader.Chunks.Rdef
 			var shaderType = ShaderType.Parse(reader, typeReader, target, 2, isFirst, startOffset);
 
 			var defaultValueOffset = variableReader.ReadUInt32();
+			List<Number> defaultValue = null;
 			if (defaultValueOffset != 0)
 			{
+				defaultValue = new List<Number>();
 				var defaultValueReader = reader.CopyAtOffset((int) defaultValueOffset);
-				// TODO: Read default value
-				// https://github.com/mirrors/wine/blob/master/dlls/d3dcompiler_43/reflection.c#L1362
+				if (size % 4 != 0)
+					throw new InvalidOperationException("Can only deal with 4-byte default values at the moment.");
+				for (int i = 0; i < size; i += 4)
+					defaultValue.Add(new Number(defaultValueReader.ReadBytes(4), NumberType.Unknown));
 			}
 
 			var name = nameReader.ReadString();
 			var result = new ShaderVariable
 			{
+				DefaultValue = defaultValue,
 				Member = new ShaderTypeMember(0)
 				{
 					Name = name,
@@ -131,14 +140,24 @@ namespace SlimShader.Chunks.Rdef
 
 		public override string ToString()
 		{
-			string result = string.Format("{0} Size: {1,5}", Member, Size);
+			var sb = new StringBuilder();
+
+			sb.AppendFormat("{0} Size: {1,5}", Member, Size);
 
 			if (!Flags.HasFlag(ShaderVariableFlags.Used))
-				result += " [unused]";
+				sb.Append(" [unused]");
 
-			result += Environment.NewLine;
+			sb.AppendLine();
 
-			return result;
+			if (DefaultValue != null)
+			{
+				sb.Append("//      = ");
+				foreach (Number number in DefaultValue)
+					sb.AppendFormat("0x{0:x8} ", number.UInt);
+				sb.AppendLine();
+			}
+
+			return sb.ToString();
 		}
 	}
 }

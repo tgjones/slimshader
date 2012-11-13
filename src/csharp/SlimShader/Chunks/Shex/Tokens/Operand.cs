@@ -251,7 +251,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 				case OperandType.Immediate64:
 					{
 						string result = (OperandType == OperandType.Immediate64) ? "d(" : "l(";
-						bool addSpaces = _parentType != OpcodeType.Mov && _parentType != OpcodeType.MovC;
+						bool addSpaces = _parentType != OpcodeType.Mov && _parentType != OpcodeType.MovC && _parentType != OpcodeType.StoreStructured;
 						for (int i = 0; i < NumComponents; i++)
 						{
 							result += (OperandType == OperandType.Immediate64)

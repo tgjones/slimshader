@@ -64,7 +64,7 @@ namespace SlimShader.Chunks.Xsgn
 		{
 			uint stream = 0;
 			if (size == SignatureElementSize._7)
-				stream = reader.ReadUInt32();
+				stream = parameterReader.ReadUInt32();
 
 			uint nameOffset = parameterReader.ReadUInt32();
 			var nameReader = reader.CopyAtOffset((int) nameOffset);
@@ -128,7 +128,7 @@ namespace SlimShader.Chunks.Xsgn
 			if (SystemValueType.RequiresMask())
 			{
 				return string.Format("{0,-20} {1,5}   {2,-4} {3,8} {4,8} {5,7}   {6,-4}", SemanticName, SemanticIndex,
-					Shex.EnumExtensions.GetDescription(Mask),
+					Mask.GetDescription(),
 					Register, SystemValueType.GetDescription(),
 					ComponentType.GetDescription(), ReadWriteMask.GetDescription());
 			}

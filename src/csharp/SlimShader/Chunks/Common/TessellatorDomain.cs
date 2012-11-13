@@ -21,7 +21,7 @@
 		/// Triangle data.
 		/// </summary>
 		[Description("domain_tri", ChunkType.Shex)]
-		Tri = 2,
+		Triangle = 2,
 
 		/// <summary>
 		/// Quad data.

@@ -29,5 +29,10 @@ namespace SlimShader.Chunks.Shex.Tokens
 				MaxTessFactor = reader.ReadSingle()
 			};
 		}
+
+		public override string ToString()
+		{
+			return string.Format("{0} l({1})", TypeDescription, MaxTessFactor.ToString("F6"));
+		}
 	}
 }
