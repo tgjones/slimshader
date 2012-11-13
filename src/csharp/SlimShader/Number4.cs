@@ -1,8 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using SlimShader.Chunks.Common;
+using SlimShader.Chunks.Shex;
 
-namespace SlimShader.Chunks.Shex
+namespace SlimShader
 {
 	/// <summary>
 	/// Represents four Numbers, or two doubles.

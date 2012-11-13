@@ -1,8 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
-namespace SlimShader.Chunks.Shex
+namespace SlimShader
 {
 	/// <summary>
 	/// Represents an int, float or uint.

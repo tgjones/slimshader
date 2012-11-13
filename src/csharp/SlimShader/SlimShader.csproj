@@ -41,7 +41,7 @@
     <Compile Include="Chunks\Shex\Tokens\StreamDeclarationToken.cs" />
     <Compile Include="Chunks\Spdb\DebuggingChunk.cs" />
     <Compile Include="Chunks\Sfi0\Sfi0Chunk.cs" />
-    <Compile Include="Chunks\Shex\Number4.cs" />
+    <Compile Include="Number4.cs" />
     <Compile Include="Chunks\Shex\Number4Type.cs" />
     <Compile Include="Chunks\Shex\RegisterCounts.cs" />
     <Compile Include="Chunks\Shex\SyncFlags.cs" />
@@ -92,7 +92,7 @@
     <Compile Include="Chunks\Shex\InstructionTestBoolean.cs" />
     <Compile Include="Chunks\Shex\InstructionTokenExtendedType.cs" />
     <Compile Include="Chunks\Shex\InterpolationMode.cs" />
-    <Compile Include="Chunks\Shex\Number.cs" />
+    <Compile Include="Number.cs" />
     <Compile Include="Chunks\Shex\NumberType.cs" />
     <Compile Include="Chunks\Shex\NumberTypeAttribute.cs" />
     <Compile Include="Chunks\Shex\OpcodeHeader.cs" />
