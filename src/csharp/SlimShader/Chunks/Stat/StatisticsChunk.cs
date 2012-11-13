@@ -163,32 +163,17 @@ namespace SlimShader.Chunks.Stat
 
 		public uint MovInstructionCount { get; private set; }
 		public uint MovCInstructionCount { get; private set; }
-		public uint Unknown3 { get; private set; }
 		public uint ConversionInstructionCount { get; private set; }
-		public uint Unknown4 { get; private set; }
-		public uint Unknown5 { get; private set; }
-		public uint Unknown6 { get; private set; }
-		public uint Unknown7 { get; private set; }
 
 		public static StatisticsChunk Parse(BytecodeReader reader, uint chunkSize)
 		{
 			var size = chunkSize / sizeof(uint);
 
-			// Unknowns:
-			// DefCount
-			// MacroInstructionCount
-
-			// PatchConstantParameters
-			// cGSInstanceCount
-			// cBarrierInstructions
-			// cInterlockedInstructions
-			// cTextureStoreInstructions
-
 			var result = new StatisticsChunk
 			{
 				InstructionCount = reader.ReadUInt32(),
 				TempRegisterCount = reader.ReadUInt32(),
-				DefineCount = reader.ReadUInt32(), // Guessed
+				DefineCount = reader.ReadUInt32(),
 				DeclarationCount = reader.ReadUInt32(),
 				FloatInstructionCount = reader.ReadUInt32(),
 				IntInstructionCount = reader.ReadUInt32(),
@@ -206,16 +191,19 @@ namespace SlimShader.Chunks.Stat
 				TextureBiasInstructions = reader.ReadUInt32(),
 				TextureGradientInstructions = reader.ReadUInt32(),
 				MovInstructionCount = reader.ReadUInt32(),
-				MovCInstructionCount = reader.ReadUInt32(), // Guessed
-				ConversionInstructionCount = reader.ReadUInt32(),
-				Unknown4 = reader.ReadUInt32(),
-				InputPrimitive = (Primitive) reader.ReadUInt32(),
-				GeometryShaderOutputTopology = (PrimitiveTopology) reader.ReadUInt32(),
-				GeometryShaderMaxOutputVertexCount = reader.ReadUInt32(),
-				Unknown5 = reader.ReadUInt32(),
-				Unknown6 = reader.ReadUInt32(),
-				Unknown7 = reader.ReadUInt32(),
+				MovCInstructionCount = reader.ReadUInt32(),
+				ConversionInstructionCount = reader.ReadUInt32()
 			};
+
+			var unknown0 = reader.ReadUInt32();
+
+			result.InputPrimitive = (Primitive) reader.ReadUInt32();
+			result.GeometryShaderOutputTopology = (PrimitiveTopology) reader.ReadUInt32();
+			result.GeometryShaderMaxOutputVertexCount = reader.ReadUInt32();
+
+			var unknown1 = reader.ReadUInt32();
+			var unknown2 = reader.ReadUInt32();
+			var unknown3 = reader.ReadUInt32();
 
 			// DX10 stat size
 			if (size == 29)
@@ -230,9 +218,9 @@ namespace SlimShader.Chunks.Stat
 			result.HullShaderPartitioning = (TessellatorPartitioning) reader.ReadUInt32();
 			result.TessellatorDomain = (TessellatorDomain) reader.ReadUInt32();
 
-			result.BarrierInstructions = reader.ReadUInt32(); // Guessed
-			result.InterlockedInstructions = reader.ReadUInt32(); // Guessed
-			result.TextureStoreInstructions = reader.ReadUInt32(); // Guessed
+			result.BarrierInstructions = reader.ReadUInt32();
+			result.InterlockedInstructions = reader.ReadUInt32();
+			result.TextureStoreInstructions = reader.ReadUInt32();
 
 			// DX11 stat size.
 			if (size == 37)

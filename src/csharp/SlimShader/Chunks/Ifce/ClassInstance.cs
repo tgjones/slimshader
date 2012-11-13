@@ -19,7 +19,8 @@ namespace SlimShader.Chunks.Ifce
 			var name = nameReader.ReadString();
 
 			var type = classInstanceReader.ReadUInt16();
-			Debug.Assert(classInstanceReader.ReadUInt16() == 1); // Unknown, perhaps the class instance type?
+			var unknown = classInstanceReader.ReadUInt16();
+			Debug.Assert(unknown == 1); // Unknown, perhaps the class instance type?
 
 			return new ClassInstance
 			{

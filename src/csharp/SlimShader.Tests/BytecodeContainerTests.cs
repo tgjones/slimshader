@@ -59,10 +59,10 @@ namespace SlimShader.Tests
 				var container = BytecodeContainer.Parse(binaryFileBytes);
 
 				// Assert.
-				//Assert.AreEqual(shaderReflection.BitwiseInstructionCount, 2); // TODO
+				Assert.AreEqual(shaderReflection.BitwiseInstructionCount, 0); // TODO
 				Assert.AreEqual(shaderReflection.ConditionalMoveInstructionCount, container.Statistics.MovCInstructionCount);
 				Assert.AreEqual(shaderReflection.ConversionInstructionCount, container.Statistics.ConversionInstructionCount);
-				//Assert.AreEqual(shaderReflection.GeometryShaderSInputPrimitive, actual.g); // TODO
+				Assert.AreEqual((int) shaderReflection.GeometryShaderSInputPrimitive, (int) container.Statistics.InputPrimitive);
 				Assert.AreEqual(shaderReflection.InterfaceSlotCount, (container.Interfaces != null)
 					? container.Interfaces.InterfaceSlotCount
 					: 0);
