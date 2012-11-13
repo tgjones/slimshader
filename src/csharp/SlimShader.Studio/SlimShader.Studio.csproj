@@ -87,6 +87,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\ShaderViewer\EditorProvider.cs" />
+    <Compile Include="Modules\ShaderViewer\ViewModels\EditorViewModel.cs" />
+    <Compile Include="Modules\ShaderViewer\Views\EditorView.xaml.cs">
+      <DependentUpon>EditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -112,7 +117,18 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Page Include="Modules\ShaderViewer\Views\EditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SlimShader\SlimShader.csproj">
+      <Project>{d75528f5-54f9-4e31-94f6-03c194f74cf2}</Project>
+      <Name>SlimShader</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
