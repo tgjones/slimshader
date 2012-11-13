@@ -17,6 +17,14 @@ Console.WriteLine(bytecodeContainer.Statistics.StaticFlowControlCount);
 Console.WriteLine(bytecodeContainer.Shader.Tokens.Count);
 ```
 
+GUI
+---
+
+I've written a simple GUI to showcase SlimShader. You can open a compiled (binary) shader file, view the disassembled 
+version, and view various properties (from the STAT chunk).
+
+![Screenshot](https://github.com/tgjones/slimshader/raw/master/doc/screenshot.png)
+
 Acknowledgements
 ----------------
 
@@ -30,14 +38,6 @@ Acknowledgements
 * [FXDIS](http://code.google.com/p/fxdis-d3d1x/) was useful to look at when getting started, but the techniques used
   in that project (casting raw bytes to struct types) don't translate well from C++ to C#.
 * For the SHDR chunk, I mostly just used D3D11TokenizedProgramFormat.hpp, a header file that comes with the Windows DDK.
-
-GUI
----
-
-I've written a simple GUI to showcase SlimShader. You can open a compiled (binary) shader file, view the disassembled 
-version, and view various properties (from the STAT chunk).
-
-![Screenshot](https://github.com/tgjones/slimshader/raw/master/doc/screenshot.png)
 
 License
 -------
