@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="GlobalMemory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegisterSet.cs" />
     <Compile Include="Resources\UnorderedAccessView.cs" />
     <Compile Include="VirtualMachine.cs" />
     <Compile Include="VirtualMachineThread.cs" />

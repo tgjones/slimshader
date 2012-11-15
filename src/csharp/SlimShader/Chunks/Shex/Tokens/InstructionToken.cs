@@ -9,11 +9,15 @@ namespace SlimShader.Chunks.Shex.Tokens
 	///
 	/// Normal instructions:
 	/// [10:00] OpcodeType
-	/// [12:11] resinfo_return_type TODO
+	/// [12:11] ResInfo return type
 	/// [13:13] Saturate
 	/// [17:14] Ignored, 0
-	/// [18:18] InstructionTestBoolean
-	/// [22:19] precise_mask TODO
+	/// [18:18] Boolean test for conditional instructions such as if (if_z or if_nz)
+	/// [22:19] Precise value mask
+	//          This is part of the opcode specific control range.
+	//          It's 1 bit per-channel of the output, for instructions with multiple
+	//          output operands, it applies to that component in each operand. This
+	//          uses the components defined in D3D10_SB_4_COMPONENT_NAME.
 	/// [23:23] Ignored, 0
 	/// [30:24] Instruction length in DWORDs including the opcode token.
 	/// [31]    0 normally. 1 if extended operand definition, meaning next DWORD
@@ -29,8 +33,14 @@ namespace SlimShader.Chunks.Shex.Tokens
 	/// </summary>
 	public class InstructionToken : OpcodeToken
 	{
+		/// <summary>
+		/// Return type for the resinfo instruction.
+ 		/// </summary>
+		public ResInfoReturnType ResInfoReturnType { get; private set; }
+
 		public bool Saturate { get; private set; }
 		public InstructionTestBoolean TestBoolean { get; private set; }
+		public ComponentMask PreciseValueMask { get; private set; }
 		public SyncFlags SyncFlags { get; private set; }
 		public List<InstructionTokenExtendedType> ExtendedTypes { get; private set; }
 		public sbyte[] SampleOffsets { get; private set; }
@@ -73,8 +83,10 @@ namespace SlimShader.Chunks.Shex.Tokens
 			}
 			else
 			{
+				instructionToken.ResInfoReturnType = token0.DecodeValue<ResInfoReturnType>(11, 12);
 				instructionToken.Saturate = (token0.DecodeValue(13, 13) == 1);
 				instructionToken.TestBoolean = token0.DecodeValue<InstructionTestBoolean>(18, 18);
+				instructionToken.PreciseValueMask = token0.DecodeValue<ComponentMask>(19, 22);
 			}
 
 			bool extended = header.IsExtended;
