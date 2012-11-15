@@ -63,11 +63,20 @@ namespace SlimShader.Tests
 				Assert.AreEqual(shaderReflection.ConditionalMoveInstructionCount, container.Statistics.MovCInstructionCount);
 				Assert.AreEqual(shaderReflection.ConversionInstructionCount, container.Statistics.ConversionInstructionCount);
 				Assert.AreEqual((int) shaderReflection.GeometryShaderSInputPrimitive, (int) container.Statistics.InputPrimitive);
-				Assert.AreEqual(shaderReflection.InterfaceSlotCount, (container.Interfaces != null)
-					? container.Interfaces.InterfaceSlotCount
-					: 0);
+				Assert.AreEqual(shaderReflection.InterfaceSlotCount, container.ResourceDefinition.InterfaceSlotCount);
 				Assert.AreEqual((bool) shaderReflection.IsSampleFrequencyShader, false); // TODO
 				Assert.AreEqual(shaderReflection.MoveInstructionCount, container.Statistics.MovInstructionCount);
+				//Assert.AreEqual(shaderReflection.RequiresFlags, 0); // TODO
+
+				int expectedSizeX, expectedSizeY, expectedSizeZ;
+				uint actualSizeX, actualSizeY, actualSizeZ;
+				shaderReflection.GetThreadGroupSize(out expectedSizeX, out expectedSizeY, out expectedSizeZ);
+				container.Shader.GetThreadGroupSize(out actualSizeX, out actualSizeY, out actualSizeZ);
+				Assert.AreEqual(expectedSizeX, actualSizeX);
+				Assert.AreEqual(expectedSizeY, actualSizeY);
+				Assert.AreEqual(expectedSizeZ, actualSizeZ);
+
+				//Assert.AreEqual((int) shaderReflection.MinFeatureLevel, 0); // TODO
 
 				Assert.AreEqual(desc.ArrayInstructionCount, container.Statistics.ArrayInstructionCount);
 				Assert.AreEqual(desc.BarrierInstructions, container.Statistics.BarrierInstructions);
@@ -129,8 +138,6 @@ namespace SlimShader.Tests
 				for (int i = 0; i < shaderReflection.Description.PatchConstantParameters; i++)
 					CompareParameter(shaderReflection.GetPatchConstantParameterDescription(i),
 						container.PatchConstantSignature.Parameters[i]);
-
-				//shaderReflection.GetThreadGroupSize(); // TODO
 			}
 		}
 

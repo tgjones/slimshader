@@ -16,6 +16,7 @@ namespace SlimShader.Chunks.Rdef
 		public ShaderVersion Target { get; private set; }
 		public ShaderFlags Flags { get; private set; }
 		public string Creator { get; private set; }
+		public uint InterfaceSlotCount { get; private set; }
 
 		public ResourceDefinitionChunk()
 		{
@@ -38,6 +39,13 @@ namespace SlimShader.Chunks.Rdef
 			var creatorReader = reader.CopyAtOffset((int) creatorOffset);
 			var creator = creatorReader.ReadString();
 
+			var result = new ResourceDefinitionChunk
+			{
+				Target = target,
+				Flags = (ShaderFlags) flags,
+				Creator = creator
+			};
+
 			if (target.MajorVersion >= 5)
 			{
 				string rd11 = headerReader.ReadUInt32().ToFourCcString();
@@ -49,15 +57,8 @@ namespace SlimShader.Chunks.Rdef
 				var unknown4 = headerReader.ReadUInt32();
 				var unknown5 = headerReader.ReadUInt32();
 				var unknown6 = headerReader.ReadUInt32();
-				var unknown7 = headerReader.ReadUInt32();
+				result.InterfaceSlotCount = headerReader.ReadUInt32();
 			}
-
-			var result = new ResourceDefinitionChunk
-			{
-				Target = target,
-				Flags = (ShaderFlags) flags,
-				Creator = creator
-			};
 
 			var constantBufferReader = reader.CopyAtOffset((int) constantBufferOffset);
 			for (int i = 0; i < constantBufferCount; i++)

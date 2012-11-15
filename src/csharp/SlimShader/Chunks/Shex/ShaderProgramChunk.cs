@@ -135,6 +135,19 @@ namespace SlimShader.Chunks.Shex
 			Debug.Assert(stack.Count == 0);
 		}
 
+		public void GetThreadGroupSize(out uint sizeX, out uint sizeY, out uint sizeZ)
+		{
+			var threadGroupDeclarationToken = Tokens.OfType<ThreadGroupDeclarationToken>().FirstOrDefault();
+			if (threadGroupDeclarationToken == null)
+			{
+				sizeX = sizeY = sizeZ = 0;
+				return;
+			}
+			sizeX = threadGroupDeclarationToken.Dimensions[0];
+			sizeY = threadGroupDeclarationToken.Dimensions[1];
+			sizeZ = threadGroupDeclarationToken.Dimensions[2];
+		}
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
