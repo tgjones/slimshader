@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Shex.Tokens
@@ -27,37 +30,44 @@ namespace SlimShader.Chunks.Shex.Tokens
 		/// <summary>
 		/// Indicates the info queue message ID.
 		/// </summary>
-		public uint InfoQueueMessageID { get; internal set; }
+		public uint InfoQueueMessageID { get; private set; }
 
 		/// <summary>
 		/// Indicates the convention for formatting the message.
 		/// </summary>
-		public ShaderMessageFormat MessageFormat { get; internal set; }
+		public ShaderMessageFormat MessageFormat { get; private set; }
 
 		/// <summary>
 		/// DWORD indicating the number of characters in the string without the terminator.
 		/// </summary>
-		public uint NumCharacters { get; internal set; }
+		public uint NumCharacters { get; private set; }
 
 		/// <summary>
 		/// DWORD indicating the number of operands.
 		/// </summary>
-		public uint NumOperands { get; internal set; }
+		public uint NumOperands { get; private set; }
 
 		/// <summary>
 		/// DWORD indicating length of operands.
 		/// </summary>
-		public uint OperandsLength { get; internal set; }
+		public uint OperandsLength { get; private set; }
 
-		// Not sure what format this is.
-		public object EncodedOperands { get; internal set; }
+		/// <summary>
+		/// Operands, used as arguments to the format string.
+		/// </summary>
+		public List<Operand> Operands { get; private set; }
 
 		/// <summary>
 		/// String with trailing zero, padded to a multiple of DWORDs.
 		/// The string is in the given format and the operands given should
 		/// be used for argument substitutions when formatting.
 		/// </summary>
-		public string Format { get; internal set; }
+		public string Format { get; private set; }
+
+		public ShaderMessageDeclarationToken()
+		{
+			Operands = new List<Operand>();
+		}
 
 		public static ShaderMessageDeclarationToken Parse(BytecodeReader reader)
 		{
@@ -74,11 +84,39 @@ namespace SlimShader.Chunks.Shex.Tokens
 				OperandsLength = reader.ReadUInt32()
 			};
 
-			// TODO: Read encoded operands and format string.
-			for (int i = 0; i < length - 5; i++)
-				reader.ReadUInt32();
+			for (int i = 0; i < result.NumOperands; i++)
+				result.Operands.Add(Operand.Parse(reader, OpcodeType.CustomData));
+
+			result.Format = reader.ReadString();
+
+			// String is padded to a multiple of DWORDs.
+			uint remainingBytes = (4 - ((result.NumCharacters + 1) % 4)) % 4;
+			reader.ReadBytes((int) remainingBytes);
 
 			return result;
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+
+			string command;
+			switch (InfoQueueMessageID)
+			{
+				case 2097410 :
+					command = "printf";
+					break;
+				case 2097411 :
+					command = "errorf";
+					break;
+				default :
+					throw new NotSupportedException("Unknown InfoQueueMessageID: " + InfoQueueMessageID);
+			}
+			sb.AppendFormat("{0} \"{1}\"", command, Format);
+			foreach (var operand in Operands)
+				sb.AppendFormat(", {0}", operand);
+
+			return sb.ToString();
 		}
 	}
 }

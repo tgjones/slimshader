@@ -3,6 +3,9 @@
 //
 //
 ///
+// Note: SHADER WILL ONLY WORK WITH THE DEBUG SDK LAYER ENABLED.
+//
+//
 // Buffer Definitions: 
 //
 // cbuffer cbuf0
@@ -25,7 +28,8 @@
 // tex1                              texture  float4        cube    1        1
 // tex2                              texture  float4          3d    2        1
 // tex3                              texture  float4       2dMS2    3        1
-// tex4                              texture  float4          2d    4        2
+// tex4[0]                           texture  float4          2d    4        1
+// tex4[1]                           texture  float4          2d    5        1
 // cbuf0                             cbuffer      NA          NA    0        1
 //
 //
@@ -45,7 +49,8 @@
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
-ps_4_0
+ps_5_0
+dcl_globalFlags refactoringAllowed
 dcl_constantbuffer cb0[129], dynamicIndexed
 dcl_sampler s0, mode_default
 dcl_sampler s1, mode_default
@@ -59,7 +64,7 @@ dcl_input_ps linear v0.yzw
 dcl_input_ps linear centroid v1.x
 dcl_input_ps_siv linear noperspective v2.x, position
 dcl_output o0.xyzw
-dcl_temps 11
+dcl_temps 13
 dcl_indexableTemp x0[8], 4
 dcl_indexableTemp x1[4], 4
 dcl_indexableTemp x2[4], 4
@@ -106,23 +111,23 @@ add r0.x, cb0[0].y, cb0[0].x
 add r0.x, r0.x, cb0[0].z
 add r0.x, r0.x, cb0[0].w
 add r0.x, r0.x, r0.y
-sample r1.xyzw, l(0.125000, 5.000000, 0.000000, 0.000000), t0.xyzw, s0
-add r0.x, r0.x, r1.x
-sample r1.xyzw, l(0.777000, 1234.500000, 0.000000, 0.000000), t0.xyzw, s1
-add r0.x, r0.x, r1.x
-sample r1.xyzw, l(0.125000, 5.000000, 1.000000, 0.000000), t1.xyzw, s0
-add r0.x, r0.x, r1.x
-sample r1.xyzw, l(0.125000, 5.000000, 1.000000, 0.000000), t2.xyzw, s0
-add r0.x, r0.x, r1.z
-ldms_aoffimmi(1,1,0) r1.xyzw, l(0, 5, 0, 0), t3.xyzw, l(0)
-add r0.x, r0.x, r1.x
+sample_indexable(texture2d)(float,float,float,float) r0.y, l(0.125000, 5.000000, 0.000000, 0.000000), t0.yxzw, s0
+add r0.x, r0.y, r0.x
+sample_indexable(texture2d)(float,float,float,float) r0.y, l(0.777000, 1234.500000, 0.000000, 0.000000), t0.yxzw, s1
+add r0.x, r0.y, r0.x
+sample_indexable(texturecube)(float,float,float,float) r0.y, l(0.125000, 5.000000, 1.000000, 0.000000), t1.yxzw, s0
+add r0.x, r0.y, r0.x
+sample_indexable(texture3d)(float,float,float,float) r0.y, l(0.125000, 5.000000, 1.000000, 0.000000), t2.xzyw, s0
+add r0.x, r0.y, r0.x
+ldms_aoffimmi_indexable(1,1,0)(texture2dms)(float,float,float,float) r0.y, l(0, 5, 0, 0), t3.yxzw, l(0)
+add r0.x, r0.y, r0.x
 div r0.y, l(1.000000, 1.000000, 1.000000, 1.000000), r0.x
-sample_b r1.xyzw, r0.xyxx, t0.xyzw, s0, l(-15.000000)
-add r0.x, r0.x, r1.y
-sample r1.xyzw, l(0.000000, 5.000000, 0.000000, 0.000000), t4.xyzw, s0
-add r0.x, r0.x, r1.z
-sample r1.xyzw, l(0.000000, 5.000000, 0.000000, 0.000000), t5.xyzw, s0
-add r0.x, r0.x, r1.z
+sample_b_indexable(texture2d)(float,float,float,float) r0.y, r0.xyxx, t0.xyzw, s0, l(-15.000000)
+add r0.x, r0.y, r0.x
+sample_indexable(texture2d)(float,float,float,float) r0.y, l(0.000000, 5.000000, 0.000000, 0.000000), t4.xzyw, s0
+add r0.x, r0.y, r0.x
+sample_indexable(texture2d)(float,float,float,float) r0.y, l(0.000000, 5.000000, 0.000000, 0.000000), t5.xzyw, s0
+add r0.x, r0.y, r0.x
 itof r0.yz, r0.wwzw
 mov x1[3].x, r0.y
 mov x2[2].x, r0.y
@@ -173,53 +178,87 @@ add r0.z, r0.w, r0.z
 mul r2.z, r0.x, l(0.200000)
 add r2.w, r1.y, l(0.500000)
 round_z r2.xy, r0.zyzz
-mov r3.z, r0.x
-mov r3.w, r1.y
-mov r3.xy, r2.xyxx
+resinfo_indexable(texture2d)(float,float,float,float) r3.xyw, l(0), t0.xyzw
+ftou r0.y, r3.y
+utof r3.y, r0.y
+samplepos r4.xy, rasterizer.xyxx, r3.y
+mov r0.z, r3.w
+mov r4.z, l(55566.199219)
+countbits r5.xy, r3.xyxx
+mov r6.z, r0.x
+mov r6.w, r1.y
+mov r6.xy, r2.xyxx
 mov r0.y, l(0)
 loop 
-  ftoi r0.z, r3.x
-  ige r0.z, r0.y, r0.z
-  breakc_nz r0.z
-  itof r4.x, r0.y
-  mov r5.xyzw, r3.xyzw
-  mov r0.z, l(0)
+  ftoi r1.x, r6.x
+  ige r1.x, r0.y, r1.x
+  breakc_nz r1.x
+  itof r7.x, r0.y
+  mov r8.xyzw, r6.xyzw
+  mov r1.x, l(0)
   loop 
-    ftoi r0.w, r5.y
-    ige r0.w, r0.z, r0.w
-    breakc_nz r0.w
-    itof r4.y, r0.z
-    sample_d r6.xyzw, r4.xyxx, t0.xyzw, s0, l(1.500000, 1.500000, 0.000000, 0.000000), l(4.100000, 4.100000, 0.000000, 0.000000)
-    mov r7.xyzw, r5.xyzw
-    mov r0.w, l(0)
+    ftoi r1.z, r8.y
+    ige r1.z, r1.x, r1.z
+    breakc_nz r1.z
+    itof r7.y, r1.x
+    sample_d_indexable(texture2d)(float,float,float,float) r9.xyzw, r7.xyxx, t0.xyzw, s0, l(1.500000, 1.500000, 0.000000, 0.000000), l(4.100000, 4.100000, 0.000000, 0.000000)
+    mov r7.yzw, r8.wwxy
+    mov r1.z, l(0)
     loop 
-      ftoi r1.x, r7.x
-      ige r1.x, r0.w, r1.x
-      breakc_nz r1.x
-      itof r8.x, r0.w
-      mov r9.xyzw, r7.xyzw
-      mov r1.x, l(0)
+      ftoi r1.w, r7.z
+      ige r1.w, r1.z, r1.w
+      breakc_nz r1.w
+      itof r10.x, r1.z
+      mov r11.xyz, r7.zwyz
+      mov r1.w, l(0)
       loop 
-        ftoi r1.z, r9.y
-        ige r1.z, r1.x, r1.z
-        breakc_nz r1.z
-        itof r8.y, r1.x
-        sample_d r10.xyzw, r8.xyxx, t0.xyzw, s0, l(1.500000, 1.500000, 0.000000, 0.000000), l(4.100000, 4.100000, 0.000000, 0.000000)
-        add r9.xyzw, r10.xyzw, r9.xyzw
-        iadd r1.x, r1.x, l(1)
+        ftoi r4.w, r11.y
+        ige r4.w, r1.w, r4.w
+        breakc_nz r4.w
+        itof r10.y, r1.w
+        sample_d_indexable(texture2d)(float,float,float,float) r10.yzw, r10.xyxx, t0.zxyw, s0, l(1.500000, 1.500000, 0.000000, 0.000000), l(4.100000, 4.100000, 0.000000, 0.000000)
+        add r11.xyz, r10.yzwy, r11.xyzx
+        iadd r1.w, r1.w, l(1)
       endloop 
-      mov r7.xyzw, r9.xyzw
-      iadd r0.w, r0.w, l(1)
+      mov r7.yzw, r11.zzxy
+      iadd r1.z, r1.z, l(1)
     endloop 
-    mad r8.xyzw, r7.xyzw, l(2.000000, 2.000000, 2.000000, 2.000000), l(1.100000, 2.200000, 3.300000, 4.400000)
-    mad r6.xyzw, r8.xyzw, l(55566.199219, 55566.199219, 55566.199219, 55566.199219), r6.xyzw
-    add r5.xyzw, r6.xyzw, r5.xyzw
-    iadd r0.z, r0.z, l(1)
+    mad r1.z, r7.y, l(2.000000), l(4.400000)
+    mul r0.w, r4.y, r1.z
+    mul r3.zw, r0.zzzw, r4.xxxz
+    countbits r5.zw, r3.zzzw
+    utof r10.xyzw, r5.xyzw
+    add r10.xyzw, r3.xyzw, r10.xyzw
+    bfrev r12.xyzw, r10.xyzw
+    utof r12.xyzw, r12.xyzw
+    add r10.xyzw, r10.xyzw, r12.xyzw
+    eq r0.w, r10.x, l(2.000000)
+    if_nz r0.w
+      abort 
+    endif 
+    mul r12.xyzw, r10.zzzz, l(4.000000, 4.000000, 3.000000, 3.000000)
+    ge r12.xyzw, r12.xyzw, -r12.yyww
+    movc r12.xyzw, r12.xyzw, l(4.000000,0.250000,3.000000,0.333333), l(-4.000000,-0.250000,-3.000000,-0.333333)
+    mul r1.zw, r10.zzzz, r12.yyyw
+    frc r1.zw, r1.zzzw
+    mul r1.zw, r1.zzzw, r12.xxxz
+    eq r1.zw, r1.zzzw, l(0.000000, 0.000000, 0.000000, 0.000000)
+    if_nz r1.z
+      printf "%0 is fine!", r10.z
+    else 
+      printf "%0 is not %1 fine!", r10.z, r10.x
+    endif 
+    if_nz r1.w
+      errorf "%0 is invalid", r10.z
+    endif 
+    add r9.xyzw, r9.xyzw, r10.xyzw
+    add r8.xyzw, r9.xyzw, r8.xyzw
+    iadd r1.x, r1.x, l(1)
   endloop 
-  mov r3.xyzw, r5.xyzw
+  mov r6.xyzw, r8.xyzw
   iadd r0.y, r0.y, l(1)
 endloop 
-mad r0.xyzw, r3.xyzw, l(2.000000, 2.000000, 2.000000, 2.000000), r2.xyzw
+mad r0.xyzw, r6.xyzw, l(2.000000, 2.000000, 2.000000, 2.000000), r2.xyzw
 add o0.xyzw, r0.xyzw, l(1.100000, 2.200000, 3.300000, 4.400000)
 ret 
-// Approximately 159 instruction slots used
+// Approximately 192 instruction slots used

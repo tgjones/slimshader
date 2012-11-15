@@ -5,7 +5,7 @@ CLS
 ECHO Compiling shaders...
 ECHO.
 
-CALL CompileShader.bat FxDis test test ps_4_0 main || GOTO :error
+CALL CompileShader.bat FxDis test test ps_5_0 main || GOTO :error
 
 CALL CompileShader.bat HlslCrossCompiler/ds5 basic basic ds_5_0 main || GOTO :error
 CALL CompileShader.bat HlslCrossCompiler/hs5 basic basic hs_5_0 main || GOTO :error

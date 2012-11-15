@@ -38,6 +38,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chunks\Rdef\ShaderRequiresFlags.cs" />
     <Compile Include="Chunks\Shex\ResInfoReturnType.cs" />
     <Compile Include="Chunks\Shex\Tokens\StreamDeclarationToken.cs" />
     <Compile Include="Chunks\Spdb\DebuggingChunk.cs" />

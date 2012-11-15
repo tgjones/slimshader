@@ -93,6 +93,7 @@
 		/// <summary>
 		/// DX10.1 Rasterizer register, used to denote the depth/stencil and render target resources
 		/// </summary>
+		[Description("rasterizer")]
 		Rasterizer = 14,
 
 		/// <summary>

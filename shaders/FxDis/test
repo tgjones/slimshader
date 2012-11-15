@@ -24,6 +24,24 @@ float4 blah2( float4 cool )
    }
    cool += cool + float4(1.1, 2.2, 3.3, 4.4);
    cool *= 55566.2;
+
+   uint val;
+   tex0.GetDimensions(0, cool.x, val, cool.z);
+   cool.y = val;
+   cool.zw *= GetRenderTargetSamplePosition(asuint(cool.y));
+   cool += countbits(asuint(cool));
+   cool += reversebits(asuint(cool));
+
+   if (cool.x == 2)
+      abort();
+
+   if (cool.z % 4 == 0)
+      printf("%0 is fine!", cool.z);
+   else
+      printf("%0 is not %1 fine!", cool.z, cool.x);
+
+   if (cool.z % 3 == 0)
+      errorf("%0 is invalid", cool.z);
   
    return cool;
 }

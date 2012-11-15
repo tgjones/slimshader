@@ -478,6 +478,7 @@
 		USubB,
 
 		[NumberType(NumberType.UInt)]
+		[Description("countbits")]
 		CountBits,
 
 		[NumberType(NumberType.UInt)]
@@ -501,6 +502,7 @@
 		[Description("bfi")]
 		Bfi,
 
+		[Description("bfrev")]
 		BfRev,
 
 		[Description("swapc")]
@@ -680,7 +682,10 @@
 		EvalSampleIndex,
 		EvalCentroid,
 		DclGsInstanceCount,
+
+		[Description("abort")]
 		Abort,
+
 		DebugBreak,
 
 		/// <summary>

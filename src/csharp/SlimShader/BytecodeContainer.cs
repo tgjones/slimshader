@@ -92,6 +92,13 @@ namespace SlimShader
 			sb.AppendLine("//");
 			sb.AppendLine("///");
 
+			if (Shader.Tokens.Any(x => x.Header.OpcodeType == OpcodeType.Abort)) // TODO
+			{
+				sb.AppendLine("// Note: SHADER WILL ONLY WORK WITH THE DEBUG SDK LAYER ENABLED.");
+				sb.AppendLine("//");
+				sb.AppendLine("//");
+			}
+
 			if (Sfi0 != null)
 				sb.Append(Sfi0);
 
