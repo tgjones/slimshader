@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
+using SlimShader.VirtualMachine.Registers;
 using SlimShader.VirtualMachine.Resources;
 
 namespace SlimShader.VirtualMachine
@@ -13,7 +14,7 @@ namespace SlimShader.VirtualMachine
 		private readonly DeclarationToken[] _declarations;
 		private readonly InstructionToken[] _instructions;
 
-		private readonly GlobalMemory _globalMemory;
+		private readonly RequiredRegisters _requiredRegisters;
 
 		private readonly VirtualMachineThread[] _threads;
 		private readonly UnorderedAccessView[] _unorderedAccessViews;
@@ -22,11 +23,6 @@ namespace SlimShader.VirtualMachine
 
 		private int _programCounter;
 
-		public GlobalMemory GlobalMemory
-		{
-			get { return _globalMemory; }
-		}
-
 		public VirtualMachine(BytecodeContainer bytecode, int numContexts)
 		{
 			_bytecode = bytecode;
@@ -34,16 +30,19 @@ namespace SlimShader.VirtualMachine
 			_declarations = bytecode.Shader.Tokens.OfType<DeclarationToken>().ToArray();
 			_instructions = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
 
-			_globalMemory = new GlobalMemory(bytecode.Shader.RegisterCounts, numContexts,
-				bytecode.InputSignature.Parameters.Count,
-				bytecode.OutputSignature.Parameters.Count);
+			_requiredRegisters = RequiredRegisters.FromShader(bytecode.Shader);
 
 			_threads = new VirtualMachineThread[numContexts];
 
 			_unorderedAccessViews = new UnorderedAccessView[64];
 
 			for (int i = 0; i < _threads.Length; i++)
-				_threads[i] = new VirtualMachineThread(i, _globalMemory, bytecode.Shader.RegisterCounts);
+				_threads[i] = new VirtualMachineThread(i, _requiredRegisters);
+		}
+
+		public Register GetRegister(int contextIndex, RegisterKey key)
+		{
+			return _threads[contextIndex].Registers[key];
 		}
 
 		public void SetUnorderedAccessViews(int startSlot, UnorderedAccessView[] unorderedAccessViews)

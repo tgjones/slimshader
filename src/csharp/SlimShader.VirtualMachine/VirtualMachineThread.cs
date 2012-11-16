@@ -1,105 +1,91 @@
 using System;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
+using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine
 {
 	public class VirtualMachineThread
 	{
 		private readonly int _contextIndex;
-		private readonly GlobalMemory _globalMemory;
-		private readonly Number4[][] _indexableTempRegisters;
-		private readonly Number4[] _tempRegisters;
+		private readonly RegisterSet _registers;
 
 		public int PerThreadProgramCounter { get; private set; }
 
-		public VirtualMachineThread(int contextIndex, GlobalMemory globalMemory, RegisterCounts registerCounts)
+		public RegisterSet Registers
 		{
-			_contextIndex = contextIndex;
-			_globalMemory = globalMemory;
-
-			var indexableTempsCounts = registerCounts.IndexableTemps;
-			_indexableTempRegisters = new Number4[indexableTempsCounts.Length][];
-			for (int i = 0; i < indexableTempsCounts.Length; i++)
-				_indexableTempRegisters[i] = InitializeRegisters(indexableTempsCounts[i]);
-			_tempRegisters = InitializeRegisters((uint) registerCounts.Temps);
+			get { return _registers; }
 		}
 
-		private static Number4[] InitializeRegisters(uint count)
+		public VirtualMachineThread(int contextIndex, RequiredRegisters requiredRegisters)
 		{
-			var result = new Number4[count];
-			for (int i = 0; i < count; i++)
-				result[i] = new Number4();
-			return result;
+			_contextIndex = contextIndex;
+			_registers = new RegisterSet(requiredRegisters);
+		}
+
+		private Register GetRegister(Operand operand)
+		{
+			return _registers[new RegisterKey(operand.OperandType, GetRegisterIndex(operand))];
 		}
 
 		/// <summary>
 		/// Gets potentially-swizzled value for use on RHS of an operation.
 		/// </summary>
-		private Number4 GetRegister(Operand operand)
+		private Number4 GetOperandValue(Operand operand)
 		{
-			Func<Number4, Number4> absNegFunc = n =>
-			{
-				switch (operand.Modifier)
-				{
-					case OperandModifier.None:
-						return n;
-					case OperandModifier.Neg:
-						return Number4.Negate(n);
-					case OperandModifier.Abs:
-						return Number4.Abs(n);
-					case OperandModifier.AbsNeg:
-						return Number4.Negate(Number4.Abs(n));
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
-			};
-
-			Func<Number4, Number4> swizzleFunc = n =>
-			{
-				if (operand.SelectionMode != Operand4ComponentSelectionMode.Swizzle)
-					return n;
-				return Number4.Swizzle(n, operand.Swizzles);
-			};
-
-			// TODO: Indices might be relative
-			var indices = operand.Indices;
 			switch (operand.OperandType)
 			{
 				case OperandType.Immediate32:
 				case OperandType.Immediate64:
-					return absNegFunc(operand.ImmediateValues);
-				case OperandType.ConstantBuffer :
-					return absNegFunc(swizzleFunc(_globalMemory.ConstantBuffers[indices[0].Value][indices[1].Value]));
+					return OperandUtility.ApplyOperandModifier(operand.ImmediateValues, operand.Modifier);
+				case OperandType.ConstantBuffer:
 				case OperandType.IndexableTemp:
-					return absNegFunc(swizzleFunc(_indexableTempRegisters[indices[0].Value][indices[1].Value]));
 				case OperandType.Input:
-					return absNegFunc(swizzleFunc(_globalMemory.GetInput(_contextIndex, (int) indices[0].Value)));
 				case OperandType.Temp:
-					return absNegFunc(swizzleFunc(_tempRegisters[indices[0].Value]));
+					var numberRegister = (NumberRegister) GetRegister(operand);
+					var swizzledNumber = OperandUtility.ApplyOperandSelectionMode(numberRegister.Value, operand);
+					return OperandUtility.ApplyOperandModifier(swizzledNumber, operand.Modifier);
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
 			}
 		}
 
-		private void SetRegister(Operand operand, Number4 value)
+		private RegisterIndex GetRegisterIndex(Operand operand)
 		{
-			// TODO: Indices might be relative
-			var indices = operand.Indices;
-			switch (operand.OperandType)
+			var result = new RegisterIndex();
+			switch (operand.IndexDimension)
 			{
-				case OperandType.IndexableTemp :
-					_indexableTempRegisters[indices[0].Value][indices[1].Value].WriteMaskedValue(value, operand.ComponentMask);
+				case OperandIndexDimension._1D:
+					result.Index2D_0 = EvaluateOperandIndex(operand.Indices[0]);
 					break;
-				case OperandType.Output :
-					_globalMemory.SetOutput(_contextIndex, (int) indices[0].Value, value, operand.ComponentMask);
+				case OperandIndexDimension._2D:
+					result.Index2D_0 = EvaluateOperandIndex(operand.Indices[0]);
+					result.Index2D_1 = EvaluateOperandIndex(operand.Indices[1]);
 					break;
-				case OperandType.Temp :
-					_tempRegisters[indices[0].Value].WriteMaskedValue(value, operand.ComponentMask);
-					break;
-				default:
-					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);	
 			}
+			return result;
+		}
+
+		private ushort EvaluateOperandIndex(OperandIndex index)
+		{
+			var result = (ushort) index.Value;
+			switch (index.Representation)
+			{
+				case OperandIndexRepresentation.Immediate32PlusRelative :
+				case OperandIndexRepresentation.Immediate64PlusRelative :
+				case OperandIndexRepresentation.Relative :
+					var operandValue = GetOperandValue(index.Register);
+					result += (ushort) operandValue.GetMaskedNumber(index.Register.ComponentMask).UInt;
+					break;
+			}
+			return result;
+		}
+
+		private void SetRegisterValue(Operand operand, Number4 value)
+		{
+			var register = (NumberRegister) GetRegister(operand);
+			register.Value.WriteMaskedValue(value, operand.ComponentMask);
 		}
 
 		public void ExecuteAdd(InstructionToken token)
@@ -109,7 +95,7 @@ namespace SlimShader.VirtualMachine
 
 		public bool ExecuteBreakC(InstructionToken token)
 		{
-			var src = GetRegister(token.Operands[0]);
+			var src = GetOperandValue(token.Operands[0]);
 			bool shouldBreak; 
 			switch (token.TestBoolean)
 			{
@@ -220,9 +206,9 @@ namespace SlimShader.VirtualMachine
 
 		private void Execute(InstructionToken token, Func<Number, Number> callback)
 		{
-			var src = GetRegister(token.Operands[1]);
+			var src = GetOperandValue(token.Operands[1]);
 
-			SetRegister(token.Operands[0], new Number4
+			SetRegisterValue(token.Operands[0], new Number4
 			{
 				Number0 = callback(src.Number0),
 				Number1 = callback(src.Number1),
@@ -235,10 +221,10 @@ namespace SlimShader.VirtualMachine
 
 		private void Execute(InstructionToken token, Func<Number, Number, Number> callback)
 		{
-			var src0 = GetRegister(token.Operands[1]);
-			var src1 = GetRegister(token.Operands[2]);
+			var src0 = GetOperandValue(token.Operands[1]);
+			var src1 = GetOperandValue(token.Operands[2]);
 
-			SetRegister(token.Operands[0], new Number4
+			SetRegisterValue(token.Operands[0], new Number4
 			{
 				Number0 = callback(src0.Number0, src1.Number0),
 				Number1 = callback(src0.Number1, src1.Number1),
@@ -251,11 +237,11 @@ namespace SlimShader.VirtualMachine
 
 		private void Execute(InstructionToken token, Func<Number4, Number4, Number> callback)
 		{
-			var src0 = GetRegister(token.Operands[1]);
-			var src1 = GetRegister(token.Operands[2]);
+			var src0 = GetOperandValue(token.Operands[1]);
+			var src1 = GetOperandValue(token.Operands[2]);
 			var result = callback(src0, src1);
 
-			SetRegister(token.Operands[0], new Number4
+			SetRegisterValue(token.Operands[0], new Number4
 			{
 				Number0 = result,
 				Number1 = result,

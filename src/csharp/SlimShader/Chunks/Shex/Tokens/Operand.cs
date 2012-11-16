@@ -60,14 +60,14 @@ namespace SlimShader.Chunks.Shex.Tokens
 	{
 		private readonly OpcodeType _parentType;
 
-		public byte NumComponents { get; internal set; }
-		public Operand4ComponentSelectionMode SelectionMode { get; internal set; }
-		public ComponentMask ComponentMask { get; internal set; }
+		public byte NumComponents { get; private set; }
+		public Operand4ComponentSelectionMode SelectionMode { get; private set; }
+		public ComponentMask ComponentMask { get; private set; }
 		public Operand4ComponentName[] Swizzles { get; private set; }
-		public OperandType OperandType { get; internal set; }
-		public OperandIndexDimension IndexDimension { get; internal set; }
-		public bool IsExtended { get; internal set; }
-		public OperandModifier Modifier { get; internal set; }
+		public OperandType OperandType { get; private set; }
+		public OperandIndexDimension IndexDimension { get; private set; }
+		public bool IsExtended { get; private set; }
+		public OperandModifier Modifier { get; private set; }
 		public OperandIndex[] Indices { get; private set; }
 		public Number4 ImmediateValues { get; private set; }
 
@@ -187,15 +187,21 @@ namespace SlimShader.Chunks.Shex.Tokens
 			switch (operand.OperandType)
 			{
 				case OperandType.Immediate32:
-					operand.ImmediateValues = new Number4();
+				{
+					var immediateValues = new Number4();
 					for (var i = 0; i < operand.NumComponents; i++)
-						operand.ImmediateValues.SetNumber(i, Number.Parse(reader, numberType));
+						immediateValues.SetNumber(i, Number.Parse(reader, numberType));
+					operand.ImmediateValues = immediateValues;
 					break;
+				}
 				case OperandType.Immediate64:
-					operand.ImmediateValues = new Number4();
+				{
+					var immediateValues = new Number4();
 					for (var i = 0; i < operand.NumComponents; i++)
-						operand.ImmediateValues.SetDouble(i, reader.ReadDouble());
+						immediateValues.SetDouble(i, reader.ReadDouble());
+					operand.ImmediateValues = immediateValues;
 					break;
+				}
 			}
 
 			return operand;

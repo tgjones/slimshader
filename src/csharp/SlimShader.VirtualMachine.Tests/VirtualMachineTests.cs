@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using SlimShader.Chunks.Shex;
+using SlimShader.VirtualMachine.Registers;
 
 namespace SlimShader.VirtualMachine.Tests
 {
@@ -16,10 +18,12 @@ namespace SlimShader.VirtualMachine.Tests
 			vm.Execute();
 
 			// Assert.
-			Assert.That(vm.GlobalMemory.Outputs[0].Number0.Float, Is.EqualTo(1.0f));
-			Assert.That(vm.GlobalMemory.Outputs[0].Number1.Float, Is.EqualTo(0.5f));
-			Assert.That(vm.GlobalMemory.Outputs[0].Number2.Float, Is.EqualTo(0.4f));
-			Assert.That(vm.GlobalMemory.Outputs[0].Number3.Float, Is.EqualTo(1.0f));
+			var registerKey = new RegisterKey(OperandType.Output, new RegisterIndex(0));
+			var output0 = (NumberRegister) vm.GetRegister(0, registerKey);
+			Assert.That(output0.Value.Number0.Float, Is.EqualTo(1.0f));
+			Assert.That(output0.Value.Number1.Float, Is.EqualTo(0.5f));
+			Assert.That(output0.Value.Number2.Float, Is.EqualTo(0.4f));
+			Assert.That(output0.Value.Number3.Float, Is.EqualTo(1.0f));
 		}
 	}
 }

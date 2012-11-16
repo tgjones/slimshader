@@ -9,7 +9,7 @@ namespace SlimShader
 	/// Represents four Numbers, or two doubles.
 	/// </summary>
 	[StructLayout(LayoutKind.Explicit, Size = Number.SizeInBytes * 4)]
-	public class Number4
+	public struct Number4
 	{
 		public static Number4 Abs(Number4 original)
 		{
@@ -90,6 +90,7 @@ namespace SlimShader
 		}
 
 		public Number4(Number number0, Number number1, Number number2, Number number3)
+			: this()
 		{
 			Type = Number4Type.Number;
 			Number0 = number0;
@@ -99,15 +100,11 @@ namespace SlimShader
 		}
 
 		public Number4(double double0, double double1)
+			: this()
 		{
 			Type = Number4Type.Double;
 			Double0 = double0;
 			Double1 = double1;
-		}
-
-		public Number4()
-		{
-			
 		}
 
 		public double GetDouble(int i)
@@ -176,6 +173,19 @@ namespace SlimShader
 				default:
 					throw new ArgumentOutOfRangeException("i", string.Format("Index '{0}' is out of range.", i));
 			}
+		}
+
+		public Number GetMaskedNumber(ComponentMask mask)
+		{
+			if (mask.HasFlag(ComponentMask.X))
+				return Number0;
+			if (mask.HasFlag(ComponentMask.Y))
+				return Number1;
+			if (mask.HasFlag(ComponentMask.Z))
+				return Number2;
+			if (mask.HasFlag(ComponentMask.W))
+				return Number3;
+			throw new ArgumentOutOfRangeException("mask");
 		}
 
 		public void WriteMaskedValue(Number4 value, ComponentMask mask)
