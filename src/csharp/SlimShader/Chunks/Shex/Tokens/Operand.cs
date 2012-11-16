@@ -66,8 +66,6 @@ namespace SlimShader.Chunks.Shex.Tokens
 		public Operand4ComponentName[] Swizzles { get; private set; }
 		public OperandType OperandType { get; internal set; }
 		public OperandIndexDimension IndexDimension { get; internal set; }
-		// TODO: Can merge this with Indices?
-		public OperandIndexRepresentation[] IndexRepresentations { get; private set; }
 		public bool IsExtended { get; internal set; }
 		public OperandModifier Modifier { get; internal set; }
 		public OperandIndex[] Indices { get; private set; }
@@ -83,7 +81,6 @@ namespace SlimShader.Chunks.Shex.Tokens
 				Operand4ComponentName.Z,
 				Operand4ComponentName.W
 			};
-			IndexRepresentations = new OperandIndexRepresentation[3];
 			Indices = new OperandIndex[3];
 		}
 
@@ -150,19 +147,21 @@ namespace SlimShader.Chunks.Shex.Tokens
 			operand.OperandType = token0.DecodeValue<OperandType>(12, 19);
 			operand.IndexDimension = token0.DecodeValue<OperandIndexDimension>(20, 21);
 
-			Func<uint, byte, OperandIndexRepresentation> indexRepresentationDecoder = (t, i) =>
-				(OperandIndexRepresentation) t.DecodeValue((byte) (22 + (i * 3)), (byte) (22 + (i * 3) + 2));
-			for (byte i = 0; i < (byte) operand.IndexDimension; i++)
-				operand.IndexRepresentations[i] = indexRepresentationDecoder(token0, i);
-
 			operand.IsExtended = token0.DecodeValue(31, 31) == 1;
 			if (operand.IsExtended)
 				ReadExtendedOperand(operand, reader);
 
+			Func<uint, byte, OperandIndexRepresentation> indexRepresentationDecoder = (t, i) =>
+				(OperandIndexRepresentation) t.DecodeValue((byte) (22 + (i * 3)), (byte) (22 + (i * 3) + 2));
+
 			for (byte i = 0; i < (byte) operand.IndexDimension; i++)
 			{
 				operand.Indices[i] = new OperandIndex();
-				switch (operand.IndexRepresentations[i])
+
+				var indexRepresentation = indexRepresentationDecoder(token0, i);
+				operand.Indices[i].Representation = indexRepresentation;
+
+				switch (indexRepresentation)
 				{
 					case OperandIndexRepresentation.Immediate32:
 						operand.Indices[i].Value = reader.ReadUInt32();
@@ -180,7 +179,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 						operand.Indices[i].Value = reader.ReadUInt64();
 						goto case OperandIndexRepresentation.Relative;
 					default:
-						throw new ParseException("Unrecognised index representation: " + operand.IndexRepresentations[i]);
+						throw new ParseException("Unrecognised index representation: " + indexRepresentation);
 				}
 			}
 
@@ -280,15 +279,15 @@ namespace SlimShader.Chunks.Shex.Tokens
 							case OperandIndexDimension._0D:
 								break;
 							case OperandIndexDimension._1D:
-								index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
-									|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
+								index = (Indices[0].Representation == OperandIndexRepresentation.Relative
+									|| Indices[0].Representation == OperandIndexRepresentation.Immediate32PlusRelative
 									|| !OperandType.RequiresRegisterNumberFor1DIndex())
 									? string.Format("[{0}]", Indices[0])
 									: Indices[0].ToString();
 								break;
 							case OperandIndexDimension._2D:
-								index = (IndexRepresentations[0] == OperandIndexRepresentation.Relative
-									|| IndexRepresentations[0] == OperandIndexRepresentation.Immediate32PlusRelative
+								index = (Indices[0].Representation == OperandIndexRepresentation.Relative
+									|| Indices[0].Representation == OperandIndexRepresentation.Immediate32PlusRelative
 									|| !OperandType.RequiresRegisterNumberFor2DIndex())
 									? string.Format("[{0}][{1}]", Indices[0], Indices[1])
 									: string.Format("{0}[{1}]", Indices[0], Indices[1]);

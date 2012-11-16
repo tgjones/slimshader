@@ -2,6 +2,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 {
 	public class OperandIndex
 	{
+		public OperandIndexRepresentation Representation { get; set; }
 		public ulong Value { get; set; }
 		public Operand Register { get; set; }
 
