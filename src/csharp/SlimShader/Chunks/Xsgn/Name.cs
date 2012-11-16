@@ -1,5 +1,4 @@
 ﻿using SlimShader.Chunks.Shex;
-using SlimShader.Util;
 
 namespace SlimShader.Chunks.Xsgn
 {
@@ -15,12 +14,16 @@ namespace SlimShader.Chunks.Xsgn
 		[Description("POS")]
 		Position = 1,
 
+		[Description("CLIPDST")]
 		ClipDistance = 2,
+
+		[Description("CULLDST")]
 		CullDistance = 3,
 
 		[Description("RTINDEX")]
 		RenderTargetArrayIndex = 4,
 
+		[Description("VPINDEX")]
 		ViewportArrayIndex = 5,
 
 		[Description("VERTID")]
@@ -29,8 +32,13 @@ namespace SlimShader.Chunks.Xsgn
 		[Description("PRIMID")]
 		PrimitiveID = 7,
 
+		[Description("INSTID")]
 		InstanceID = 8,
+
+		[Description("FFACE")]
 		IsFrontFace = 9,
+
+		[Description("SAMPLE")]
 		SampleIndex = 10,
 
 		[Description("QUADEDGE")]

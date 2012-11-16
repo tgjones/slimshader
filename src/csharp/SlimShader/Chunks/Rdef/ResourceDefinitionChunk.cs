@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SlimShader.Chunks.Common;
@@ -51,12 +52,25 @@ namespace SlimShader.Chunks.Rdef
 				string rd11 = headerReader.ReadUInt32().ToFourCcString();
 				if (rd11 != "RD11")
 					throw new ParseException("Expected RD11.");
+
 				var unknown1 = headerReader.ReadUInt32(); // TODO
+				Debug.Assert(unknown1 == 60);
+
 				var unknown2 = headerReader.ReadUInt32();
+				Debug.Assert(unknown2 == 24);
+
 				var unknown3 = headerReader.ReadUInt32();
+				Debug.Assert(unknown3 == 32);
+
 				var unknown4 = headerReader.ReadUInt32();
+				Debug.Assert(unknown4 == 40);
+
 				var unknown5 = headerReader.ReadUInt32();
+				Debug.Assert(unknown5 == 36);
+
 				var unknown6 = headerReader.ReadUInt32();
+				Debug.Assert(unknown6 == 12);
+
 				result.InterfaceSlotCount = headerReader.ReadUInt32();
 			}
 

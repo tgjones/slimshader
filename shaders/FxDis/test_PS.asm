@@ -41,6 +41,13 @@
 // TEXCOORD                 0   xyzw        0     NONE   float    yzw
 // TEXCOORD                 1   xyzw        1     NONE   float   x   
 // SV_POSITION              0   xyzw        2      POS   float   x   
+// SV_RenderTargetArrayIndex     0   x           3  RTINDEX    uint   x   
+// SV_ViewportArrayIndex     0    y          3  VPINDEX    uint    y  
+// SV_PrimitiveID           0     z         3   PRIMID    uint     z 
+// SV_CullDistance          0   x           4  CULLDST   float   x   
+// SV_ClipDistance          0    y          4  CLIPDST   float    y  
+// SV_SampleIndex           0   x           5   SAMPLE    uint   x   
+// SV_IsFrontFace           0    y          5    FFACE    uint    y  
 //
 //
 // Output signature:
@@ -48,6 +55,8 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
+//
+// Pixel Shader runs at sample frequency
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed
@@ -63,6 +72,14 @@ dcl_resource_texture2d (float,float,float,float) t5
 dcl_input_ps linear v0.yzw
 dcl_input_ps linear centroid v1.x
 dcl_input_ps_siv linear noperspective v2.x, position
+dcl_input_ps_siv constant v3.x, rendertarget_array_index
+dcl_input_ps_siv constant v3.y, viewport_array_index
+dcl_input_ps_sgv v3.z, primitive_id
+dcl_input_ps_siv linear v4.x, cull_distance
+dcl_input_ps_siv linear v4.y, clip_distance
+dcl_input_ps_sgv v5.x, sampleIndex
+dcl_input_ps_sgv v5.y, is_front_face
+dcl_input vCoverage
 dcl_output o0.xyzw
 dcl_temps 13
 dcl_indexableTemp x0[8], 4
@@ -95,22 +112,40 @@ loop
   iadd r0.z, r0.z, l(1)
   mov r0.yz, r0.wwzw
 endloop 
-ftoi r0.x, r0.y
-ilt r0.w, r0.x, l(0)
+add r0.x, r0.y, l(27.000000)
+utof r0.y, v3.x
+add r0.x, r0.y, r0.x
+add r0.x, r0.x, v4.x
+utof r0.y, v3.y
+add r0.x, r0.y, r0.x
+or r0.y, v3.y, v5.x
+utof r0.y, r0.y
+add r0.x, r0.y, r0.x
+utof r0.y, v5.x
+add r0.x, r0.y, r0.x
+add r0.y, r0.x, l(4.000000)
+movc r0.x, v5.y, r0.y, r0.x
+add r0.x, r0.x, v4.y
+utof r0.y, vCoverage.x
+add r0.x, r0.y, r0.x
+utof r0.y, v3.z
+add r0.x, r0.y, r0.x
+ftoi r0.y, r0.x
+ilt r0.w, r0.y, l(0)
 if_nz r0.w
-  xor r0.w, r0.x, l(50)
+  xor r0.w, r0.y, l(50)
 else 
-  ilt r1.x, l(5), r0.x
+  ilt r1.x, l(5), r0.y
   if_nz r1.x
-    and r0.w, r0.x, l(2222)
+    and r0.w, r0.y, l(2222)
   else 
-    iadd r0.w, r0.x, -cb0[r0.x + 2].x
+    iadd r0.w, r0.y, -cb0[r0.y + 2].x
   endif 
 endif 
-add r0.x, cb0[0].y, cb0[0].x
-add r0.x, r0.x, cb0[0].z
-add r0.x, r0.x, cb0[0].w
-add r0.x, r0.x, r0.y
+add r0.y, cb0[0].y, cb0[0].x
+add r0.y, r0.y, cb0[0].z
+add r0.y, r0.y, cb0[0].w
+add r0.x, r0.y, r0.x
 sample_indexable(texture2d)(float,float,float,float) r0.y, l(0.125000, 5.000000, 0.000000, 0.000000), t0.yxzw, s0
 add r0.x, r0.y, r0.x
 sample_indexable(texture2d)(float,float,float,float) r0.y, l(0.777000, 1234.500000, 0.000000, 0.000000), t0.yxzw, s1
@@ -261,4 +296,4 @@ endloop
 mad r0.xyzw, r6.xyzw, l(2.000000, 2.000000, 2.000000, 2.000000), r2.xyzw
 add o0.xyzw, r0.xyzw, l(1.100000, 2.200000, 3.300000, 4.400000)
 ret 
-// Approximately 192 instruction slots used
+// Approximately 210 instruction slots used

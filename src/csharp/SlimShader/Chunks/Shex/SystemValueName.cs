@@ -8,16 +8,16 @@
 		[Description("position")]
 		Position = 1,
 
-		[Description("clipdistance")]
+		[Description("clip_distance")]
 		ClipDistance = 2,
 
-		[Description("culldistance")]
+		[Description("cull_distance")]
 		CullDistance = 3,
 
 		[Description("rendertarget_array_index")]
 		RenderTargetArrayIndex = 4,
 
-		[Description("viewportarrayindex")]
+		[Description("viewport_array_index")]
 		ViewportArrayIndex = 5,
 
 		[Description("vertex_id")]
@@ -26,13 +26,13 @@
 		[Description("primitive_id")]
 		PrimitiveID = 7,
 
-		[Description("instanceid")]
+		[Description("instance_id")]
 		InstanceID = 8,
 
-		[Description("isfrontface")]
+		[Description("is_front_face")]
 		IsFrontFace = 9,
 
-		[Description("sampleindex")]
+		[Description("sampleIndex")]
 		SampleIndex = 10,
 
 		// The following are added for D3D11

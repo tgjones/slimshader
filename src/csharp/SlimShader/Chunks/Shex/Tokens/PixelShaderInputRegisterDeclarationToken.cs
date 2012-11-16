@@ -65,7 +65,9 @@ namespace SlimShader.Chunks.Shex.Tokens
 		public override string ToString()
 		{
 			string result = string.Format("{0} {1}{2}", TypeDescription,
-				(InterpolationMode != InterpolationMode.Constant) ? InterpolationMode.GetDescription() + " " : string.Empty,
+				(InterpolationMode != InterpolationMode.Constant || Header.OpcodeType == OpcodeType.DclInputPsSiv) 
+					? InterpolationMode.GetDescription() + " "
+					: string.Empty,
 				Operand);
 
 			if (Header.OpcodeType == OpcodeType.DclInputPsSgv || Header.OpcodeType == OpcodeType.DclInputPsSiv)

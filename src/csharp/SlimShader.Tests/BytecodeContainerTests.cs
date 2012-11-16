@@ -64,7 +64,7 @@ namespace SlimShader.Tests
 				Assert.AreEqual(shaderReflection.ConversionInstructionCount, container.Statistics.ConversionInstructionCount);
 				Assert.AreEqual((int) shaderReflection.GeometryShaderSInputPrimitive, (int) container.Statistics.InputPrimitive);
 				Assert.AreEqual(shaderReflection.InterfaceSlotCount, container.ResourceDefinition.InterfaceSlotCount);
-				Assert.AreEqual((bool) shaderReflection.IsSampleFrequencyShader, false); // TODO
+				Assert.AreEqual((bool) shaderReflection.IsSampleFrequencyShader, container.Statistics.IsSampleFrequencyShader);
 				Assert.AreEqual(shaderReflection.MoveInstructionCount, container.Statistics.MovInstructionCount);
 				//Assert.AreEqual(shaderReflection.RequiresFlags, 0); // TODO
 

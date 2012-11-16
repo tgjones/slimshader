@@ -61,10 +61,27 @@ float4 blah( float4 cool )
    return cool;   
 }
 
-float4 main( 
+#define MY_MACRO(x) (x * x * x)
+
+float4 VS(
+	uint instanceID : SV_InstanceID,
+	uint vertexID : SV_VertexID) : SV_Position
+{
+	return float4(instanceID, vertexID, 1, 1);
+}
+
+float4 PS( 
    float4 t0 : TEXCOORD0,
    float4 t1 : TEXCOORD1_centroid,
-   float4 p0 : SV_POSITION
+   float4 p0 : SV_POSITION,
+   uint rtai : SV_RenderTargetArrayIndex,
+   float cullDist : SV_CullDistance,
+   uint vai : SV_ViewportArrayIndex,
+   uint sIndex : SV_SampleIndex,
+   bool frontFace : SV_IsFrontFace,
+   float clipDist : SV_ClipDistance,
+   uint coverage : SV_Coverage,
+	uint primitiveID : SV_PrimitiveID
    ) : SV_TARGET
 {
    float j = (uint)p0.x + dot(t0, float4(0,1,2,3)) + t1.x + (zeek.y ^ 2);
@@ -74,6 +91,17 @@ float4 main(
       if (j < 0)
          break;
    }
+   j += MY_MACRO(3);
+   j += rtai;
+   j += cullDist;
+   j += vai;
+   j += vai | sIndex;
+   j += sIndex;
+   if (frontFace)
+      j += 4;
+   j += clipDist;
+   j += coverage;
+   j += primitiveID;
    int q = (int)j;
    if ( q < 0 )
    {

@@ -214,6 +214,7 @@
 		/// <summary>
 		/// Pixel shader coverage mask input
 		/// </summary>
+		[Description("vCoverage")]
 		InputCoverageMask = 35,
 
 		/// <summary>
