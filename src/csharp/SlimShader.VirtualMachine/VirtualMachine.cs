@@ -40,9 +40,9 @@ namespace SlimShader.VirtualMachine
 				_threads[i] = new VirtualMachineThread(i, _requiredRegisters);
 		}
 
-		public Register GetRegister(int contextIndex, RegisterKey key)
+		public Register GetRegister(int contextIndex, OperandType registerType, RegisterIndex index)
 		{
-			return _threads[contextIndex].Registers[key];
+			return _threads[contextIndex].Registers[new RegisterKey(registerType, index)];
 		}
 
 		public void SetUnorderedAccessViews(int startSlot, UnorderedAccessView[] unorderedAccessViews)
@@ -115,10 +115,22 @@ namespace SlimShader.VirtualMachine
 					case OpcodeType.FtoU :
 						Execute(t => t.ExecuteFtoU(token));
 						break;
+					case OpcodeType.IAdd:
+						Execute(t => t.ExecuteIAdd(token));
+						break;
+					case OpcodeType.IGe:
+						Execute(t => t.ExecuteIGe(token));
+						break;
 					case OpcodeType.Loop:
 						break;
 					case OpcodeType.Lt:
 						Execute(t => t.ExecuteLt(token));
+						break;
+					case OpcodeType.Mad:
+						Execute(t => t.ExecuteMad(token));
+						break;
+					case OpcodeType.Max:
+						Execute(t => t.ExecuteMax(token));
 						break;
 					case OpcodeType.Mov:
 						Execute(t => t.ExecuteMov(token));
@@ -127,6 +139,9 @@ namespace SlimShader.VirtualMachine
 						Execute(t => t.ExecuteMul(token));
 						break;
 					case OpcodeType.Ret :
+						break;
+					case OpcodeType.Rsq:
+						Execute(t => t.ExecuteRsq(token));
 						break;
 					case OpcodeType.Sqrt:
 						Execute(t => t.ExecuteSqrt(token));

@@ -169,6 +169,16 @@ namespace SlimShader.VirtualMachine
 			Execute(token, src => Number.FromUInt(Convert.ToUInt32(src.Float)));
 		}
 
+		public void ExecuteIAdd(InstructionToken token)
+		{
+			Execute(token, (src0, src1) => Number.FromInt(src0.Int + src1.Int));
+		}
+
+		public void ExecuteIGe(InstructionToken token)
+		{
+			Execute(token, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000));
+		}
+
 		public void ExecuteLoop(InstructionToken token)
 		{
 			PerThreadProgramCounter++;
@@ -176,7 +186,17 @@ namespace SlimShader.VirtualMachine
 
 		public void ExecuteLt(InstructionToken token)
 		{
-			Execute(token, (src0, src1) => Number.FromFloat((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000, token.Saturate));
+			Execute(token, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000));
+		}
+
+		public void ExecuteMad(InstructionToken token)
+		{
+			Execute(token, (src0, src1, src2) => Number.FromFloat((src0.Float * src1.Float) + src2.Float, token.Saturate));
+		}
+
+		public void ExecuteMax(InstructionToken token)
+		{
+			Execute(token, (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), token.Saturate));
 		}
 
 		public void ExecuteMov(InstructionToken token)
@@ -187,6 +207,11 @@ namespace SlimShader.VirtualMachine
 		public void ExecuteMul(InstructionToken token)
 		{
 			Execute(token, (src0, src1) => Number.FromFloat(src0.Float * src1.Float, token.Saturate));
+		}
+
+		public void ExecuteRsq(InstructionToken token)
+		{
+			Execute(token, src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), token.Saturate));
 		}
 
 		public void ExecuteSqrt(InstructionToken token)
@@ -230,6 +255,23 @@ namespace SlimShader.VirtualMachine
 				Number1 = callback(src0.Number1, src1.Number1),
 				Number2 = callback(src0.Number2, src1.Number2),
 				Number3 = callback(src0.Number3, src1.Number3)
+			});
+
+			PerThreadProgramCounter++;
+		}
+
+		private void Execute(InstructionToken token, Func<Number, Number, Number, Number> callback)
+		{
+			var src0 = GetOperandValue(token.Operands[1]);
+			var src1 = GetOperandValue(token.Operands[2]);
+			var src2 = GetOperandValue(token.Operands[3]);
+
+			SetRegisterValue(token.Operands[0], new Number4
+			{
+				Number0 = callback(src0.Number0, src1.Number0, src2.Number0),
+				Number1 = callback(src0.Number1, src1.Number1, src2.Number1),
+				Number2 = callback(src0.Number2, src1.Number2, src2.Number2),
+				Number3 = callback(src0.Number3, src1.Number3, src2.Number3)
 			});
 
 			PerThreadProgramCounter++;

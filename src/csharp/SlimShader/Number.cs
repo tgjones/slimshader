@@ -45,7 +45,7 @@ namespace SlimShader
 			return FromFloat((saturate) ? Saturate(value) : value);
 		}
 
-		private static Number FromFloat(float value)
+		public static Number FromFloat(float value)
 		{
 			return new Number
 			{

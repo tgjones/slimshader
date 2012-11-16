@@ -99,6 +99,16 @@ namespace SlimShader
 			Number3 = number3;
 		}
 
+		public Number4(float float0, float float1, float float2, float float3)
+			: this()
+		{
+			Type = Number4Type.Number;
+			Number0 = Number.FromFloat(float0);
+			Number1 = Number.FromFloat(float1);
+			Number2 = Number.FromFloat(float2);
+			Number3 = Number.FromFloat(float3);
+		}
+
 		public Number4(double double0, double double1)
 			: this()
 		{

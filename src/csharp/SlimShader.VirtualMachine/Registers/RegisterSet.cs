@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SlimShader.VirtualMachine.Registers
 {
@@ -8,7 +9,13 @@ namespace SlimShader.VirtualMachine.Registers
 
 		public Register this[RegisterKey key]
 		{
-			get { return _registers[key]; }
+			get
+			{
+				Register value;
+				if (!_registers.TryGetValue(key, out value))
+					throw new ArgumentOutOfRangeException("key", "Key not found: " + key);
+				return value;
+			}
 		}
 
 		public RegisterSet(RequiredRegisters requiredRegisters)

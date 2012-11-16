@@ -15,8 +15,6 @@ namespace SlimShader.VirtualMachine.Registers
 			{
 				switch (declarationToken.Header.OpcodeType)
 				{
-					case OpcodeType.DclConstantBuffer :
-					case OpcodeType.DclIndexableTemp:
 					case OpcodeType.DclInput:
 					case OpcodeType.DclInputPs:
 					case OpcodeType.DclInputPsSgv:
@@ -24,34 +22,33 @@ namespace SlimShader.VirtualMachine.Registers
 					case OpcodeType.DclInputSgv:
 					case OpcodeType.DclInputSiv:
 					case OpcodeType.DclOutput:
+					case OpcodeType.DclOutputSgv :
+					case OpcodeType.DclOutputSiv :
 					case OpcodeType.DclResource:
 					case OpcodeType.DclSampler:
-					case OpcodeType.DclTemps:
 						result.Registers.Add(new RegisterKey(declarationToken.Operand.OperandType,
-							GetRegisterIndex(declarationToken)));
+							new RegisterIndex((ushort) declarationToken.Operand.Indices[0].Value)));
 						break;
+					case OpcodeType.DclConstantBuffer:
+					case OpcodeType.DclIndexableTemp:
+					{
+						var count = (ushort) declarationToken.Operand.Indices[1].Value;
+						for (ushort i = 0; i < count; i++)
+							result.Registers.Add(new RegisterKey(declarationToken.Operand.OperandType,
+								new RegisterIndex((ushort) declarationToken.Operand.Indices[0].Value, i)));
+						break;
+					}
+					case OpcodeType.DclTemps:
+					{
+						var tempDeclarationToken = (TempRegisterDeclarationToken) declarationToken;
+						for (ushort i = 0; i < tempDeclarationToken.TempCount; i++)
+							result.Registers.Add(new RegisterKey(OperandType.Temp, new RegisterIndex(i)));
+						break;
+					}
 				}
 			}
 			
 
-			return result;
-		}
-
-		private static RegisterIndex GetRegisterIndex(DeclarationToken token)
-		{
-			var result = new RegisterIndex();
-
-			switch (token.Operand.IndexDimension)
-			{
-				case OperandIndexDimension._1D :
-					result.Index1D = (ushort) token.Operand.Indices[0].Value;
-					break;
-				case OperandIndexDimension._2D:
-					result.Index2D_0 = (ushort) token.Operand.Indices[0].Value;
-					result.Index2D_1 = (ushort) token.Operand.Indices[1].Value;
-					break;
-			}
-			
 			return result;
 		}
 
