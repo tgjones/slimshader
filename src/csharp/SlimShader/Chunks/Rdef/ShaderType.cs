@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SlimShader.Chunks.Common;
@@ -43,6 +44,11 @@ namespace SlimShader.Chunks.Rdef
 
 		public List<ShaderTypeMember> Members { get; private set; }
 
+		/// <summary>
+		/// Name of the shader-variable type. This member can be NULL if it isn't used. This member supports 
+		/// dynamic shader linkage interface types, which have names.
+		/// TODO: Is this the right description?
+		/// </summary>
 		public string BaseTypeName { get; private set; }
 
 		public ShaderType(int indent, bool isFirst)
@@ -70,19 +76,34 @@ namespace SlimShader.Chunks.Rdef
 			if (target.MajorVersion >= 5)
 			{
 				var parentTypeOffset = typeReader.ReadUInt32(); // Guessing
-				var parentTypeReader = reader.CopyAtOffset((int) parentTypeOffset);
-				var parentTypeClass = (ShaderVariableClass) parentTypeReader.ReadUInt16();
-				var unknown4 = parentTypeReader.ReadUInt16();
-
-				var unknown1 = typeReader.ReadUInt32();
-				if (unknown1 != 0)
+				if (parentTypeOffset != 0)
 				{
-					var unknownReader = reader.CopyAtOffset((int) unknown1);
-					uint unknown5 = unknownReader.ReadUInt32();
+					var parentTypeReader = reader.CopyAtOffset((int) parentTypeOffset);
+					var parentTypeClass = (ShaderVariableClass) parentTypeReader.ReadUInt16();
+					Debug.Assert(parentTypeClass == ShaderVariableClass.Vector || parentTypeClass == ShaderVariableClass.InterfaceClass);
+
+					var unknown1 = parentTypeReader.ReadUInt16();
+					Debug.Assert(unknown1 == 0);
 				}
 
 				var unknown2 = typeReader.ReadUInt32();
-				var unknown3 = typeReader.ReadUInt32();
+				if (unknown2 != 0)
+				{
+					var unknownReader = reader.CopyAtOffset((int) unknown2);
+					uint unknown3 = unknownReader.ReadUInt32();
+					Debug.Assert(unknown3 == 0 || unknown3 == 5);
+				}
+
+				var unknown4 = typeReader.ReadUInt32();
+				Debug.Assert(unknown4 == 0 || unknown4 == 1);
+
+				var unknown5 = typeReader.ReadUInt32();
+				if (unknown5 != 0)
+				{
+					var unknownReader = reader.CopyAtOffset((int) unknown5);
+					var unknown6 = unknownReader.ReadUInt32();
+					Debug.Assert(unknown6 == 580 || unknown6 == 740);
+				}
 
 				var parentNameOffset = typeReader.ReadUInt32();
 				if (parentNameOffset > 0)
