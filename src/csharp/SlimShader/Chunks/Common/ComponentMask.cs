@@ -17,6 +17,9 @@ namespace SlimShader.Chunks.Common
 		B = 4,
 		A = 8,
 
+		Xy = X | Y,
+		Xyz = X | Y | Z,
+
 		All = X | Y | Z | W // 15
 	}
 }

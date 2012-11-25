@@ -59,6 +59,24 @@ namespace SlimShader.Chunks.Xsgn
 		///// </summary>
 		//public MinPrecision MinPrecision { get; private set; }
 
+		public SignatureParameterDescription(string semanticName, uint semanticIndex,
+			Name systemValueType, RegisterComponentType componentType, uint register,
+			ComponentMask mask, ComponentMask readWriteMask)
+		{
+			SemanticName = semanticName;
+			SemanticIndex = semanticIndex;
+			Register = register;
+			SystemValueType = systemValueType;
+			ComponentType = componentType;
+			Mask = mask;
+			ReadWriteMask = readWriteMask;
+		}
+
+		public SignatureParameterDescription()
+		{
+			
+		}
+
 		public static SignatureParameterDescription Parse(BytecodeReader reader, BytecodeReader parameterReader,
 			ChunkType chunkType, SignatureElementSize size, ProgramType programType)
 		{
