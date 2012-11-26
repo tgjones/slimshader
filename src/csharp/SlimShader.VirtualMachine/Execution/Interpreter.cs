@@ -6,7 +6,7 @@ using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Execution
 {
-	public class Interpreter
+	public class Interpreter : IShaderExecutor
 	{
 		private readonly ExecutionContext[] _executionContexts;
 		private readonly InstructionToken[] _instructions;

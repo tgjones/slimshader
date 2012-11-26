@@ -11,7 +11,7 @@ namespace SlimShader.VirtualMachine
 		private readonly BytecodeContainer _bytecode;
 
 		private readonly ExecutionContext[] _executionContexts;
-		private readonly Interpreter _interpreter;
+		private readonly IShaderExecutor _shaderExecutor;
 
 		private readonly RequiredRegisters _requiredRegisters;
 
@@ -26,12 +26,12 @@ namespace SlimShader.VirtualMachine
 			_executionContexts = new ExecutionContext[numContexts];
 			for (int i = 0; i < _executionContexts.Length; i++)
 				_executionContexts[i] = new ExecutionContext(_requiredRegisters);
-			_interpreter = new Interpreter(_executionContexts, instructions);
+			_shaderExecutor = new Interpreter(_executionContexts, instructions);
 		}
 
 		public void Execute()
 		{
-			_interpreter.Execute();
+			_shaderExecutor.Execute();
 		}
 
 		public Number4 GetRegister(int contextIndex, OperandType registerType, RegisterIndex registerIndex)
