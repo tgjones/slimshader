@@ -6,13 +6,19 @@ namespace SlimShader.VirtualMachine.Registers
 {
 	public class RequiredRegisters
 	{
-		public List<RegisterKey> Registers { get; private set; }
+		public int Inputs { get; private set; }
+		public int Outputs { get; private set; }
+		public int Resources { get; private set; }
+		public int Samplers { get; private set; }
+		public List<int> ConstantBuffers { get; private set; }
+		public List<int> IndexableTemps { get; private set; }
+		public int Temps { get; private set; }
 
 		public static RequiredRegisters FromShader(ShaderProgramChunk shader)
 		{
 			var result = new RequiredRegisters();
+
 			foreach (var declarationToken in shader.DeclarationTokens)
-			{
 				switch (declarationToken.Header.OpcodeType)
 				{
 					case OpcodeType.DclInput:
@@ -21,40 +27,43 @@ namespace SlimShader.VirtualMachine.Registers
 					case OpcodeType.DclInputPsSiv:
 					case OpcodeType.DclInputSgv:
 					case OpcodeType.DclInputSiv:
+						result.Inputs = (int) declarationToken.Operand.Indices[0].Value + 1;
+						break;
 					case OpcodeType.DclOutput:
-					case OpcodeType.DclOutputSgv :
-					case OpcodeType.DclOutputSiv :
+					case OpcodeType.DclOutputSgv:
+					case OpcodeType.DclOutputSiv:
+						result.Outputs = (int) declarationToken.Operand.Indices[0].Value + 1;
+						break;
 					case OpcodeType.DclResource:
+						result.Resources = (int) declarationToken.Operand.Indices[0].Value + 1;
+						break;
 					case OpcodeType.DclSampler:
-						result.Registers.Add(new RegisterKey(declarationToken.Operand.OperandType,
-							new RegisterIndex((ushort) declarationToken.Operand.Indices[0].Value)));
+						result.Samplers = (int) declarationToken.Operand.Indices[0].Value + 1;
 						break;
 					case OpcodeType.DclConstantBuffer:
+						while (result.ConstantBuffers.Count < (int) declarationToken.Operand.Indices[0].Value + 1)
+							result.ConstantBuffers.Add(0);
+						result.ConstantBuffers[(int) declarationToken.Operand.Indices[0].Value] =
+							(int) declarationToken.Operand.Indices[1].Value + 1;
+						break;
 					case OpcodeType.DclIndexableTemp:
-					{
-						var count = (ushort) declarationToken.Operand.Indices[1].Value;
-						for (ushort i = 0; i < count; i++)
-							result.Registers.Add(new RegisterKey(declarationToken.Operand.OperandType,
-								new RegisterIndex((ushort) declarationToken.Operand.Indices[0].Value, i)));
+						while (result.IndexableTemps.Count < (int) declarationToken.Operand.Indices[0].Value + 1)
+							result.IndexableTemps.Add(0);
+						result.IndexableTemps[(int) declarationToken.Operand.Indices[0].Value] =
+							(int) declarationToken.Operand.Indices[1].Value + 1;
 						break;
-					}
 					case OpcodeType.DclTemps:
-					{
-						var tempDeclarationToken = (TempRegisterDeclarationToken) declarationToken;
-						for (ushort i = 0; i < tempDeclarationToken.TempCount; i++)
-							result.Registers.Add(new RegisterKey(OperandType.Temp, new RegisterIndex(i)));
+						result.Temps = (int) ((TempRegisterDeclarationToken) declarationToken).TempCount;
 						break;
-					}
 				}
-			}
-			
 
 			return result;
 		}
 
-		public RequiredRegisters()
+		private RequiredRegisters()
 		{
-			Registers = new List<RegisterKey>();
+			ConstantBuffers = new List<int>();
+			IndexableTemps = new List<int>();
 		}
 	}
 }

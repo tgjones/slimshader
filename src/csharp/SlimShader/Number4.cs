@@ -209,5 +209,11 @@ namespace SlimShader
 			if (mask.HasFlag(ComponentMask.W))
 				Number3 = value.Number3;
 		}
+
+		public override string ToString()
+		{
+			return string.Format("{0},{1},{2},{3}",
+				Number0, Number1, Number2, Number3);
+		}
 	}
 }

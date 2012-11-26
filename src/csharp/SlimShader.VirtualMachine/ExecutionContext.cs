@@ -6,27 +6,65 @@ using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine
 {
-	public class VirtualMachineThread
+	public class ExecutionContext
 	{
-		private readonly int _contextIndex;
-		private readonly RegisterSet _registers;
+		public Number4[][] ConstantBuffers { get; private set; }
 
-		public int PerThreadProgramCounter { get; private set; }
+		public Number4[] Inputs { get; private set; }
+		public Number4[] Outputs { get; private set; }
 
-		public RegisterSet Registers
+		public Number4[] Temps { get; private set; }
+		public Number4[][] IndexableTemps { get; private set; }
+
+		public ExecutionContext(RequiredRegisters requiredRegisters)
 		{
-			get { return _registers; }
+			ConstantBuffers = new Number4[requiredRegisters.ConstantBuffers.Count][];
+			for (int i = 0; i < requiredRegisters.ConstantBuffers.Count; i++)
+				ConstantBuffers[i] = new Number4[requiredRegisters.ConstantBuffers[i]];
+
+			Inputs = new Number4[requiredRegisters.Inputs];
+			Outputs = new Number4[requiredRegisters.Outputs];
+
+			Temps = new Number4[requiredRegisters.Temps];
+
+			IndexableTemps = new Number4[requiredRegisters.IndexableTemps.Count][];
+			for (int i = 0; i < requiredRegisters.IndexableTemps.Count; i++)
+				IndexableTemps[i] = new Number4[requiredRegisters.IndexableTemps[i]];
 		}
 
-		public VirtualMachineThread(int contextIndex, RequiredRegisters requiredRegisters)
+		public void GetRegister(OperandType operandType, RegisterIndex registerIndex, out Number4[] register, out int index)
 		{
-			_contextIndex = contextIndex;
-			_registers = new RegisterSet(requiredRegisters);
+			switch (operandType)
+			{
+				case OperandType.ConstantBuffer:
+					register = ConstantBuffers[registerIndex.Index2D_0];
+					index = registerIndex.Index2D_1;
+					return;
+				case OperandType.Input:
+					register = Inputs;
+					index = registerIndex.Index1D;
+					return;
+				case OperandType.Output:
+					register = Outputs;
+					index = registerIndex.Index1D;
+					return;
+				case OperandType.Temp:
+					register = Temps;
+					index = registerIndex.Index1D;
+					return;
+				case OperandType.IndexableTemp:
+					register = IndexableTemps[registerIndex.Index2D_0];
+					index = registerIndex.Index2D_1;
+					return;
+				default:
+					throw new ArgumentException("Unsupported operand type: " + operandType);
+			}
 		}
 
-		private Register GetRegister(Operand operand)
+		private void GetRegister(Operand operand, out Number4[] register, out int index)
 		{
-			return _registers[new RegisterKey(operand.OperandType, GetRegisterIndex(operand))];
+			var registerIndex = GetRegisterIndex(operand);
+			GetRegister(operand.OperandType, registerIndex, out register, out index);
 		}
 
 		/// <summary>
@@ -43,8 +81,10 @@ namespace SlimShader.VirtualMachine
 				case OperandType.IndexableTemp:
 				case OperandType.Input:
 				case OperandType.Temp:
-					var numberRegister = (NumberRegister) GetRegister(operand);
-					var swizzledNumber = OperandUtility.ApplyOperandSelectionMode(numberRegister.Value, operand);
+					Number4[] register;
+					int index;
+					GetRegister(operand, out register, out index);
+					var swizzledNumber = OperandUtility.ApplyOperandSelectionMode(register[index], operand);
 					return OperandUtility.ApplyOperandModifier(swizzledNumber, operand.Modifier);
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
@@ -84,37 +124,15 @@ namespace SlimShader.VirtualMachine
 
 		private void SetRegisterValue(Operand operand, Number4 value)
 		{
-			var register = (NumberRegister) GetRegister(operand);
-			register.Value.WriteMaskedValue(value, operand.ComponentMask);
+			Number4[] register;
+			int index;
+			GetRegister(operand, out register, out index);
+			register[index].WriteMaskedValue(value, operand.ComponentMask);
 		}
 
 		public void ExecuteAdd(InstructionToken token)
 		{
 			Execute(token, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, token.Saturate));
-		}
-
-		public bool ExecuteBreakC(InstructionToken token)
-		{
-			var src = GetOperandValue(token.Operands[0]);
-			bool shouldBreak; 
-			switch (token.TestBoolean)
-			{
-				case InstructionTestBoolean.Zero:
-					shouldBreak = src.AllZero;
-					break;
-				case InstructionTestBoolean.NonZero:
-					shouldBreak = src.AnyNonZero;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-			if (shouldBreak)
-			{
-				PerThreadProgramCounter += token.LinkedInstructionOffset;
-				return true;
-			}
-			PerThreadProgramCounter++;
-			return false;
 		}
 
 		public void ExecuteDiv(InstructionToken token)
@@ -179,11 +197,6 @@ namespace SlimShader.VirtualMachine
 			Execute(token, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000));
 		}
 
-		public void ExecuteLoop(InstructionToken token)
-		{
-			PerThreadProgramCounter++;
-		}
-
 		public void ExecuteLt(InstructionToken token)
 		{
 			Execute(token, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000));
@@ -240,8 +253,6 @@ namespace SlimShader.VirtualMachine
 				Number2 = callback(src.Number2),
 				Number3 = callback(src.Number3)
 			});
-
-			PerThreadProgramCounter++;
 		}
 
 		private void Execute(InstructionToken token, Func<Number, Number, Number> callback)
@@ -256,8 +267,6 @@ namespace SlimShader.VirtualMachine
 				Number2 = callback(src0.Number2, src1.Number2),
 				Number3 = callback(src0.Number3, src1.Number3)
 			});
-
-			PerThreadProgramCounter++;
 		}
 
 		private void Execute(InstructionToken token, Func<Number, Number, Number, Number> callback)
@@ -273,8 +282,6 @@ namespace SlimShader.VirtualMachine
 				Number2 = callback(src0.Number2, src1.Number2, src2.Number2),
 				Number3 = callback(src0.Number3, src1.Number3, src2.Number3)
 			});
-
-			PerThreadProgramCounter++;
 		}
 
 		private void Execute(InstructionToken token, Func<Number4, Number4, Number> callback)
@@ -290,8 +297,6 @@ namespace SlimShader.VirtualMachine
 				Number2 = result,
 				Number3 = result
 			});
-
-			PerThreadProgramCounter++;
 		}
 	}
 }
