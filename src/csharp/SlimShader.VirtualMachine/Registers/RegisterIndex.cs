@@ -5,13 +5,13 @@ namespace SlimShader.VirtualMachine.Registers
 	[StructLayout(LayoutKind.Explicit)]
 	public struct RegisterIndex
 	{
-		[FieldOffset(0)]
+		[FieldOffset(2)]
 		public ushort Index1D;
 
 		[FieldOffset(0)]
 		public ushort Index2D_0;
 
-		[FieldOffset(16)]
+		[FieldOffset(2)]
 		public ushort Index2D_1;
 
 		public RegisterIndex(ushort index1D)

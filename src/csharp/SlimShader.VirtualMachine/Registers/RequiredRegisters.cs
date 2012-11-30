@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 
@@ -6,6 +7,7 @@ namespace SlimShader.VirtualMachine.Registers
 {
 	public class RequiredRegisters
 	{
+		public int NumPrimitives { get; private set; }
 		public int Inputs { get; private set; }
 		public int Outputs { get; private set; }
 		public int Resources { get; private set; }
@@ -19,6 +21,8 @@ namespace SlimShader.VirtualMachine.Registers
 			var result = new RequiredRegisters();
 
 			foreach (var declarationToken in shader.DeclarationTokens)
+			{
+				var indices = declarationToken.Operand.Indices;
 				switch (declarationToken.Header.OpcodeType)
 				{
 					case OpcodeType.DclInput:
@@ -27,35 +31,43 @@ namespace SlimShader.VirtualMachine.Registers
 					case OpcodeType.DclInputPsSiv:
 					case OpcodeType.DclInputSgv:
 					case OpcodeType.DclInputSiv:
-						result.Inputs = (int) declarationToken.Operand.Indices[0].Value + 1;
+						if (indices.Length == 2)
+						{
+							result.NumPrimitives = (int) indices[0].Value + 1;
+							result.Inputs = Math.Max(result.Inputs, (int) indices[1].Value + 1);
+						}
+						else
+						{
+							result.NumPrimitives = 1;
+							result.Inputs = (int) indices[0].Value + 1;
+						}
 						break;
 					case OpcodeType.DclOutput:
 					case OpcodeType.DclOutputSgv:
 					case OpcodeType.DclOutputSiv:
-						result.Outputs = (int) declarationToken.Operand.Indices[0].Value + 1;
+						result.Outputs = (int)indices[0].Value + 1;
 						break;
 					case OpcodeType.DclResource:
-						result.Resources = (int) declarationToken.Operand.Indices[0].Value + 1;
+						result.Resources = (int)indices[0].Value + 1;
 						break;
 					case OpcodeType.DclSampler:
-						result.Samplers = (int) declarationToken.Operand.Indices[0].Value + 1;
+						result.Samplers = (int)indices[0].Value + 1;
 						break;
 					case OpcodeType.DclConstantBuffer:
-						while (result.ConstantBuffers.Count < (int) declarationToken.Operand.Indices[0].Value + 1)
+						while (result.ConstantBuffers.Count < (int) indices[0].Value + 1)
 							result.ConstantBuffers.Add(0);
-						result.ConstantBuffers[(int) declarationToken.Operand.Indices[0].Value] =
-							(int) declarationToken.Operand.Indices[1].Value + 1;
+						result.ConstantBuffers[(int)indices[0].Value] = (int) indices[1].Value + 1;
 						break;
 					case OpcodeType.DclIndexableTemp:
-						while (result.IndexableTemps.Count < (int) declarationToken.Operand.Indices[0].Value + 1)
+						while (result.IndexableTemps.Count < (int)indices[0].Value + 1)
 							result.IndexableTemps.Add(0);
-						result.IndexableTemps[(int) declarationToken.Operand.Indices[0].Value] =
-							(int) declarationToken.Operand.Indices[1].Value + 1;
+						result.IndexableTemps[(int)indices[0].Value] = (int)indices[1].Value + 1;
 						break;
 					case OpcodeType.DclTemps:
 						result.Temps = (int) ((TempRegisterDeclarationToken) declarationToken).TempCount;
 						break;
 				}
+			}
 
 			return result;
 		}

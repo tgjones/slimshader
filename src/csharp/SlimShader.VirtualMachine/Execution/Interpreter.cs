@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Registers;
@@ -24,7 +25,7 @@ namespace SlimShader.VirtualMachine.Execution
 		/// http://www.istc-cc.cmu.edu/publications/papers/2011/SIMD.pdf
 		/// http://hal.archives-ouvertes.fr/docs/00/62/26/54/PDF/collange_sympa2011_en.pdf
 		/// </summary>
-		public void Execute()
+		public IEnumerable<ExecutionResponse> Execute()
 		{
 			for (int programCounter = 0; programCounter < _instructions.Length; programCounter++)
 			{
@@ -33,6 +34,10 @@ namespace SlimShader.VirtualMachine.Execution
 				{
 					case OpcodeType.Add:
 						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, token.Saturate)));
+						break;
+					case OpcodeType.Cut :
+					case OpcodeType.CutStream:
+						yield return ExecutionResponse.Cut;
 						break;
 					case OpcodeType.Div:
 						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(src0.Float / src1.Float, token.Saturate)));
@@ -56,6 +61,10 @@ namespace SlimShader.VirtualMachine.Execution
 								+ src0.Number2.Float * src1.Number2.Float
 								+ src0.Number3.Float * src1.Number3.Float,
 							token.Saturate)));
+						break;
+					case OpcodeType.Emit:
+					case OpcodeType.EmitStream :
+						yield return ExecutionResponse.Emit;
 						break;
 					case OpcodeType.EndSwitch:
 						break;
@@ -115,6 +124,7 @@ namespace SlimShader.VirtualMachine.Execution
 						throw new InvalidOperationException(token.Header.OpcodeType + " is not yet supported.");
 				}
 			}
+			yield return ExecutionResponse.Finished;
 		}
 
 		private void Execute(Action<ExecutionContext> callback)
@@ -159,7 +169,7 @@ namespace SlimShader.VirtualMachine.Execution
 			switch (operand.IndexDimension)
 			{
 				case OperandIndexDimension._1D:
-					result.Index2D_0 = EvaluateOperandIndex(context, operand.Indices[0]);
+					result.Index1D = EvaluateOperandIndex(context, operand.Indices[0]);
 					break;
 				case OperandIndexDimension._2D:
 					result.Index2D_0 = EvaluateOperandIndex(context, operand.Indices[0]);

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Execution;
@@ -15,6 +16,11 @@ namespace SlimShader.VirtualMachine
 
 		private readonly RequiredRegisters _requiredRegisters;
 
+		public int NumPrimitives
+		{
+			get { return _requiredRegisters.NumPrimitives; }
+		}
+
 		public VirtualMachine(BytecodeContainer bytecode, int numContexts)
 		{
 			_bytecode = bytecode;
@@ -26,12 +32,17 @@ namespace SlimShader.VirtualMachine
 			_executionContexts = new ExecutionContext[numContexts];
 			for (int i = 0; i < _executionContexts.Length; i++)
 				_executionContexts[i] = new ExecutionContext(_requiredRegisters);
-			_shaderExecutor = new Interpreter(_executionContexts, instructions);
+			_shaderExecutor = new Interpreter(_executionContexts, instructions); 
+		}
+
+		public IEnumerable<ExecutionResponse> ExecuteMultiple()
+		{
+			return _shaderExecutor.Execute();
 		}
 
 		public void Execute()
 		{
-			_shaderExecutor.Execute();
+			ExecuteMultiple().ToList();
 		}
 
 		public Number4 GetRegister(int contextIndex, OperandType registerType, RegisterIndex registerIndex)

@@ -8,7 +8,7 @@ namespace SlimShader.VirtualMachine
 	{
 		public Number4[][] ConstantBuffers { get; private set; }
 
-		public Number4[] Inputs { get; private set; }
+		public Number4[][] Inputs { get; private set; }
 		public Number4[] Outputs { get; private set; }
 
 		public Number4[] Temps { get; private set; }
@@ -20,7 +20,10 @@ namespace SlimShader.VirtualMachine
 			for (int i = 0; i < requiredRegisters.ConstantBuffers.Count; i++)
 				ConstantBuffers[i] = new Number4[requiredRegisters.ConstantBuffers[i]];
 
-			Inputs = new Number4[requiredRegisters.Inputs];
+			Inputs = new Number4[requiredRegisters.NumPrimitives][];
+			for (int i = 0; i < requiredRegisters.NumPrimitives; i++)
+				Inputs[i] = new Number4[requiredRegisters.Inputs];
+
 			Outputs = new Number4[requiredRegisters.Outputs];
 
 			Temps = new Number4[requiredRegisters.Temps];
@@ -39,8 +42,9 @@ namespace SlimShader.VirtualMachine
 					index = registerIndex.Index2D_1;
 					return;
 				case OperandType.Input:
-					register = Inputs;
-					index = registerIndex.Index1D;
+					// Only GS requires 2-dimensional inputs, but for simplicity we always use a 2-dimensional input array.
+					register = Inputs[registerIndex.Index2D_0];
+					index = registerIndex.Index2D_1;
 					return;
 				case OperandType.Output:
 					register = Outputs;

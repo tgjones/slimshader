@@ -1,7 +1,9 @@
-﻿namespace SlimShader.VirtualMachine.Execution
+﻿using System.Collections.Generic;
+
+namespace SlimShader.VirtualMachine.Execution
 {
 	public interface IShaderExecutor
 	{
-		void Execute();
+		IEnumerable<ExecutionResponse> Execute();
 	}
 }

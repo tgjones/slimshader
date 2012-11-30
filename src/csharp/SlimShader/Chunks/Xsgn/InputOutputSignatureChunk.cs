@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SlimShader.Chunks.Common;
@@ -9,11 +8,11 @@ namespace SlimShader.Chunks.Xsgn
 {
 	public abstract class InputOutputSignatureChunk : BytecodeChunk
 	{
-		public List<SignatureParameterDescription> Parameters { get; private set; }
+		public SignatureParameterDescriptionCollection Parameters { get; private set; }
 
 		protected InputOutputSignatureChunk()
 		{
-			Parameters = new List<SignatureParameterDescription>();
+			Parameters = new SignatureParameterDescriptionCollection();
 		}
 
 		public static InputOutputSignatureChunk Parse(BytecodeReader reader, ChunkType chunkType,

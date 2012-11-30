@@ -8,7 +8,7 @@ namespace SlimShader
 	/// <summary>
 	/// Represents four Numbers, or two doubles.
 	/// </summary>
-	[StructLayout(LayoutKind.Explicit, Size = Number.SizeInBytes * 4)]
+	[StructLayout(LayoutKind.Explicit, Size = Number.SizeInBytes * 4 + 4)]
 	public struct Number4
 	{
 		public static Number4 Abs(Number4 original)
@@ -76,7 +76,7 @@ namespace SlimShader
 		[FieldOffset(sizeof(double))]
 		public double Double1;
 
-		[FieldOffset(Number.SizeInBytes * 3)]
+		[FieldOffset(Number.SizeInBytes * 4)]
 		public Number4Type Type;
 
 		public bool AllZero
