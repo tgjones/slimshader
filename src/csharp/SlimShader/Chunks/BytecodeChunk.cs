@@ -29,6 +29,7 @@ namespace SlimShader.Chunks
 			{ "STAT".ToFourCc(), ChunkType.Stat }
 		};
 
+		public BytecodeContainer Container { get; private set; }
 		public uint FourCc { get; private set; }
 		public ChunkType ChunkType { get; private set; }
 		public uint ChunkSize { get; private set; }
@@ -82,6 +83,7 @@ namespace SlimShader.Chunks
 					throw new ParseException("Invalid chunk type: " + chunkType);
 			}
 
+			chunk.Container = container;
 			chunk.FourCc = fourCc;
 			chunk.ChunkSize = chunkSize;
 			chunk.ChunkType = chunkType;

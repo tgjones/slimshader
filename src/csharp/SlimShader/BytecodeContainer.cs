@@ -14,6 +14,13 @@ namespace SlimShader
 {
 	public class BytecodeContainer
 	{
+		private readonly byte[] _rawBytes;
+
+		public byte[] RawBytes
+		{
+			get { return _rawBytes; }
+		}
+
 		public BytecodeContainerHeader Header { get; private set; }
 		public List<BytecodeChunk> Chunks { get; private set; }
 
@@ -57,30 +64,26 @@ namespace SlimShader
 			get { return Chunks.OfType<InterfacesChunk>().SingleOrDefault(); }
 		}
 
-		public BytecodeContainer()
+		public BytecodeContainer(byte[] rawBytes)
 		{
+			_rawBytes = rawBytes;
 			Chunks = new List<BytecodeChunk>();
+
+			var reader = new BytecodeReader(rawBytes, 0, rawBytes.Length);
+
+			Header = BytecodeContainerHeader.Parse(reader);
+
+			for (uint i = 0; i < Header.ChunkCount; i++)
+			{
+				uint chunkOffset = reader.ReadUInt32();
+				var chunkReader = reader.CopyAtOffset((int)chunkOffset);
+				Chunks.Add(BytecodeChunk.ParseChunk(chunkReader, this));
+			}
 		}
 
 		public static BytecodeContainer Parse(byte[] bytes)
 		{
-			return Parse(new BytecodeReader(bytes, 0, bytes.Length));
-		}
-
-		public static BytecodeContainer Parse(BytecodeReader reader)
-		{
-			var container = new BytecodeContainer();
-
-			container.Header = BytecodeContainerHeader.Parse(reader);
-
-			for (uint i = 0; i < container.Header.ChunkCount; i++)
-			{
-				uint chunkOffset = reader.ReadUInt32();
-				var chunkReader = reader.CopyAtOffset((int) chunkOffset);
-				container.Chunks.Add(BytecodeChunk.ParseChunk(chunkReader, container));
-			}
-
-			return container;
+			return new BytecodeContainer(bytes);
 		}
 
 		public override string ToString()
@@ -129,6 +132,11 @@ namespace SlimShader
 			sb.AppendFormat("// Approximately {0} instruction slots used", Statistics.InstructionCount);
 
 			return sb.ToString();
+		}
+
+		public static implicit operator byte[](BytecodeContainer container)
+		{
+			return container._rawBytes;
 		}
 	}
 }
