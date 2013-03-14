@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Resources;
 using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Execution
@@ -111,6 +112,19 @@ namespace SlimShader.VirtualMachine.Execution
 					case OpcodeType.Rsq:
 						Execute(t => Execute(t, token, src => Number.FromFloat((float)(1.0f / Math.Sqrt(src.Float)), token.Saturate)));
 						break;
+					case OpcodeType.Sample:
+						Execute(t =>
+						{
+							var srcAddress = GetOperandValue(t, token.Operands[1]);
+							var srcResource = GetTexture(t, token.Operands[2]);
+							var srcSampler = GetSampler(t, token.Operands[3]);
+
+							//var result = srcResource.Sample(srcSampler, srcAddress);
+							var result = new Number4();
+
+							SetRegisterValue(t, token.Operands[0], result);
+						});
+						break;
 					case OpcodeType.Sqrt:
 						Execute(t => Execute(t, token, src => Number.FromFloat((float)Math.Sqrt(src.Float), token.Saturate)));
 						break;
@@ -158,6 +172,28 @@ namespace SlimShader.VirtualMachine.Execution
 					GetRegister(context, operand, out register, out index);
 					var swizzledNumber = OperandUtility.ApplyOperandSelectionMode(register[index], operand);
 					return OperandUtility.ApplyOperandModifier(swizzledNumber, operand.Modifier);
+				default:
+					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
+			}
+		}
+
+		private ITexture GetTexture(ExecutionContext context, Operand operand)
+		{
+			switch (operand.OperandType)
+			{
+				case OperandType.Resource:
+					return context.Textures[GetRegisterIndex(context, operand).Index1D];
+				default:
+					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
+			}
+		}
+
+		private ISampler GetSampler(ExecutionContext context, Operand operand)
+		{
+			switch (operand.OperandType)
+			{
+				case OperandType.Sampler:
+					return context.Samplers[GetRegisterIndex(context, operand).Index1D];
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
 			}

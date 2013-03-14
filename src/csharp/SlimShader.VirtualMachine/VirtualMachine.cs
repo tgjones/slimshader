@@ -4,6 +4,7 @@ using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Execution;
 using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Resources;
 
 namespace SlimShader.VirtualMachine
 {
@@ -59,6 +60,16 @@ namespace SlimShader.VirtualMachine
 			int index;
 			_executionContexts[contextIndex].GetRegister(registerType, registerIndex, out register, out index);
 			register[index] = value;
+		}
+
+		public void SetTexture(int contextIndex, RegisterIndex registerIndex, ITexture texture)
+		{
+			_executionContexts[contextIndex].Textures[registerIndex.Index1D] = texture;
+		}
+
+		public void SetSampler(int contextIndex, RegisterIndex registerIndex, ISampler sampler)
+		{
+			_executionContexts[contextIndex].Samplers[registerIndex.Index1D] = sampler;
 		}
 	}
 }

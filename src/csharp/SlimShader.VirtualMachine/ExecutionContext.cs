@@ -1,6 +1,7 @@
 using System;
 using SlimShader.Chunks.Shex;
 using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Resources;
 
 namespace SlimShader.VirtualMachine
 {
@@ -13,6 +14,9 @@ namespace SlimShader.VirtualMachine
 
 		public Number4[] Temps { get; private set; }
 		public Number4[][] IndexableTemps { get; private set; }
+
+		public ITexture[] Textures { get; private set; }
+		public ISampler[] Samplers { get; private set; }
 
 		public ExecutionContext(RequiredRegisters requiredRegisters)
 		{
@@ -31,6 +35,9 @@ namespace SlimShader.VirtualMachine
 			IndexableTemps = new Number4[requiredRegisters.IndexableTemps.Count][];
 			for (int i = 0; i < requiredRegisters.IndexableTemps.Count; i++)
 				IndexableTemps[i] = new Number4[requiredRegisters.IndexableTemps[i]];
+
+			Textures = new ITexture[requiredRegisters.Resources];
+			Samplers = new ISampler[requiredRegisters.Samplers];
 		}
 
 		public void GetRegister(OperandType operandType, RegisterIndex registerIndex, out Number4[] register, out int index)

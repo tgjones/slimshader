@@ -48,6 +48,8 @@
     <Compile Include="Registers\RegisterIndexType.cs" />
     <Compile Include="Registers\RegisterKey.cs" />
     <Compile Include="Registers\RequiredRegisters.cs" />
+    <Compile Include="Resources\ISampler.cs" />
+    <Compile Include="Resources\ITexture.cs" />
     <Compile Include="Resources\UnorderedAccessView.cs" />
     <Compile Include="Util\OperandUtility.cs" />
     <Compile Include="VirtualMachine.cs" />
