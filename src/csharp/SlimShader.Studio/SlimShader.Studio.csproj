@@ -49,6 +49,24 @@
     <Reference Include="Gemini">
       <HintPath>..\packages\GeminiWpf.0.1.2\lib\net40\Gemini.dll</HintPath>
     </Reference>
+    <Reference Include="GraphSharp">
+      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphSharp.Controls">
+      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -75,6 +93,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFExtensions">
+      <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="WPFToolkit.Extended">
       <HintPath>..\packages\Extended.Wpf.Toolkit.1.7.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
     </Reference>
@@ -90,6 +111,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\ActiveDocumentChangedEventArgs.cs" />
+    <Compile Include="Framework\ExtendedShell.cs" />
+    <Compile Include="Framework\IExtendedShell.cs" />
+    <Compile Include="Framework\StringEx.cs" />
+    <Compile Include="Modules\ControlFlowViewer\Models\CfgEdge.cs" />
+    <Compile Include="Modules\ControlFlowViewer\Models\CfgGraph.cs" />
+    <Compile Include="Modules\ControlFlowViewer\Controls\CfgGraphLayout.cs" />
+    <Compile Include="Modules\ControlFlowViewer\Module.cs" />
+    <Compile Include="Modules\ControlFlowViewer\ViewModels\BasicBlockViewModel.cs" />
+    <Compile Include="Modules\ControlFlowViewer\ViewModels\ControlFlowViewerViewModel.cs" />
+    <Compile Include="Modules\ControlFlowViewer\Views\ControlFlowViewerView.xaml.cs">
+      <DependentUpon>ControlFlowViewerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\ShaderViewer\EditorProvider.cs" />
     <Compile Include="Modules\ShaderViewer\ViewModels\EditorViewModel.cs" />
     <Compile Include="Modules\ShaderViewer\Views\EditorView.xaml.cs">
@@ -121,12 +155,20 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Modules\ControlFlowViewer\Views\ControlFlowViewerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Modules\ShaderViewer\Views\EditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SlimShader.VirtualMachine\SlimShader.VirtualMachine.csproj">
+      <Project>{167769B9-A10E-4DFD-B09F-43BFEF4EB673}</Project>
+      <Name>SlimShader.VirtualMachine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SlimShader\SlimShader.csproj">
       <Project>{d75528f5-54f9-4e31-94f6-03c194f74cf2}</Project>
       <Name>SlimShader</Name>
@@ -135,6 +177,7 @@
   <ItemGroup>
     <Resource Include="Resources\AppIcon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

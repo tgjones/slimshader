@@ -2,6 +2,7 @@
 using System.IO;
 using Gemini.Framework;
 using Gemini.Framework.Services;
+using SlimShader.Studio.Framework;
 
 namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 {
@@ -9,6 +10,7 @@ namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 	public class EditorViewModel : Document
 	{
 		private readonly IPropertyGrid _propertyGrid;
+		private readonly IExtendedShell _extendedShell;
 
 		private string _path;
 		private string _fileName;
@@ -18,6 +20,11 @@ namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 		public override string DisplayName
 		{
 			get { return _fileName; }
+		}
+
+		public BytecodeContainer BytecodeContainer
+		{
+			get { return _bytecodeContainer; }
 		}
 
 		public string DisassembledCode
@@ -30,8 +37,9 @@ namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 			}
 		}
 
-		public EditorViewModel(IPropertyGrid propertyGrid)
+		public EditorViewModel(IPropertyGrid propertyGrid, IExtendedShell extendedShell)
 		{
+			_extendedShell = extendedShell;
 			_propertyGrid = propertyGrid;
 		}
 
@@ -51,6 +59,7 @@ namespace SlimShader.Studio.Modules.ShaderViewer.ViewModels
 
 		protected override void OnActivate()
 		{
+			_extendedShell.RaiseActiveDocumentChanged(this);
 			_propertyGrid.SelectedObject = _bytecodeContainer.Statistics;
 			base.OnActivate();
 		}

@@ -17,7 +17,7 @@
 
 		public override string ToString()
 		{
-			return base.ToString() + ". BranchTarget: " + BranchTarget.InstructionToken + ". BranchType: " + BranchType;
+			return "*branch* " + BranchType.ToString().ToLower();
 		}
 	}
 }

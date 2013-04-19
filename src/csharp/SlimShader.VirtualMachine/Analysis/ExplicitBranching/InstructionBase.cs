@@ -15,10 +15,5 @@ namespace SlimShader.VirtualMachine.Analysis.ExplicitBranching
 		{
 			return false;
 		}
-
-		public override string ToString()
-		{
-			return GetType().Name + ". " + InstructionToken;
-		}
 	}
 }

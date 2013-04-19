@@ -2,7 +2,9 @@
 using System.Reflection;
 using Caliburn.Micro;
 using Gemini.Framework;
+using Gemini.Framework.Results;
 using Gemini.Framework.Services;
+using SlimShader.Studio.Modules.ControlFlowViewer.ViewModels;
 
 namespace SlimShader.Studio.Modules.Startup
 {
@@ -22,6 +24,7 @@ namespace SlimShader.Studio.Modules.Startup
 			Shell.Title = "SlimShader Studio";
 			Shell.Icon = _resourceManager.GetBitmap("Resources/Icon.ico",
 				Assembly.GetExecutingAssembly().GetAssemblyName());
+			Shell.ShowTool(IoC.Get<ControlFlowViewerViewModel>());
 		}
 	}
 }
