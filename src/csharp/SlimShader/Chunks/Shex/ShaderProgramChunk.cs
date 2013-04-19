@@ -19,6 +19,11 @@ namespace SlimShader.Chunks.Shex
 			get { return Tokens.OfType<DeclarationToken>(); }
 		}
 
+		public IEnumerable<InstructionToken> InstructionTokens
+		{
+			get { return Tokens.OfType<InstructionToken>(); }
+		}
+
 		public RegisterCounts RegisterCounts
 		{
 			get { return new RegisterCounts(DeclarationTokens); }

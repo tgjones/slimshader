@@ -40,6 +40,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\BasicBlock.cs" />
+    <Compile Include="Analysis\ControlFlowGraph.cs" />
+    <Compile Include="Analysis\ExplicitBranching\BranchingInstruction.cs" />
+    <Compile Include="Analysis\ExplicitBranching\BranchType.cs" />
+    <Compile Include="Analysis\ExplicitBranching\ExplicitBranchingRewriter.cs" />
+    <Compile Include="Analysis\ExplicitBranching\InstructionBase.cs" />
+    <Compile Include="Analysis\ExplicitBranching\NormalInstruction.cs" />
     <Compile Include="ExecutionResponse.cs" />
     <Compile Include="Execution\Interpreter.cs" />
     <Compile Include="Execution\IShaderExecutor.cs" />

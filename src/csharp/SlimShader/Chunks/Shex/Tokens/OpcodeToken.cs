@@ -9,6 +9,11 @@
 			get { return Header.OpcodeType.GetDescription(); }
 		}
 
+		protected OpcodeToken()
+		{
+			Header = new OpcodeHeader();
+		}
+
 		public override string ToString()
 		{
 			return TypeDescription;
