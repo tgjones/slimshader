@@ -55,5 +55,50 @@ namespace SlimShader.VirtualMachine.Tests.Analysis
 			Assert.That(controlFlowGraph.BasicBlocks[1].Instructions, Has.Count.EqualTo(1));
 			Assert.That(controlFlowGraph.BasicBlocks[1].Successors, Is.Empty);
 		}
+
+		[Test]
+		public void CanComputePostDominators()
+		{
+			// Arrange.
+			// A
+			// |\
+			// | \
+			// B  C
+			// |   \
+			// |    \
+			// D__>__E
+			// |    /
+			// |   /
+			// |  /
+			// | /
+			// |/
+			// F
+			var blockA = new BasicBlock(0, null);
+			var blockB = new BasicBlock(1, null);
+			var blockC = new BasicBlock(2, null);
+			var blockD = new BasicBlock(3, null);
+			var blockE = new BasicBlock(4, null);
+			var blockF = new BasicBlock(5, null);
+			blockA.Successors.AddRange(new[] { blockB, blockC });
+			blockB.Successors.AddRange(new[] { blockD });
+			blockC.Successors.AddRange(new[] { blockE });
+			blockD.Successors.AddRange(new[] { blockE, blockF });
+			blockE.Successors.AddRange(new[] { blockF });
+			var controlFlowGraph = new ControlFlowGraph
+			{
+				BasicBlocks = { blockA, blockB, blockC, blockD, blockE, blockF }
+			};
+
+			// Act.
+			controlFlowGraph.ComputePostDominators();
+
+			// Assert.
+			Assert.That(blockA.ImmediatePostDominator, Is.EqualTo(blockF));
+			Assert.That(blockB.ImmediatePostDominator, Is.EqualTo(blockD));
+			Assert.That(blockC.ImmediatePostDominator, Is.EqualTo(blockE));
+			Assert.That(blockD.ImmediatePostDominator, Is.EqualTo(blockF));
+			Assert.That(blockE.ImmediatePostDominator, Is.EqualTo(blockF));
+			Assert.That(blockF.ImmediatePostDominator, Is.Null);
+		}
 	}
 }

@@ -70,9 +70,46 @@ namespace SlimShader.VirtualMachine.Analysis
 
 		public List<BasicBlock> BasicBlocks { get; private set; }
 
-		private ControlFlowGraph()
+		public ControlFlowGraph()
 		{
 			BasicBlocks = new List<BasicBlock>();
+		}
+
+		public void ComputePostDominators()
+		{
+			// Algorithm adapted from Wikipedia - http://en.wikipedia.org/wiki/Dominator_(graph_theory)
+
+			// TODO: Ensure there is a single exit node.
+
+			// Post-dominator of the exit node is the exit node itself.
+			var exitBlock = BasicBlocks.Single(x => !x.Successors.Any());
+			exitBlock.PostDominators.Add(exitBlock);
+
+			// For all other nodes, set all nodes as the post-dominators.
+			var blocksWithoutExitBlock = BasicBlocks.Where(x => x != exitBlock).ToList();
+			foreach (var block in blocksWithoutExitBlock)
+				block.PostDominators.AddRange(BasicBlocks);
+
+			// Iteratively eliminate nodes that are not post-dominators.
+			bool anyChanges;
+			do
+			{
+				anyChanges = false;
+				foreach (var block in blocksWithoutExitBlock)
+				{
+					var successorPostDominators = block.Successors.First().PostDominators.AsEnumerable();
+					foreach (var successor in block.Successors.Skip(1))
+						successorPostDominators = successorPostDominators.Intersect(successor.PostDominators);
+					var postDominators = successorPostDominators.Union(new[] { block }).ToList();
+
+					if (block.PostDominators.Intersect(postDominators).Count() != block.PostDominators.Count)
+					{
+						block.PostDominators.Clear();
+						block.PostDominators.AddRange(postDominators.OrderBy(x => x.Position));
+						anyChanges = true;
+					}
+				}
+			} while (anyChanges);
 		}
 	}
 }
