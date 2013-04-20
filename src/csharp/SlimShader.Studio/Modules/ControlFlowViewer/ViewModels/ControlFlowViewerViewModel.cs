@@ -56,8 +56,16 @@ namespace SlimShader.Studio.Modules.ControlFlowViewer.ViewModels
 				Graph.AddVertexRange(basicBlockLookup.Values);
 
 				foreach (var basicBlock in cfg.BasicBlocks)
+				{
 					foreach (var successor in basicBlock.Successors)
 						Graph.AddEdge(new CfgEdge(basicBlockLookup[basicBlock], basicBlockLookup[successor]));
+					if (basicBlock.ImmediatePostDominator != null)
+						Graph.AddEdge(new CfgEdge(basicBlockLookup[basicBlock],
+							basicBlockLookup[basicBlock.ImmediatePostDominator])
+						{
+							IsImmediatePostDominatorEdge = true
+						});
+				}
 
 				NotifyOfPropertyChange(() => LayoutAlgorithmType);
 			};

@@ -6,6 +6,7 @@
 			 xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
              xmlns:local="clr-namespace:SlimShader.Studio.Modules.ControlFlowViewer.Controls"
              xmlns:vm="clr-namespace:SlimShader.Studio.Modules.ControlFlowViewer.ViewModels"
+             xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -25,6 +26,13 @@
 				</ItemsControl>
 			</Border>
 		</DataTemplate>
+		<Style TargetType="{x:Type graphsharp:EdgeControl}">
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding IsImmediatePostDominatorEdge}" Value="True">
+					<Setter Property="Foreground" Value="Red"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
 	</UserControl.Resources>
     <Grid>
 		<zoom:ZoomControl  Grid.Row="1" Zoom="0.2" ZoomBoxOpacity="0.5" Background="#ff656565">

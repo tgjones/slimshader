@@ -50,6 +50,8 @@ namespace SlimShader.VirtualMachine.Analysis
 				}
 			}
 
+			result.ComputePostDominators();
+
 			return result;
 		}
 
