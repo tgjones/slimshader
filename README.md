@@ -2,7 +2,8 @@ SlimShader
 ==========
 
 SlimShader is a Direct3D shader bytecode parser for .NET and C++. It is a Portable Class Library (PCL), compatible with
-.NET Framework 4.0+ and .NET for Windows Store apps.
+.NET Framework 4.0+ and .NET for Windows Store apps. This is the repository for the .NET version; the C++ version can be found at
+[tgjones/slimshader-cpp](https://github.com/tgjones/slimshader-cpp).
 
 Usage
 -----
