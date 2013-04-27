@@ -17,5 +17,13 @@ namespace SlimShader.VirtualMachine.Util
 			result.SetAll(true);
 			return result;
 		}
+
+		public static bool Any(this BitArray bitArray)
+		{
+			for (int i = 0; i < bitArray.Length; i++)
+				if (bitArray[i])
+					return true;
+			return false;
+		}
 	}
 }

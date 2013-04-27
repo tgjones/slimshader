@@ -16,7 +16,7 @@ namespace SlimShader.VirtualMachine.Tests
 
 			// Act.
 			vm.Execute();
-
+			
 			// Assert.
 			var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
 			Assert.That(output0.Number0.Float, Is.EqualTo(1.0f));

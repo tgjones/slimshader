@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Execution;
+using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 {
@@ -45,16 +46,8 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 		{
 			divergenceStack.Peek().NextPC = ReconvergencePC;
 			for (int i = 0; i < NextPCs.Count; i++)
-				if (Any(activeMasks[i]))
+				if (activeMasks[i].Any())
 					divergenceStack.Push(NextPCs[i], activeMasks[i], ReconvergencePC);
-		}
-
-		private static bool Any(BitArray bitArray)
-		{
-			for (int i = 0; i < bitArray.Length; i++)
-				if (bitArray[i])
-					return true;
-			return false;
 		}
 	}
 }
