@@ -2,13 +2,16 @@
 using System.Linq;
 using SlimShader.VirtualMachine.Analysis.ExplicitBranching;
 
-namespace SlimShader.VirtualMachine.Analysis
+namespace SlimShader.VirtualMachine.Analysis.ControlFlow
 {
 	public class ControlFlowGraph
 	{
+		private readonly IList<InstructionBase> _allInstructions;
+
 		public static ControlFlowGraph FromInstructions(IEnumerable<InstructionBase> instructions)
 		{
-			var result = new ControlFlowGraph();
+			var instructionsList = instructions.ToList();
+			var result = new ControlFlowGraph(instructionsList);
 
 			// The following algorithm is from "Analyzing Control Flow in Java Bytecode" by Jianjun Zhao.
 			// Determine the basic blocks by finding the set of leaders:
@@ -20,7 +23,6 @@ namespace SlimShader.VirtualMachine.Analysis
 			// Each leader gives rise to a basic block consisting of all instructions up to the next leader
 			// or the end of the bytecode.
 
-			var instructionsList = instructions.ToList();
 			var blockInstructions = new List<InstructionBase>();
 			int position = 0;
 			for (int i = 0; i < instructionsList.Count; i++)
@@ -72,8 +74,14 @@ namespace SlimShader.VirtualMachine.Analysis
 
 		public List<BasicBlock> BasicBlocks { get; private set; }
 
-		public ControlFlowGraph()
+		public IList<InstructionBase> AllInstructions
 		{
+			get { return _allInstructions; }
+		}
+
+		public ControlFlowGraph(IList<InstructionBase> allInstructions)
+		{
+			_allInstructions = allInstructions;
 			BasicBlocks = new List<BasicBlock>();
 		}
 

@@ -2,7 +2,7 @@
 using System.Linq;
 using Caliburn.Micro;
 using SlimShader.Studio.Framework;
-using SlimShader.VirtualMachine.Analysis;
+using SlimShader.VirtualMachine.Analysis.ControlFlow;
 
 namespace SlimShader.Studio.Modules.ControlFlowViewer.ViewModels
 {

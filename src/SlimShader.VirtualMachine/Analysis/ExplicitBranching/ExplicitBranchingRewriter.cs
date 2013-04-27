@@ -13,6 +13,9 @@ namespace SlimShader.VirtualMachine.Analysis.ExplicitBranching
 			{
 				switch (x.Header.OpcodeType)
 				{
+					case OpcodeType.Continue :
+					case OpcodeType.ContinueC :
+						throw new System.NotImplementedException();
 					case OpcodeType.If:
 					case OpcodeType.Loop :
 					case OpcodeType.Switch:

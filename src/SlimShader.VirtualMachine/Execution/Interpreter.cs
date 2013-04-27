@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
+using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
 using SlimShader.VirtualMachine.Registers;
 using SlimShader.VirtualMachine.Resources;
 using SlimShader.VirtualMachine.Util;
@@ -11,12 +13,16 @@ namespace SlimShader.VirtualMachine.Execution
 	public class Interpreter : IShaderExecutor
 	{
 		private readonly ExecutionContext[] _executionContexts;
-		private readonly InstructionToken[] _instructions;
+		private readonly ExecutableInstruction[] _instructions;
+		private readonly BitArray _allZero;
+		private readonly BitArray _allOne;
 
-		public Interpreter(ExecutionContext[] executionContexts, InstructionToken[] instructions)
+		public Interpreter(ExecutionContext[] executionContexts, ExecutableInstruction[] instructions)
 		{
 			_executionContexts = executionContexts;
 			_instructions = instructions;
+			_allZero = new BitArray(executionContexts.Length);
+			_allOne = new BitArray(executionContexts.Length);
 		}
 
 		/// <summary>
@@ -28,115 +34,146 @@ namespace SlimShader.VirtualMachine.Execution
 		/// </summary>
 		public IEnumerable<ExecutionResponse> Execute()
 		{
-			for (int programCounter = 0; programCounter < _instructions.Length; programCounter++)
+			var divergenceStack = new DivergenceStack(_executionContexts.Length);
+			divergenceStack.Push(0, _allOne, -1);
+
+			while (divergenceStack.Peek().NextPC < _instructions.Length)
 			{
-				InstructionToken token = _instructions[programCounter];
-				switch (token.Header.OpcodeType)
-				{
-					case OpcodeType.Add:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, token.Saturate)));
+				var topOfDivergenceStack = divergenceStack.Peek();
+				int pc = topOfDivergenceStack.NextPC;
+				var instruction = _instructions[pc];
+
+				var activeMasks = new List<BitArray>();
+
+				switch (instruction.OpcodeType)
+ 				{
+					case ExecutableOpcodeType.Add:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate)));
 						break;
-					case OpcodeType.Cut :
-					case OpcodeType.CutStream:
+					case ExecutableOpcodeType.BranchC :
+						activeMasks.Add(new BitArray(_executionContexts.Length));
+						activeMasks.Add(new BitArray(_executionContexts.Length));
+						Execute(t =>
+						{
+							var src0 = GetOperandValue(t, instruction.Operands[0]);
+							bool result = TestCondition(ref src0, instruction.TestBoolean);
+							activeMasks[0][t.Index] = result;
+							activeMasks[1][t.Index] = result;
+						});
+						break;
+					case ExecutableOpcodeType.Cut :
+					case ExecutableOpcodeType.CutStream:
 						yield return ExecutionResponse.Cut;
 						break;
-					case OpcodeType.Div:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(src0.Float / src1.Float, token.Saturate)));
+					case ExecutableOpcodeType.Div:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate)));
 						break;
-					case OpcodeType.Dp2:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(
+					case ExecutableOpcodeType.Dp2:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
 							src0.Number0.Float * src1.Number0.Float + src0.Number1.Float * src1.Number1.Float,
-							token.Saturate)));
+							instruction.Saturate)));
 						break;
-					case OpcodeType.Dp3:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(
+					case ExecutableOpcodeType.Dp3:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
 							src0.Number0.Float * src1.Number0.Float
 								+ src0.Number1.Float * src1.Number1.Float
 								+ src0.Number2.Float * src1.Number2.Float,
-							token.Saturate)));
+							instruction.Saturate)));
 						break;
-					case OpcodeType.Dp4:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(
+					case ExecutableOpcodeType.Dp4:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
 							src0.Number0.Float * src1.Number0.Float
 								+ src0.Number1.Float * src1.Number1.Float
 								+ src0.Number2.Float * src1.Number2.Float
 								+ src0.Number3.Float * src1.Number3.Float,
-							token.Saturate)));
+							instruction.Saturate)));
 						break;
-					case OpcodeType.Emit:
-					case OpcodeType.EmitStream :
+					case ExecutableOpcodeType.Emit:
+					case ExecutableOpcodeType.EmitStream :
 						yield return ExecutionResponse.Emit;
 						break;
-					case OpcodeType.EndSwitch:
+					case ExecutableOpcodeType.ILt:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
 						break;
-					case OpcodeType.ILt:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+					case ExecutableOpcodeType.ItoF:
+						Execute(t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate)));
 						break;
-					case OpcodeType.EndLoop:
-						programCounter += token.LinkedInstructionOffset;
+					case ExecutableOpcodeType.FtoI:
+						Execute(t => Execute(t, instruction, src => Number.FromInt(Convert.ToInt32(src.Float))));
 						break;
-					case OpcodeType.ItoF:
-						Execute(t => Execute(t, token, src => Number.FromFloat(Convert.ToSingle(src.Int), token.Saturate)));
+					case ExecutableOpcodeType.FtoU:
+						Execute(t => Execute(t, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
 						break;
-					case OpcodeType.FtoI:
-						Execute(t => Execute(t, token, src => Number.FromInt(Convert.ToInt32(src.Float))));
+					case ExecutableOpcodeType.IAdd:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
 						break;
-					case OpcodeType.FtoU:
-						Execute(t => Execute(t, token, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
+					case ExecutableOpcodeType.IGe:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
 						break;
-					case OpcodeType.IAdd:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
+					case ExecutableOpcodeType.Lt:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
 						break;
-					case OpcodeType.IGe:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+					case ExecutableOpcodeType.Mad:
+						Execute(t => Execute(t, instruction, (src0, src1, src2) => Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate)));
 						break;
-					case OpcodeType.Loop:
+					case ExecutableOpcodeType.Max:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate)));
 						break;
-					case OpcodeType.Lt:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
+					case ExecutableOpcodeType.Mov:
+						Execute(t => Execute(t, instruction, src => src));
 						break;
-					case OpcodeType.Mad:
-						Execute(t => Execute(t, token, (src0, src1, src2) => Number.FromFloat((src0.Float * src1.Float) + src2.Float, token.Saturate)));
+					case ExecutableOpcodeType.Mul:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate)));
 						break;
-					case OpcodeType.Max:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), token.Saturate)));
+					case ExecutableOpcodeType.Ret:
 						break;
-					case OpcodeType.Mov:
-						Execute(t => Execute(t, token, src => src));
+					case ExecutableOpcodeType.Rsq:
+						Execute(t => Execute(t, instruction, src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate)));
 						break;
-					case OpcodeType.Mul:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromFloat(src0.Float * src1.Float, token.Saturate)));
-						break;
-					case OpcodeType.Ret:
-						break;
-					case OpcodeType.Rsq:
-						Execute(t => Execute(t, token, src => Number.FromFloat((float)(1.0f / Math.Sqrt(src.Float)), token.Saturate)));
-						break;
-					case OpcodeType.Sample:
+					case ExecutableOpcodeType.Sample:
 						Execute(t =>
 						{
-							var srcAddress = GetOperandValue(t, token.Operands[1]);
-							var srcResource = GetTexture(t, token.Operands[2]);
-							var srcSampler = GetSampler(t, token.Operands[3]);
+							var srcAddress = GetOperandValue(t, instruction.Operands[1]);
+							var srcResource = GetTexture(t, instruction.Operands[2]);
+							var srcSampler = GetSampler(t, instruction.Operands[3]);
 
 							//var result = srcResource.Sample(srcSampler, srcAddress);
 							var result = new Number4();
 
-							SetRegisterValue(t, token.Operands[0], result);
+							SetRegisterValue(t, instruction.Operands[0], result);
 						});
 						break;
-					case OpcodeType.Sqrt:
-						Execute(t => Execute(t, token, src => Number.FromFloat((float)Math.Sqrt(src.Float), token.Saturate)));
+					case ExecutableOpcodeType.Sqrt:
+						Execute(t => Execute(t, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate)));
 						break;
-					case OpcodeType.Utof:
-						Execute(t => Execute(t, token, src => Number.FromFloat(Convert.ToSingle(src.UInt), token.Saturate)));
+					case ExecutableOpcodeType.Utof:
+						Execute(t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate)));
 						break;
-					case OpcodeType.Xor:
-						Execute(t => Execute(t, token, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
+					case ExecutableOpcodeType.Xor:
+						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
 						break;
 					default:
-						throw new InvalidOperationException(token.Header.OpcodeType + " is not yet supported.");
+						throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
 				}
+
+				// Algorithm from "Dynamic Warp Formation: Exploiting Thread Scheduling for Efficient MIMD Control Flow
+				// on SIMD Graphics Hardware" by Wilson Wai Lun Fung -
+				// https://circle.ubc.ca/bitstream/handle/2429/2268/ubc_2008_fall_fung_wilson_wai_lun.pdf?sequence=1
+				// 
+				// 3 possible cases:
+				// - No Divergence (single next PC)
+				//     => Update the next PC ﬁeld of the top of stack (TOS) entry to
+				//        the next PC of all active threads in this warp.
+				// - Divergence (multiple next PC)
+				//     => Modify the next PC ﬁeld of the TOS entry to the reconvergence point. 
+				//        For each unique next PC of the warp, push a
+				//        new entry onto the stack with next PC ﬁeld being the unique
+				//        next PC and the reconv. PC being the reconvergence point.
+				//        The active mask of each entry denotes the threads branching
+				//        to the next PC value of this entry.
+				// - Reconvergence (next PC = reconv. PC of TOS)
+				//     => Pop TOS entry from the stack.
+				instruction.UpdateDivergenceStack(divergenceStack, activeMasks);
 			}
 			yield return ExecutionResponse.Finished;
 		}
@@ -145,6 +182,19 @@ namespace SlimShader.VirtualMachine.Execution
 		{
 			foreach (var thread in _executionContexts)
 				callback(thread);
+		}
+
+		private static bool TestCondition(ref Number4 number, InstructionTestBoolean testBoolean)
+		{
+			switch (testBoolean)
+			{
+				case InstructionTestBoolean.Zero:
+					return number.AllZero;
+				case InstructionTestBoolean.NonZero:
+					return number.AnyNonZero;
+				default:
+					throw new ArgumentOutOfRangeException("testBoolean");
+			}
 		}
 
 		private void GetRegister(ExecutionContext context, Operand operand, out Number4[] register, out int index)
@@ -238,11 +288,11 @@ namespace SlimShader.VirtualMachine.Execution
 			register[index].WriteMaskedValue(value, operand.ComponentMask);
 		}
 
-		private void Execute(ExecutionContext context, InstructionToken token, Func<Number, Number> callback)
+		private void Execute(ExecutionContext context, ExecutableInstruction instruction, Func<Number, Number> callback)
 		{
-			var src = GetOperandValue(context, token.Operands[1]);
+			var src = GetOperandValue(context, instruction.Operands[1]);
 
-			SetRegisterValue(context, token.Operands[0], new Number4
+			SetRegisterValue(context, instruction.Operands[0], new Number4
 			{
 				Number0 = callback(src.Number0),
 				Number1 = callback(src.Number1),
@@ -251,12 +301,12 @@ namespace SlimShader.VirtualMachine.Execution
 			});
 		}
 
-		private void Execute(ExecutionContext context, InstructionToken token, Func<Number, Number, Number> callback)
+		private void Execute(ExecutionContext context, ExecutableInstruction instruction, Func<Number, Number, Number> callback)
 		{
-			var src0 = GetOperandValue(context, token.Operands[1]);
-			var src1 = GetOperandValue(context, token.Operands[2]);
+			var src0 = GetOperandValue(context, instruction.Operands[1]);
+			var src1 = GetOperandValue(context, instruction.Operands[2]);
 
-			SetRegisterValue(context, token.Operands[0], new Number4
+			SetRegisterValue(context, instruction.Operands[0], new Number4
 			{
 				Number0 = callback(src0.Number0, src1.Number0),
 				Number1 = callback(src0.Number1, src1.Number1),
@@ -265,13 +315,13 @@ namespace SlimShader.VirtualMachine.Execution
 			});
 		}
 
-		private void Execute(ExecutionContext context, InstructionToken token, Func<Number, Number, Number, Number> callback)
+		private void Execute(ExecutionContext context, ExecutableInstruction instruction, Func<Number, Number, Number, Number> callback)
 		{
-			var src0 = GetOperandValue(context, token.Operands[1]);
-			var src1 = GetOperandValue(context, token.Operands[2]);
-			var src2 = GetOperandValue(context, token.Operands[3]);
+			var src0 = GetOperandValue(context, instruction.Operands[1]);
+			var src1 = GetOperandValue(context, instruction.Operands[2]);
+			var src2 = GetOperandValue(context, instruction.Operands[3]);
 
-			SetRegisterValue(context, token.Operands[0], new Number4
+			SetRegisterValue(context, instruction.Operands[0], new Number4
 			{
 				Number0 = callback(src0.Number0, src1.Number0, src2.Number0),
 				Number1 = callback(src0.Number1, src1.Number1, src2.Number1),
@@ -280,13 +330,13 @@ namespace SlimShader.VirtualMachine.Execution
 			});
 		}
 
-		private void Execute(ExecutionContext context, InstructionToken token, Func<Number4, Number4, Number> callback)
+		private void Execute(ExecutionContext context, ExecutableInstruction instruction, Func<Number4, Number4, Number> callback)
 		{
-			var src0 = GetOperandValue(context, token.Operands[1]);
-			var src1 = GetOperandValue(context, token.Operands[2]);
+			var src0 = GetOperandValue(context, instruction.Operands[1]);
+			var src1 = GetOperandValue(context, instruction.Operands[2]);
 			var result = callback(src0, src1);
 
-			SetRegisterValue(context, token.Operands[0], new Number4
+			SetRegisterValue(context, instruction.Operands[0], new Number4
 			{
 				Number0 = result,
 				Number1 = result,

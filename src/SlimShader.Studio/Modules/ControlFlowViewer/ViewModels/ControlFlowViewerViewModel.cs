@@ -4,7 +4,7 @@ using Gemini.Framework;
 using Gemini.Framework.Services;
 using SlimShader.Studio.Framework;
 using SlimShader.Studio.Modules.ControlFlowViewer.Models;
-using SlimShader.VirtualMachine.Analysis;
+using SlimShader.VirtualMachine.Analysis.ControlFlow;
 using SlimShader.VirtualMachine.Analysis.ExplicitBranching;
 
 namespace SlimShader.Studio.Modules.ControlFlowViewer.ViewModels

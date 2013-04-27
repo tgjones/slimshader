@@ -2,7 +2,7 @@
 using System.Linq;
 using SlimShader.VirtualMachine.Analysis.ExplicitBranching;
 
-namespace SlimShader.VirtualMachine.Analysis
+namespace SlimShader.VirtualMachine.Analysis.ControlFlow
 {
 	public class BasicBlock
 	{

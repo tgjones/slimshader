@@ -7,6 +7,8 @@ namespace SlimShader.VirtualMachine
 {
 	public class ExecutionContext
 	{
+		public int Index { get; private set; }
+
 		public Number4[][] ConstantBuffers { get; private set; }
 
 		public Number4[][] Inputs { get; private set; }
@@ -18,8 +20,10 @@ namespace SlimShader.VirtualMachine
 		public ITexture[] Textures { get; private set; }
 		public ISampler[] Samplers { get; private set; }
 
-		public ExecutionContext(RequiredRegisters requiredRegisters)
+		public ExecutionContext(int index, RequiredRegisters requiredRegisters)
 		{
+			Index = index;
+
 			ConstantBuffers = new Number4[requiredRegisters.ConstantBuffers.Count][];
 			for (int i = 0; i < requiredRegisters.ConstantBuffers.Count; i++)
 				ConstantBuffers[i] = new Number4[requiredRegisters.ConstantBuffers[i]];

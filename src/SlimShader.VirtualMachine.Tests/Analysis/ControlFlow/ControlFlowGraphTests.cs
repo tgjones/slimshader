@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using SlimShader.VirtualMachine.Analysis;
+using SlimShader.VirtualMachine.Analysis.ControlFlow;
 using SlimShader.VirtualMachine.Analysis.ExplicitBranching;
 
-namespace SlimShader.VirtualMachine.Tests.Analysis
+namespace SlimShader.VirtualMachine.Tests.Analysis.ControlFlow
 {
 	[TestFixture]
 	public class ControlFlowGraphTests
@@ -84,7 +84,7 @@ namespace SlimShader.VirtualMachine.Tests.Analysis
 			blockC.Successors.AddRange(new[] { blockE });
 			blockD.Successors.AddRange(new[] { blockE, blockF });
 			blockE.Successors.AddRange(new[] { blockF });
-			var controlFlowGraph = new ControlFlowGraph
+			var controlFlowGraph = new ControlFlowGraph(null)
 			{
 				BasicBlocks = { blockA, blockB, blockC, blockD, blockE, blockF }
 			};

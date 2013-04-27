@@ -2,6 +2,10 @@
 using System.Linq;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
+using SlimShader.VirtualMachine.Analysis;
+using SlimShader.VirtualMachine.Analysis.ControlFlow;
+using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
+using SlimShader.VirtualMachine.Analysis.ExplicitBranching;
 using SlimShader.VirtualMachine.Execution;
 using SlimShader.VirtualMachine.Registers;
 using SlimShader.VirtualMachine.Resources;
@@ -26,14 +30,17 @@ namespace SlimShader.VirtualMachine
 		{
 			_bytecode = bytecode;
 
-			var instructions = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
+			var instructionTokens = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
+			var branchingInstructions = ExplicitBranchingRewriter.Rewrite(instructionTokens);
+			var controlFlowGraph = ControlFlowGraph.FromInstructions(branchingInstructions);
+			var executableInstructions = ExecutableInstructionRewriter.Rewrite(controlFlowGraph);
 
 			_requiredRegisters = RequiredRegisters.FromShader(bytecode.Shader);
 
 			_executionContexts = new ExecutionContext[numContexts];
 			for (int i = 0; i < _executionContexts.Length; i++)
-				_executionContexts[i] = new ExecutionContext(_requiredRegisters);
-			_shaderExecutor = new Interpreter(_executionContexts, instructions); 
+				_executionContexts[i] = new ExecutionContext(i, _requiredRegisters);
+			_shaderExecutor = new Interpreter(_executionContexts, executableInstructions.ToArray()); 
 		}
 
 		public IEnumerable<ExecutionResponse> ExecuteMultiple()
