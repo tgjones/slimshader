@@ -14,15 +14,13 @@ namespace SlimShader.VirtualMachine.Execution
 	{
 		private readonly ExecutionContext[] _executionContexts;
 		private readonly ExecutableInstruction[] _instructions;
-		private readonly BitArray _allZero;
 		private readonly BitArray _allOne;
 
 		public Interpreter(ExecutionContext[] executionContexts, ExecutableInstruction[] instructions)
 		{
 			_executionContexts = executionContexts;
 			_instructions = instructions;
-			_allZero = new BitArray(executionContexts.Length);
-			_allOne = new BitArray(executionContexts.Length);
+			_allOne = BitArrayUtility.CreateAllOne(executionContexts.Length);
 		}
 
 		/// <summary>
@@ -48,17 +46,19 @@ namespace SlimShader.VirtualMachine.Execution
 				switch (instruction.OpcodeType)
  				{
 					case ExecutableOpcodeType.Add:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate)));
 						break;
+					case ExecutableOpcodeType.Branch:
+ 						break;
 					case ExecutableOpcodeType.BranchC :
 						activeMasks.Add(new BitArray(_executionContexts.Length));
 						activeMasks.Add(new BitArray(_executionContexts.Length));
-						Execute(t =>
+						Execute(topOfDivergenceStack, t =>
 						{
 							var src0 = GetOperandValue(t, instruction.Operands[0]);
 							bool result = TestCondition(ref src0, instruction.TestBoolean);
 							activeMasks[0][t.Index] = result;
-							activeMasks[1][t.Index] = result;
+							activeMasks[1][t.Index] = !result;
 						});
 						break;
 					case ExecutableOpcodeType.Cut :
@@ -66,22 +66,22 @@ namespace SlimShader.VirtualMachine.Execution
 						yield return ExecutionResponse.Cut;
 						break;
 					case ExecutableOpcodeType.Div:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Dp2:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
 							src0.Number0.Float * src1.Number0.Float + src0.Number1.Float * src1.Number1.Float,
 							instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Dp3:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
 							src0.Number0.Float * src1.Number0.Float
 								+ src0.Number1.Float * src1.Number1.Float
 								+ src0.Number2.Float * src1.Number2.Float,
 							instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Dp4:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
 							src0.Number0.Float * src1.Number0.Float
 								+ src0.Number1.Float * src1.Number1.Float
 								+ src0.Number2.Float * src1.Number2.Float
@@ -93,45 +93,57 @@ namespace SlimShader.VirtualMachine.Execution
 						yield return ExecutionResponse.Emit;
 						break;
 					case ExecutableOpcodeType.ILt:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
 						break;
 					case ExecutableOpcodeType.ItoF:
-						Execute(t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.FtoI:
-						Execute(t => Execute(t, instruction, src => Number.FromInt(Convert.ToInt32(src.Float))));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromInt(Convert.ToInt32(src.Float))));
 						break;
 					case ExecutableOpcodeType.FtoU:
-						Execute(t => Execute(t, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
 						break;
 					case ExecutableOpcodeType.IAdd:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
 						break;
 					case ExecutableOpcodeType.IGe:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
 						break;
 					case ExecutableOpcodeType.Lt:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
 						break;
 					case ExecutableOpcodeType.Mad:
-						Execute(t => Execute(t, instruction, (src0, src1, src2) => Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1, src2) => Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Max:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Mov:
-						Execute(t => Execute(t, instruction, src => src));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => src));
+						break;
+					case ExecutableOpcodeType.MovC:
+						Execute(topOfDivergenceStack, t =>
+						{
+							// If src0, then dest = src1 else dest = src2
+							var src0 = GetOperandValue(t, instruction.Operands[1]);
+							bool result = TestCondition(ref src0, instruction.TestBoolean);
+							SetRegisterValue(t, instruction.Operands[0], result
+								? GetOperandValue(t, instruction.Operands[2])
+								: GetOperandValue(t, instruction.Operands[3]));
+						});
 						break;
 					case ExecutableOpcodeType.Mul:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Ret:
-						break;
+						yield return ExecutionResponse.Finished;
+ 						break;
 					case ExecutableOpcodeType.Rsq:
-						Execute(t => Execute(t, instruction, src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Sample:
-						Execute(t =>
+						Execute(topOfDivergenceStack, t =>
 						{
 							var srcAddress = GetOperandValue(t, instruction.Operands[1]);
 							var srcResource = GetTexture(t, instruction.Operands[2]);
@@ -144,13 +156,13 @@ namespace SlimShader.VirtualMachine.Execution
 						});
 						break;
 					case ExecutableOpcodeType.Sqrt:
-						Execute(t => Execute(t, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Utof:
-						Execute(t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate)));
 						break;
 					case ExecutableOpcodeType.Xor:
-						Execute(t => Execute(t, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
+						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
 						break;
 					default:
 						throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
@@ -175,13 +187,13 @@ namespace SlimShader.VirtualMachine.Execution
 				//     => Pop TOS entry from the stack.
 				instruction.UpdateDivergenceStack(divergenceStack, activeMasks);
 			}
-			yield return ExecutionResponse.Finished;
 		}
 
-		private void Execute(Action<ExecutionContext> callback)
+		private void Execute(DivergenceStackEntry divergenceStackEntry, Action<ExecutionContext> callback)
 		{
 			foreach (var thread in _executionContexts)
-				callback(thread);
+				if (divergenceStackEntry.ActiveMask[thread.Index])
+					callback(thread);
 		}
 
 		private static bool TestCondition(ref Number4 number, InstructionTestBoolean testBoolean)

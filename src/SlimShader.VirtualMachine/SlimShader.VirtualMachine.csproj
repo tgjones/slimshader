@@ -63,6 +63,7 @@
     <Compile Include="Resources\ISampler.cs" />
     <Compile Include="Resources\ITexture.cs" />
     <Compile Include="Resources\UnorderedAccessView.cs" />
+    <Compile Include="Util\BitArrayUtility.cs" />
     <Compile Include="Util\OperandUtility.cs" />
     <Compile Include="VirtualMachine.cs" />
     <Compile Include="ExecutionContext.cs" />

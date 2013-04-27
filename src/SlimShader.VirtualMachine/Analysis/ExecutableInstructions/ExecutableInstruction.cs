@@ -43,10 +43,18 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 
 		public override void UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks)
 		{
-			// TODO: Check whether all threads in warp have taken the same branch.
 			divergenceStack.Peek().NextPC = ReconvergencePC;
 			for (int i = 0; i < NextPCs.Count; i++)
-				divergenceStack.Push(NextPCs[i], activeMasks[i], ReconvergencePC);
+				if (Any(activeMasks[i]))
+					divergenceStack.Push(NextPCs[i], activeMasks[i], ReconvergencePC);
+		}
+
+		private static bool Any(BitArray bitArray)
+		{
+			for (int i = 0; i < bitArray.Length; i++)
+				if (bitArray[i])
+					return true;
+			return false;
 		}
 	}
 }

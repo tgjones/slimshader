@@ -28,7 +28,7 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 							thisPC + 1
 						},
 
-						OpcodeType = MapOpcodeType(branchingInstruction.InstructionToken.Header.OpcodeType),
+						OpcodeType = ExecutableOpcodeType.BranchC,
 						Operands = explicitBranchingInsturction.InstructionToken.Operands,
 						Saturate = explicitBranchingInsturction.InstructionToken.Saturate,
 						TestBoolean = explicitBranchingInsturction.InstructionToken.TestBoolean
@@ -36,17 +36,24 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 				}
 				else
 				{
+					ExecutableOpcodeType opcodeType;
 					int nextPC;
 					if (explicitBranchingInsturction.IsUnconditionalBranch)
+					{
+						opcodeType = ExecutableOpcodeType.Branch;
 						nextPC = GetInstructionIndex(controlFlowGraph.AllInstructions, ((BranchingInstruction) explicitBranchingInsturction).BranchTarget);
+					}
 					else
+					{
+						opcodeType = MapOpcodeType(explicitBranchingInsturction.InstructionToken.Header.OpcodeType);
 						nextPC = thisPC + 1;
+					}
 
 					yield return new NonDivergentExecutableInstruction
 					{
 						NextPC = nextPC,
 
-						OpcodeType = MapOpcodeType(explicitBranchingInsturction.InstructionToken.Header.OpcodeType),
+						OpcodeType = opcodeType,
 						Operands = explicitBranchingInsturction.InstructionToken.Operands,
 						Saturate = explicitBranchingInsturction.InstructionToken.Saturate,
 						TestBoolean = explicitBranchingInsturction.InstructionToken.TestBoolean
@@ -74,7 +81,7 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 
 		private static ExecutableOpcodeType MapOpcodeType(OpcodeType opcodeType)
 		{
-			return (ExecutableOpcodeType) Enum.ToObject(typeof (ExecutableOpcodeType), (int) opcodeType);
+			return (ExecutableOpcodeType) Enum.Parse(typeof (ExecutableOpcodeType), opcodeType.ToString());
 		}
 	}
 }
