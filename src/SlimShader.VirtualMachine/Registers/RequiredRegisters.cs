@@ -22,7 +22,9 @@ namespace SlimShader.VirtualMachine.Registers
 
 			foreach (var declarationToken in shader.DeclarationTokens)
 			{
-				var indices = declarationToken.Operand.Indices;
+				OperandIndex[] indices = (declarationToken.Operand != null) 
+					? declarationToken.Operand.Indices 
+					: new OperandIndex[0];
 				switch (declarationToken.Header.OpcodeType)
 				{
 					case OpcodeType.DclInput:
