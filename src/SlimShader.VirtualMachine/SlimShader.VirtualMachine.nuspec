@@ -11,5 +11,8 @@
 		<projectUrl>https://github.com/tgjones/slimshader</projectUrl>
 		<licenseUrl>http://www.opensource.org/licenses/MIT</licenseUrl>
 		<tags>HLSL shader assembly fxc bytecode decompiler Direct3D virtual machine VM GPU</tags>
+		<dependencies>
+			<dependency id="SlimShader" version="$version$" />
+		</dependencies>
 	</metadata>
 </package>

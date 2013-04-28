@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SlimShader.Compiler")]
-[assembly: AssemblyDescription("SlimShader.Compiler transforms HLSL source code into SlimShader objects")]
+[assembly: AssemblyDescription("SlimShader.Compiler transforms HLSL source code into SlimShader objects ready for use in SlimShader.VirtualMachine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tim Jones")]
 [assembly: AssemblyProduct("SlimShader.Compiler")]
