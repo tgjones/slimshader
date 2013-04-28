@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="SlimShader.Compiler.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SlimShader\SlimShader.csproj">

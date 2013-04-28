@@ -1,0 +1,15 @@
+﻿<?xml version="1.0"?>
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$id$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<description>$description$</description>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<projectUrl>https://github.com/tgjones/slimshader</projectUrl>
+		<licenseUrl>http://www.opensource.org/licenses/MIT</licenseUrl>
+		<tags>HLSL shader assembly fxc bytecode decompiler Direct3D</tags>
+	</metadata>
+</package>

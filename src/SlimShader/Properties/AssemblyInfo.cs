@@ -1,18 +1,17 @@
 ﻿using System.Resources;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SlimShader")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("SlimShader is a Direct3D shader bytecode parser for .NET and C++")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Tim Jones")]
 [assembly: AssemblyProduct("SlimShader")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright ©2013 Tim Jones")]
+[assembly: AssemblyTrademark("timjones.tw")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 

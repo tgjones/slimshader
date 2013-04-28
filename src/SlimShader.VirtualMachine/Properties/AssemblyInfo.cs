@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SlimShader.VirtualMachine")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("SlimShader.VirtualMachine is an HLSL virtual machine for .NET")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Tim Jones")]
 [assembly: AssemblyProduct("SlimShader.VirtualMachine")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright ©2013 Tim Jones")]
+[assembly: AssemblyTrademark("timjones.tw")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 
