@@ -49,6 +49,15 @@ namespace SlimShader
 			}
 		}
 
+        public static Number4 Subtract(ref Number4 left, ref Number4 right)
+        {
+            return new Number4(
+                Number.FromFloat(left.Number0.Float - right.Number0.Float),
+                Number.FromFloat(left.Number1.Float - right.Number1.Float),
+                Number.FromFloat(left.Number2.Float - right.Number2.Float),
+                Number.FromFloat(left.Number3.Float - right.Number3.Float));
+        }
+
 		public static Number4 Swizzle(Number4 original, Operand4ComponentName[] swizzles)
 		{
 			return new Number4(

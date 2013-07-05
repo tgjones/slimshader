@@ -10,15 +10,19 @@ using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Execution
 {
+    // NOTE: Gradient instructions can't be used in loops or branches, so all execution contexts must be active (right?).
+    // AFAIK, this is enforced by the HLSL compiler. TODO: Check this.
 	public class Interpreter : IShaderExecutor
 	{
-		private readonly ExecutionContext[] _executionContexts;
+	    private readonly VirtualMachine _virtualMachine;
+	    private readonly ExecutionContext[] _executionContexts;
 		private readonly ExecutableInstruction[] _instructions;
 		private readonly BitArray _allOne;
 
-		public Interpreter(ExecutionContext[] executionContexts, ExecutableInstruction[] instructions)
+        public Interpreter(VirtualMachine virtualMachine, ExecutionContext[] executionContexts, ExecutableInstruction[] instructions)
 		{
-			_executionContexts = executionContexts;
+            _virtualMachine = virtualMachine;
+            _executionContexts = executionContexts;
 			_instructions = instructions;
 			_allOne = BitArrayUtility.CreateAllOne(executionContexts.Length);
 		}
@@ -44,131 +48,243 @@ namespace SlimShader.VirtualMachine.Execution
 				var activeMasks = new List<BitArray>();
 
 				switch (instruction.OpcodeType)
- 				{
-					case ExecutableOpcodeType.Add:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Branch:
- 						break;
-					case ExecutableOpcodeType.BranchC :
-						activeMasks.Add(new BitArray(_executionContexts.Length));
-						activeMasks.Add(new BitArray(_executionContexts.Length));
-						Execute(topOfDivergenceStack, t =>
-						{
-							var src0 = GetOperandValue(t, instruction.Operands[0]);
-							bool result = TestCondition(ref src0, instruction.TestBoolean);
-							activeMasks[0][t.Index] = result;
-							activeMasks[1][t.Index] = !result;
-						});
-						break;
-					case ExecutableOpcodeType.Cut :
-					case ExecutableOpcodeType.CutStream:
-						yield return ExecutionResponse.Cut;
-						break;
-					case ExecutableOpcodeType.Div:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Dp2:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
-							src0.Number0.Float * src1.Number0.Float + src0.Number1.Float * src1.Number1.Float,
-							instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Dp3:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
-							src0.Number0.Float * src1.Number0.Float
-								+ src0.Number1.Float * src1.Number1.Float
-								+ src0.Number2.Float * src1.Number2.Float,
-							instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Dp4:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
-							src0.Number0.Float * src1.Number0.Float
-								+ src0.Number1.Float * src1.Number1.Float
-								+ src0.Number2.Float * src1.Number2.Float
-								+ src0.Number3.Float * src1.Number3.Float,
-							instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Emit:
-					case ExecutableOpcodeType.EmitStream :
-						yield return ExecutionResponse.Emit;
-						break;
-					case ExecutableOpcodeType.ILt:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
-						break;
-					case ExecutableOpcodeType.ItoF:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.FtoI:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromInt(Convert.ToInt32(src.Float))));
-						break;
-					case ExecutableOpcodeType.FtoU:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
-						break;
-					case ExecutableOpcodeType.IAdd:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
-						break;
-					case ExecutableOpcodeType.IGe:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
-						break;
-					case ExecutableOpcodeType.Lt:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
-						break;
-					case ExecutableOpcodeType.Mad:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1, src2) => Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Max:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Mov:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => src));
-						break;
-					case ExecutableOpcodeType.MovC:
-						Execute(topOfDivergenceStack, t =>
-						{
-							// If src0, then dest = src1 else dest = src2
-							var src0 = GetOperandValue(t, instruction.Operands[1]);
-							bool result = TestCondition(ref src0, instruction.TestBoolean);
-							SetRegisterValue(t, instruction.Operands[0], result
-								? GetOperandValue(t, instruction.Operands[2])
-								: GetOperandValue(t, instruction.Operands[3]));
-						});
-						break;
-					case ExecutableOpcodeType.Mul:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Ret:
-						yield return ExecutionResponse.Finished;
- 						break;
-					case ExecutableOpcodeType.Rsq:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Sample:
-						Execute(topOfDivergenceStack, t =>
-						{
-							var srcAddress = GetOperandValue(t, instruction.Operands[1]);
-							var srcResource = GetTexture(t, instruction.Operands[2]);
-							var srcSampler = GetSampler(t, instruction.Operands[3]);
+				{
+				    case ExecutableOpcodeType.Add:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Branch:
+				        break;
+				    case ExecutableOpcodeType.BranchC:
+				        activeMasks.Add(new BitArray(_executionContexts.Length));
+				        activeMasks.Add(new BitArray(_executionContexts.Length));
+				        Execute(topOfDivergenceStack, t =>
+				        {
+				            var src0 = GetOperandValue(t, instruction.Operands[0]);
+				            bool result = TestCondition(ref src0, instruction.TestBoolean);
+				            activeMasks[0][t.Index] = result;
+				            activeMasks[1][t.Index] = !result;
+				        });
+				        break;
+				    case ExecutableOpcodeType.Cut:
+				    case ExecutableOpcodeType.CutStream:
+				        yield return ExecutionResponse.Cut;
+				        break;
+				    case ExecutableOpcodeType.Div:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Dp2:
+				        Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
+				            src0.Number0.Float * src1.Number0.Float + src0.Number1.Float * src1.Number1.Float,
+				            instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Dp3:
+				        Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
+				            src0.Number0.Float * src1.Number0.Float
+				                + src0.Number1.Float * src1.Number1.Float
+				                + src0.Number2.Float * src1.Number2.Float,
+				            instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Dp4:
+				        Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
+				            src0.Number0.Float * src1.Number0.Float
+				                + src0.Number1.Float * src1.Number1.Float
+				                + src0.Number2.Float * src1.Number2.Float
+				                + src0.Number3.Float * src1.Number3.Float,
+				            instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Emit:
+				    case ExecutableOpcodeType.EmitStream:
+				        yield return ExecutionResponse.Emit;
+				        break;
+				    case ExecutableOpcodeType.ILt:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+				        break;
+				    case ExecutableOpcodeType.ItoF:
+				        Execute(topOfDivergenceStack,
+				            t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.FtoI:
+				        Execute(topOfDivergenceStack,
+				            t => Execute(t, instruction, src => Number.FromInt(Convert.ToInt32(src.Float))));
+				        break;
+				    case ExecutableOpcodeType.FtoU:
+				        Execute(topOfDivergenceStack,
+				            t => Execute(t, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
+				        break;
+				    case ExecutableOpcodeType.IAdd:
+				        Execute(topOfDivergenceStack,
+				            t => Execute(t, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
+				        break;
+				    case ExecutableOpcodeType.IGe:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+				        break;
+				    case ExecutableOpcodeType.Lt:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
+				        break;
+				    case ExecutableOpcodeType.Mad:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1, src2) =>
+				                        Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Max:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Mov:
+				        Execute(topOfDivergenceStack, t => Execute(t, instruction, src => src));
+				        break;
+				    case ExecutableOpcodeType.MovC:
+				        Execute(topOfDivergenceStack, t =>
+				        {
+				            // If src0, then dest = src1 else dest = src2
+				            var src0 = GetOperandValue(t, instruction.Operands[1]);
+				            bool result = TestCondition(ref src0, instruction.TestBoolean);
+				            SetRegisterValue(t, instruction.Operands[0], result
+				                ? GetOperandValue(t, instruction.Operands[2])
+				                : GetOperandValue(t, instruction.Operands[3]));
+				        });
+				        break;
+				    case ExecutableOpcodeType.Mul:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Ret:
+				        yield return ExecutionResponse.Finished;
+				        break;
+				    case ExecutableOpcodeType.Rsq:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction,
+				                    src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.RtxCoarse:
+				        for (var i = 0; i < _executionContexts.Length; i += 4)
+				        {
+				            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1]);
+				            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1]);
 
-							//var result = srcResource.Sample(srcSampler, srcAddress);
-							var result = new Number4();
+				            var deltaX = Number4.Subtract(ref topRight, ref topLeft);
 
-							SetRegisterValue(t, instruction.Operands[0], result);
-						});
-						break;
-					case ExecutableOpcodeType.Sqrt:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Utof:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate)));
-						break;
-					case ExecutableOpcodeType.Xor:
-						Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
-						break;
-					default:
-						throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
+				            for (var j = i; j < i + 4; j++)
+				                SetRegisterValue(_executionContexts[j], instruction.Operands[0], deltaX);
+				        }
+				        break;
+				    case ExecutableOpcodeType.RtxFine:
+                        for (var i = 0; i < _executionContexts.Length; i += 4)
+                        {
+                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1]);
+                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1]);
+                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1]);
+                            var bottomRight = GetOperandValue(_executionContexts[i + 3], instruction.Operands[1]);
+
+                            var topDeltaX = Number4.Subtract(ref topRight, ref topLeft);
+                            var bottomDeltaX = Number4.Subtract(ref bottomRight, ref bottomLeft);
+
+                            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0], topDeltaX);
+                            SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0], topDeltaX);
+
+                            SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0], bottomDeltaX);
+                            SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0], bottomDeltaX);
+                        }
+				        break;
+                    case ExecutableOpcodeType.RtyCoarse:
+                        for (var i = 0; i < _executionContexts.Length; i += 4)
+                        {
+                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1]);
+                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1]);
+
+                            var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
+
+                            for (var j = i; j < i + 4; j++)
+                                SetRegisterValue(_executionContexts[j], instruction.Operands[0], deltaY);
+                        }
+                        break;
+                    case ExecutableOpcodeType.RtyFine:
+                        for (var i = 0; i < _executionContexts.Length; i += 4)
+                        {
+                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1]);
+                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1]);
+                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1]);
+                            var bottomRight = GetOperandValue(_executionContexts[i + 3], instruction.Operands[1]);
+
+                            var leftDeltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
+                            var rightDeltaY = Number4.Subtract(ref bottomRight, ref topRight);
+
+                            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0], leftDeltaY);
+                            SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0], rightDeltaY);
+
+                            SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0], leftDeltaY);
+                            SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0], rightDeltaY);
+                        }
+                        break;
+                    case ExecutableOpcodeType.Sample:
+				    {
+				        var srcResource = GetTexture(instruction.Operands[2]);
+				        var srcSampler = GetSampler(instruction.Operands[3]);
+				        for (var i = 0; i < _executionContexts.Length; i += 4)
+				        {
+                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1]);
+                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1]);
+                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1]);
+                            var bottomRight = GetOperandValue(_executionContexts[i + 3], instruction.Operands[1]);
+
+                            var deltaX = Number4.Subtract(ref topRight, ref topLeft);
+                            var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
+
+				            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0],
+				                srcResource.SampleGrad(srcSampler, ref topLeft,
+				                    ref deltaX, ref deltaY));
+                            SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0],
+                                srcResource.SampleGrad(srcSampler, ref topRight,
+                                    ref deltaX, ref deltaY));
+                            SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0],
+                                srcResource.SampleGrad(srcSampler, ref bottomLeft,
+                                    ref deltaX, ref deltaY));
+                            SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0],
+                                srcResource.SampleGrad(srcSampler, ref bottomRight,
+                                    ref deltaX, ref deltaY));
+				        }
+				        break;
+				    }
+				    case ExecutableOpcodeType.Sqrt:
+				        Execute(topOfDivergenceStack,
+				            t =>
+				                Execute(t, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Utof:
+				        Execute(topOfDivergenceStack,
+				            t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate)));
+				        break;
+				    case ExecutableOpcodeType.Xor:
+				        Execute(topOfDivergenceStack,
+				            t => Execute(t, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
+				        break;
+				    default:
+				        throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
 				}
 
-				// Algorithm from "Dynamic Warp Formation: Exploiting Thread Scheduling for Efficient MIMD Control Flow
+			    // Algorithm from "Dynamic Warp Formation: Exploiting Thread Scheduling for Efficient MIMD Control Flow
 				// on SIMD Graphics Hardware" by Wilson Wai Lun Fung -
 				// https://circle.ubc.ca/bitstream/handle/2429/2268/ubc_2008_fall_fung_wilson_wai_lun.pdf?sequence=1
 				// 
@@ -189,7 +305,7 @@ namespace SlimShader.VirtualMachine.Execution
 			}
 		}
 
-		private void Execute(DivergenceStackEntry divergenceStackEntry, Action<ExecutionContext> callback)
+	    private void Execute(DivergenceStackEntry divergenceStackEntry, Action<ExecutionContext> callback)
 		{
 			foreach (var thread in _executionContexts)
 				if (divergenceStackEntry.ActiveMask[thread.Index])
@@ -239,23 +355,23 @@ namespace SlimShader.VirtualMachine.Execution
 			}
 		}
 
-		private ITexture GetTexture(ExecutionContext context, Operand operand)
+		private ITexture GetTexture(Operand operand)
 		{
 			switch (operand.OperandType)
 			{
 				case OperandType.Resource:
-					return context.Textures[GetRegisterIndex(context, operand).Index1D];
+					return _virtualMachine.Textures[operand.Indices[0].Value];
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
 			}
 		}
 
-		private ISampler GetSampler(ExecutionContext context, Operand operand)
+		private ISamplerState GetSampler(Operand operand)
 		{
 			switch (operand.OperandType)
 			{
 				case OperandType.Sampler:
-					return context.Samplers[GetRegisterIndex(context, operand).Index1D];
+                    return _virtualMachine.Samplers[operand.Indices[0].Value];
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
 			}

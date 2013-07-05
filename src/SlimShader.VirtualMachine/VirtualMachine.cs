@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
-using SlimShader.VirtualMachine.Analysis;
 using SlimShader.VirtualMachine.Analysis.ControlFlow;
 using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
 using SlimShader.VirtualMachine.Analysis.ExplicitBranching;
@@ -12,6 +13,11 @@ using SlimShader.VirtualMachine.Resources;
 
 namespace SlimShader.VirtualMachine
 {
+    // For pixel shaders, the virtual machine expects pixels quads to be arranged as follows:
+    // 0 = top left
+    // 1 = top right
+    // 2 = bottom left
+    // 3 = bottom right
 	public class VirtualMachine
 	{
 		private readonly BytecodeContainer _bytecode;
@@ -21,6 +27,9 @@ namespace SlimShader.VirtualMachine
 
 		private readonly RequiredRegisters _requiredRegisters;
 
+        internal ITexture[] Textures { get; private set; }
+        internal ISamplerState[] Samplers { get; private set; }
+
 		public int NumPrimitives
 		{
 			get { return _requiredRegisters.NumPrimitives; }
@@ -28,6 +37,9 @@ namespace SlimShader.VirtualMachine
 
 		public VirtualMachine(BytecodeContainer bytecode, int numContexts)
 		{
+            if (bytecode.Shader.Version.ProgramType == ProgramType.PixelShader && numContexts % 4 != 0)
+                throw new ArgumentOutOfRangeException("numContexts", "numContexts must be a multiple of 4 for pixel shaders.");
+
 			_bytecode = bytecode;
 
 			var instructionTokens = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
@@ -40,7 +52,10 @@ namespace SlimShader.VirtualMachine
 			_executionContexts = new ExecutionContext[numContexts];
 			for (int i = 0; i < _executionContexts.Length; i++)
 				_executionContexts[i] = new ExecutionContext(i, _requiredRegisters);
-			_shaderExecutor = new Interpreter(_executionContexts, executableInstructions.ToArray()); 
+			_shaderExecutor = new Interpreter(this, _executionContexts, executableInstructions.ToArray());
+
+            Textures = new ITexture[_requiredRegisters.Resources];
+            Samplers = new ISamplerState[_requiredRegisters.Samplers];
 		}
 
 		public IEnumerable<ExecutionResponse> ExecuteMultiple()
@@ -69,14 +84,14 @@ namespace SlimShader.VirtualMachine
 			register[index] = value;
 		}
 
-		public void SetTexture(int contextIndex, RegisterIndex registerIndex, ITexture texture)
+		public void SetTexture(RegisterIndex registerIndex, ITexture texture)
 		{
-			_executionContexts[contextIndex].Textures[registerIndex.Index1D] = texture;
+			Textures[registerIndex.Index1D] = texture;
 		}
 
-		public void SetSampler(int contextIndex, RegisterIndex registerIndex, ISampler sampler)
+		public void SetSampler(RegisterIndex registerIndex, ISamplerState samplerState)
 		{
-			_executionContexts[contextIndex].Samplers[registerIndex.Index1D] = sampler;
+			Samplers[registerIndex.Index1D] = samplerState;
 		}
 	}
 }
