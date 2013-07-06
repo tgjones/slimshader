@@ -10,12 +10,13 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
         public List<int> NextPCs { get; set; }
         public int ReconvergencePC { get; set; }
 
-        public override void UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks)
+        public override bool UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks)
         {
             divergenceStack.Peek().NextPC = ReconvergencePC;
-            for (int i = 0; i < NextPCs.Count; i++)
+            for (var i = 0; i < NextPCs.Count; i++)
                 if (activeMasks[i].Any())
                     divergenceStack.Push(NextPCs[i], activeMasks[i], ReconvergencePC);
+            return true;
         }
     }
 }

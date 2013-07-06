@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
@@ -35,144 +36,140 @@ namespace SlimShader.VirtualMachine.Execution
 		public IEnumerable<ExecutionResponse> Execute()
 		{
 		    var warp = new Warp(_executionContexts.Length);
+		    var activeExecutionContexts = GetActiveExecutionContexts(warp.DivergenceStack.Peek());
 			while (warp.DivergenceStack.Peek().NextPC < _instructions.Length)
 			{
 				var topOfDivergenceStack = warp.DivergenceStack.Peek();
 				int pc = topOfDivergenceStack.NextPC;
 				var instruction = _instructions[pc];
 
-				var activeMasks = new List<BitArray>();
+			    List<BitArray> activeMasks = null;
 
 				switch (instruction.OpcodeType)
 				{
 				    case ExecutableOpcodeType.Add:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, (src0, src1) => Number.FromFloat(src0.Float + src1.Float, instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Branch:
 				        break;
 				    case ExecutableOpcodeType.BranchC:
+                        activeMasks = new List<BitArray>();
 				        activeMasks.Add(new BitArray(_executionContexts.Length));
 				        activeMasks.Add(new BitArray(_executionContexts.Length));
-				        Execute(topOfDivergenceStack, t =>
+				        foreach (var thread in activeExecutionContexts)
 				        {
-				            var src0 = GetOperandValue(t, instruction.Operands[0]);
+				            var src0 = GetOperandValue(thread, instruction.Operands[0]);
 				            bool result = TestCondition(ref src0, instruction.TestBoolean);
-				            activeMasks[0][t.Index] = result;
-				            activeMasks[1][t.Index] = !result;
-				        });
+				            activeMasks[0][thread.Index] = result;
+				            activeMasks[1][thread.Index] = !result;
+				        }
 				        break;
 				    case ExecutableOpcodeType.Cut:
 				    case ExecutableOpcodeType.CutStream:
 				        yield return ExecutionResponse.Cut;
 				        break;
 				    case ExecutableOpcodeType.Div:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1) => Number.FromFloat(src0.Float / src1.Float, instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Dp2:
-				        Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
-				            src0.Number0.Float * src1.Number0.Float + src0.Number1.Float * src1.Number1.Float,
-				            instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, (src0, src1) => Number.FromFloat(
+				                src0.Number0.Float * src1.Number0.Float + src0.Number1.Float * src1.Number1.Float,
+				                instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Dp3:
-				        Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
-				            src0.Number0.Float * src1.Number0.Float
-				                + src0.Number1.Float * src1.Number1.Float
-				                + src0.Number2.Float * src1.Number2.Float,
-				            instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, (src0, src1) => Number.FromFloat(
+				                src0.Number0.Float * src1.Number0.Float
+				                    + src0.Number1.Float * src1.Number1.Float
+				                    + src0.Number2.Float * src1.Number2.Float,
+				                instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Dp4:
-				        Execute(topOfDivergenceStack, t => Execute(t, instruction, (src0, src1) => Number.FromFloat(
-				            src0.Number0.Float * src1.Number0.Float
-				                + src0.Number1.Float * src1.Number1.Float
-				                + src0.Number2.Float * src1.Number2.Float
-				                + src0.Number3.Float * src1.Number3.Float,
-				            instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, (src0, src1) => Number.FromFloat(
+				                src0.Number0.Float * src1.Number0.Float
+				                    + src0.Number1.Float * src1.Number1.Float
+				                    + src0.Number2.Float * src1.Number2.Float
+				                    + src0.Number3.Float * src1.Number3.Float,
+				                instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Emit:
 				    case ExecutableOpcodeType.EmitStream:
 				        yield return ExecutionResponse.Emit;
 				        break;
 				    case ExecutableOpcodeType.ILt:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1) => Number.FromUInt((src0.Int < src1.Int) ? 0xFFFFFFFF : 0x0000000));
 				        break;
 				    case ExecutableOpcodeType.ItoF:
-				        Execute(topOfDivergenceStack,
-				            t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.FtoI:
-				        Execute(topOfDivergenceStack,
-				            t => Execute(t, instruction, src => Number.FromInt(Convert.ToInt32(src.Float))));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, src => Number.FromInt(Convert.ToInt32(src.Float)));
 				        break;
 				    case ExecutableOpcodeType.FtoU:
-				        Execute(topOfDivergenceStack,
-				            t => Execute(t, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float))));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float)));
 				        break;
 				    case ExecutableOpcodeType.IAdd:
-				        Execute(topOfDivergenceStack,
-				            t => Execute(t, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int));
 				        break;
 				    case ExecutableOpcodeType.IGe:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000));
 				        break;
 				    case ExecutableOpcodeType.Lt:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1) => Number.FromUInt((src0.Float < src1.Float) ? 0xFFFFFFFF : 0x0000000));
 				        break;
 				    case ExecutableOpcodeType.Mad:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1, src2) =>
-				                        Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1, src2) =>
+				                    Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Max:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1) => Number.FromFloat(Math.Max(src0.Float, src1.Float), instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Mov:
-				        Execute(topOfDivergenceStack, t => Execute(t, instruction, src => src));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, src => src);
 				        break;
 				    case ExecutableOpcodeType.MovC:
-				        Execute(topOfDivergenceStack, t =>
+				        foreach (var thread in activeExecutionContexts)
 				        {
 				            // If src0, then dest = src1 else dest = src2
-				            var src0 = GetOperandValue(t, instruction.Operands[1]);
+				            var src0 = GetOperandValue(thread, instruction.Operands[1]);
 				            bool result = TestCondition(ref src0, instruction.TestBoolean);
-				            SetRegisterValue(t, instruction.Operands[0], result
-				                ? GetOperandValue(t, instruction.Operands[2])
-				                : GetOperandValue(t, instruction.Operands[3]));
-				        });
+				            SetRegisterValue(thread, instruction.Operands[0], result
+				                ? GetOperandValue(thread, instruction.Operands[2])
+				                : GetOperandValue(thread, instruction.Operands[3]));
+				        }
 				        break;
 				    case ExecutableOpcodeType.Mul:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                (src0, src1) => Number.FromFloat(src0.Float * src1.Float, instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Ret:
 				        yield return ExecutionResponse.Finished;
 				        break;
 				    case ExecutableOpcodeType.Rsq:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction,
-				                    src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction,
+				                src => Number.FromFloat((float) (1.0f / Math.Sqrt(src.Float)), instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.RtxCoarse:
 				        for (var i = 0; i < _executionContexts.Length; i += 4)
@@ -264,17 +261,16 @@ namespace SlimShader.VirtualMachine.Execution
 				        break;
 				    }
 				    case ExecutableOpcodeType.Sqrt:
-				        Execute(topOfDivergenceStack,
-				            t =>
-				                Execute(t, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, src => Number.FromFloat((float) Math.Sqrt(src.Float), instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Utof:
-				        Execute(topOfDivergenceStack,
-				            t => Execute(t, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, src => Number.FromFloat(Convert.ToSingle(src.UInt), instruction.Saturate));
 				        break;
 				    case ExecutableOpcodeType.Xor:
-				        Execute(topOfDivergenceStack,
-				            t => Execute(t, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt)));
+				        foreach (var thread in activeExecutionContexts)
+				            Execute(thread, instruction, (src0, src1) => Number.FromUInt(src0.UInt | src1.UInt));
 				        break;
 				    default:
 				        throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
@@ -297,15 +293,14 @@ namespace SlimShader.VirtualMachine.Execution
 				//        to the next PC value of this entry.
 				// - Reconvergence (next PC = reconv. PC of TOS)
 				//     => Pop TOS entry from the stack.
-				instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks);
+				if (instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks))
+                    activeExecutionContexts = GetActiveExecutionContexts(topOfDivergenceStack);
 			}
 		}
 
-	    private void Execute(DivergenceStackEntry divergenceStackEntry, Action<ExecutionContext> callback)
+	    private IList<ExecutionContext> GetActiveExecutionContexts(DivergenceStackEntry divergenceStackEntry)
 		{
-			foreach (var thread in _executionContexts)
-				if (divergenceStackEntry.ActiveMask[thread.Index])
-					callback(thread);
+            return _executionContexts.Where(x => divergenceStackEntry.ActiveMask[x.Index]).ToList();
 		}
 
 		private static bool TestCondition(ref Number4 number, InstructionTestBoolean testBoolean)

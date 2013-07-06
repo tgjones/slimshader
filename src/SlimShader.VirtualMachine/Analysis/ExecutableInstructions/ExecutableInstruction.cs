@@ -13,6 +13,6 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 		public InstructionTestBoolean TestBoolean { get; set; }
 		public List<Operand> Operands { get; set; }
 
-		public abstract void UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks);
+		public abstract bool UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks);
 	}
 }

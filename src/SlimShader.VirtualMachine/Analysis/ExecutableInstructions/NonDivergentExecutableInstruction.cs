@@ -8,18 +8,20 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
     {
         public int NextPC { get; set; }
 
-        public override void UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks)
+        public override bool UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks)
         {
             var topOfDivergenceStack = divergenceStack.Peek();
             if (NextPC == topOfDivergenceStack.ReconvergencePC)
             {
                 // Reconvergence.
                 divergenceStack.Pop();
+                return true;
             }
             else
             {
                 // No Divergence.
                 topOfDivergenceStack.NextPC = NextPC;
+                return false;
             }
         }
     }
