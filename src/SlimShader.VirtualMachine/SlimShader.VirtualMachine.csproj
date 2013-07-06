@@ -55,6 +55,7 @@
     <Compile Include="Execution\DivergenceStack.cs" />
     <Compile Include="Execution\DivergenceStackEntry.cs" />
     <Compile Include="Execution\ExecutableOpcodeType.cs" />
+    <Compile Include="Execution\InstructionImplementations.cs" />
     <Compile Include="Execution\Interpreter.cs" />
     <Compile Include="Execution\IShaderExecutor.cs" />
     <Compile Include="Execution\Warp.cs" />
