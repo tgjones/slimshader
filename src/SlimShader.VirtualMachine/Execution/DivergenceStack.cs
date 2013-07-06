@@ -5,12 +5,10 @@ namespace SlimShader.VirtualMachine.Execution
 {
 	public class DivergenceStack
 	{
-		private readonly int _executionContextCount;
 		private readonly Stack<DivergenceStackEntry> _stack;
  
-		public DivergenceStack(int executionContextCount)
+		public DivergenceStack()
 		{
-			_executionContextCount = executionContextCount;
 			_stack = new Stack<DivergenceStackEntry>();
 		}
 

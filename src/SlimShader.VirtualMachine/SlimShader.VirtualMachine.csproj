@@ -42,8 +42,10 @@
   <ItemGroup>
     <Compile Include="Analysis\ControlFlow\BasicBlock.cs" />
     <Compile Include="Analysis\ControlFlow\ControlFlowGraph.cs" />
+    <Compile Include="Analysis\ExecutableInstructions\DivergentExecutableInstruction.cs" />
     <Compile Include="Analysis\ExecutableInstructions\ExecutableInstruction.cs" />
     <Compile Include="Analysis\ExecutableInstructions\ExecutableInstructionRewriter.cs" />
+    <Compile Include="Analysis\ExecutableInstructions\NonDivergentExecutableInstruction.cs" />
     <Compile Include="Analysis\ExplicitBranching\BranchingInstruction.cs" />
     <Compile Include="Analysis\ExplicitBranching\BranchType.cs" />
     <Compile Include="Analysis\ExplicitBranching\ExplicitBranchingRewriter.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Execution\ExecutableOpcodeType.cs" />
     <Compile Include="Execution\Interpreter.cs" />
     <Compile Include="Execution\IShaderExecutor.cs" />
+    <Compile Include="Execution\Warp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registers\RegisterIndex.cs" />
     <Compile Include="Registers\RegisterIndexType.cs" />

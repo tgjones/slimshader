@@ -17,14 +17,12 @@ namespace SlimShader.VirtualMachine.Execution
 	    private readonly VirtualMachine _virtualMachine;
 	    private readonly ExecutionContext[] _executionContexts;
 		private readonly ExecutableInstruction[] _instructions;
-		private readonly BitArray _allOne;
-
+		
         public Interpreter(VirtualMachine virtualMachine, ExecutionContext[] executionContexts, ExecutableInstruction[] instructions)
 		{
             _virtualMachine = virtualMachine;
             _executionContexts = executionContexts;
 			_instructions = instructions;
-			_allOne = BitArrayUtility.CreateAllOne(executionContexts.Length);
 		}
 
 		/// <summary>
@@ -36,12 +34,10 @@ namespace SlimShader.VirtualMachine.Execution
 		/// </summary>
 		public IEnumerable<ExecutionResponse> Execute()
 		{
-			var divergenceStack = new DivergenceStack(_executionContexts.Length);
-			divergenceStack.Push(0, _allOne, -1);
-
-			while (divergenceStack.Peek().NextPC < _instructions.Length)
+		    var warp = new Warp(_executionContexts.Length);
+			while (warp.DivergenceStack.Peek().NextPC < _instructions.Length)
 			{
-				var topOfDivergenceStack = divergenceStack.Peek();
+				var topOfDivergenceStack = warp.DivergenceStack.Peek();
 				int pc = topOfDivergenceStack.NextPC;
 				var instruction = _instructions[pc];
 
@@ -301,7 +297,7 @@ namespace SlimShader.VirtualMachine.Execution
 				//        to the next PC value of this entry.
 				// - Reconvergence (next PC = reconv. PC of TOS)
 				//     => Pop TOS entry from the stack.
-				instruction.UpdateDivergenceStack(divergenceStack, activeMasks);
+				instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks);
 			}
 		}
 
