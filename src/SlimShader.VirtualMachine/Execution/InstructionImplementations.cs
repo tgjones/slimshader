@@ -131,6 +131,47 @@ namespace SlimShader.VirtualMachine.Execution
         }
 
         /// <summary>
+        /// Component-wise floating point equality comparison.
+        /// </summary>
+        /// <remarks>
+        /// Performs the integer comparison (src0 == src1) for each component, and writes the result to dest.
+        /// If the comparison is true, then 0xFFFFFFFF is returned for that component. 
+        /// Otherwise 0x0000000 is returned.
+        /// </remarks>
+        /// <param name="src0">The value to compare to src1.</param>
+        /// <param name="src1">The value to compare to src0.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 Eq(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                // ReSharper disable CompareOfFloatsByEqualityOperator
+                Number0 = GetCompareResult(src0.Number0.Float == src1.Number0.Float),
+                Number1 = GetCompareResult(src0.Number1.Float == src1.Number1.Float),
+                Number2 = GetCompareResult(src0.Number2.Float == src1.Number2.Float),
+                Number3 = GetCompareResult(src0.Number3.Float == src1.Number3.Float),
+                // ReSharper restore CompareOfFloatsByEqualityOperator
+            };
+        }
+
+        /// <summary>
+        /// Component-wise 2-exponent.
+        /// </summary>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The exponent.</param>
+        /// <returns>The result of the operation. dest = 2^src0</returns>
+        public static Number4 Exp(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat((float) Math.Pow(2, src0.Number0.Float), saturate),
+                Number1 = Number.FromFloat((float) Math.Pow(2, src0.Number1.Float), saturate),
+                Number2 = Number.FromFloat((float) Math.Pow(2, src0.Number2.Float), saturate),
+                Number3 = Number.FromFloat((float) Math.Pow(2, src0.Number3.Float), saturate)
+            };
+        }
+
+        /// <summary>
         /// Component-wise signed floating point to integer conversion.
         /// </summary>
         /// <remarks>
@@ -219,6 +260,28 @@ namespace SlimShader.VirtualMachine.Execution
                 Number1 = Number.FromInt(src0.Number1.Int + src1.Number1.Int),
                 Number2 = Number.FromInt(src0.Number2.Int + src1.Number2.Int),
                 Number3 = Number.FromInt(src0.Number3.Int + src1.Number3.Int)
+            };
+        }
+
+        /// <summary>
+        /// Component-wise vector integer equality comparison.
+        /// </summary>
+        /// <remarks>
+        /// Performs the integer comparison (src0 == src1) for each component, and writes the result to dest.
+        /// If the comparison is true, then 0xFFFFFFFF is returned for that component. 
+        /// Otherwise 0x0000000 is returned.
+        /// </remarks>
+        /// <param name="src0">The value to compare to src1.</param>
+        /// <param name="src1">The value to compare to src0.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 IEq(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = GetCompareResult(src0.Number0.Int == src1.Number0.Int),
+                Number1 = GetCompareResult(src0.Number1.Int == src1.Number1.Int),
+                Number2 = GetCompareResult(src0.Number2.Int == src1.Number2.Int),
+                Number3 = GetCompareResult(src0.Number3.Int == src1.Number3.Int),
             };
         }
 
@@ -328,6 +391,74 @@ namespace SlimShader.VirtualMachine.Execution
                 Number1 = GetCompareResult(src0.Number1.Int != src1.Number1.Int),
                 Number2 = GetCompareResult(src0.Number2.Int != src1.Number2.Int),
                 Number3 = GetCompareResult(src0.Number3.Int != src1.Number3.Int),
+            };
+        }
+
+        /// <summary>
+        /// Component-wise integer 2's complement.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs component-wise 2's complement of each 32-bit value in src0. 
+        /// The 32-bit results are stored in dest.
+        /// </remarks>
+        /// <param name="src0">Contains the values for the operation.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 INeg(ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt(-src0.Number0.Int),
+                Number1 = Number.FromInt(-src0.Number1.Int),
+                Number2 = Number.FromInt(-src0.Number2.Int),
+                Number3 = Number.FromInt(-src0.Number3.Int)
+            };
+        }
+
+        /// <summary>
+        /// Component-wise shift left.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs a component-wise shift of each 32-bit value in src0 
+        /// left by an unsigned integer bit count provided by the LSB 5 bits (0-31 range) 
+        /// in src1.select_component, inserting 0. The 32-bit per component results are 
+        /// placed in dest. The count is a scalar value applied to all components.
+        /// TODO: Check where shift amount comes from.
+        /// </remarks>
+        /// <param name="src0">Contains the values to be shifted.</param>
+        /// <param name="src1">Contains the shift amount.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 IShl(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt(src0.Number0.Int << (int) src1.Number0.UInt),
+                Number1 = Number.FromInt(src0.Number1.Int << (int) src1.Number0.UInt),
+                Number2 = Number.FromInt(src0.Number2.Int << (int) src1.Number0.UInt),
+                Number3 = Number.FromInt(src0.Number3.Int << (int) src1.Number0.UInt)
+            };
+        }
+
+        /// <summary>
+        /// Component-wise shift right.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs a component-wise shift of each 32-bit value in src0 
+        /// right by an unsigned integer bit count provided by the LSB 5 bits (0-31 range) 
+        /// in src1.select_component, inserting 0. The 32-bit per component results are 
+        /// placed in dest. The count is a scalar value applied to all components.
+        /// TODO: Check where shift amount comes from.
+        /// </remarks>
+        /// <param name="src0">Contains the values to be shifted.</param>
+        /// <param name="src1">Contains the shift amount.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 IShr(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt(src0.Number0.Int >> (int) src1.Number0.UInt),
+                Number1 = Number.FromInt(src0.Number1.Int >> (int) src1.Number0.UInt),
+                Number2 = Number.FromInt(src0.Number2.Int >> (int) src1.Number0.UInt),
+                Number3 = Number.FromInt(src0.Number3.Int >> (int) src1.Number0.UInt)
             };
         }
 
