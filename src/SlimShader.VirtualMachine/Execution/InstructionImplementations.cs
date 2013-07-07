@@ -2,10 +2,19 @@
 
 namespace SlimShader.VirtualMachine.Execution
 {
+    /// <summary>
+    /// Contains implementations of Shader Model 5 assembly instructions.
+    /// </summary>
+    /// <remarks>
+    /// XML documentation comments are from MSDN (Shader Model 5 Assembly):
+    /// http://msdn.microsoft.com/en-us/library/windows/desktop/hh447232(v=vs.85).aspx
+    /// </remarks>
     public static class InstructionImplementations
     {
-        private const uint TrueUInt = 0xFFFFFFFF;
-        private const uint FalseUInt = 0x0000000;
+        private static Number GetCompareResult(bool result)
+        {
+            return Number.FromUInt(result ? 0xFFFFFFFF : 0x0000000);
+        }
 
         /// <summary>
         /// Component-wise add of 2 vectors.
@@ -122,6 +131,58 @@ namespace SlimShader.VirtualMachine.Execution
         }
 
         /// <summary>
+        /// Component-wise signed floating point to integer conversion.
+        /// </summary>
+        /// <remarks>
+        /// The conversion is performed per-component. Rounding is always performed towards zero, 
+        /// following the C convention for casts from float to int.
+        /// 
+        /// Applications that require different 
+        /// rounding semantics can invoke the round instructions before casting to integer.
+        /// 
+        /// Inputs are clamped to the range [-2147483648.999f ... 2147483647.999f] prior to conversion, 
+        /// and input NaN values produce a zero result.
+        /// </remarks>
+        /// <param name="src0">The components to convert.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 FtoI(ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt(Convert.ToInt32(src0.Number0.Float)),
+                Number1 = Number.FromInt(Convert.ToInt32(src0.Number1.Float)),
+                Number2 = Number.FromInt(Convert.ToInt32(src0.Number2.Float)),
+                Number3 = Number.FromInt(Convert.ToInt32(src0.Number3.Float))
+            };
+        }
+
+        /// <summary>
+        /// Component-wise floating point to unsigned integer conversion.
+        /// </summary>
+        /// <remarks>
+        /// The conversion is performed per-component. Rounding is always performed towards zero, 
+        /// following the C convention for casts from float to int.
+        /// 
+        /// Applications that require different 
+        /// rounding semantics can invoke the round instructions before casting to integer.
+        /// 
+        /// Inputs are clamped to the range [-2147483648.999f ... 2147483647.999f] prior to conversion, 
+        /// and input NaN values produce a zero result.
+        /// </remarks>
+        /// <param name="src0">The components to convert.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 FtoU(ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromUInt(Convert.ToUInt32(src0.Number0.Float)),
+                Number1 = Number.FromUInt(Convert.ToUInt32(src0.Number1.Float)),
+                Number2 = Number.FromUInt(Convert.ToUInt32(src0.Number2.Float)),
+                Number3 = Number.FromUInt(Convert.ToUInt32(src0.Number3.Float))
+            };
+        }
+
+        /// <summary>
         /// Component-wise vector floating point greater-than-or-equal comparison.
         /// </summary>
         /// <remarks>
@@ -137,10 +198,50 @@ namespace SlimShader.VirtualMachine.Execution
         {
             return new Number4
             {
-                Number0 = Number.FromUInt((src0.Number0.Float >= src1.Number0.Float) ? TrueUInt : FalseUInt),
-                Number1 = Number.FromUInt((src0.Number1.Float >= src1.Number1.Float) ? TrueUInt : FalseUInt),
-                Number2 = Number.FromUInt((src0.Number2.Float >= src1.Number2.Float) ? TrueUInt : FalseUInt),
-                Number3 = Number.FromUInt((src0.Number3.Float >= src1.Number3.Float) ? TrueUInt : FalseUInt),
+                Number0 = GetCompareResult(src0.Number0.Float >= src1.Number0.Float),
+                Number1 = GetCompareResult(src0.Number1.Float >= src1.Number1.Float),
+                Number2 = GetCompareResult(src0.Number2.Float >= src1.Number2.Float),
+                Number3 = GetCompareResult(src0.Number3.Float >= src1.Number3.Float),
+            };
+        }
+
+        /// <summary>
+        /// Component-wise integer add of 2 vectors.
+        /// </summary>
+        /// <param name="src0">The vector to add to src1.</param>
+        /// <param name="src1">The vector to add to src0.</param>
+        /// <returns>The result of the operation. dest = src0 + src1.</returns>
+        public static Number4 IAdd(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt(src0.Number0.Int + src1.Number0.Int),
+                Number1 = Number.FromInt(src0.Number1.Int + src1.Number1.Int),
+                Number2 = Number.FromInt(src0.Number2.Int + src1.Number2.Int),
+                Number3 = Number.FromInt(src0.Number3.Int + src1.Number3.Int)
+            };
+        }
+
+        /// <summary>
+        /// Component-wise vector integer greater-than-or-equal comparison.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs the integer comparison (src0 &gt;= src1) for each component, 
+        /// and writes the result to dest.
+        /// If the comparison is true, then 0xFFFFFFFF is returned for that component. 
+        /// Otherwise 0x0000000 is returned.
+        /// </remarks>
+        /// <param name="src0">The value to compare to src1.</param>
+        /// <param name="src1">The value to compare to src0.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 IGe(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = GetCompareResult(src0.Number0.Int >= src1.Number0.Int),
+                Number1 = GetCompareResult(src0.Number1.Int >= src1.Number1.Int),
+                Number2 = GetCompareResult(src0.Number2.Int >= src1.Number2.Int),
+                Number3 = GetCompareResult(src0.Number3.Int >= src1.Number3.Int),
             };
         }
 
@@ -156,14 +257,102 @@ namespace SlimShader.VirtualMachine.Execution
         /// <param name="src0">The value to compare to src1.</param>
         /// <param name="src1">The value to compare to src0.</param>
         /// <returns>The result of the operation.</returns>
-        public static Number4 Ilt(ref Number4 src0, ref Number4 src1)
+        public static Number4 ILt(ref Number4 src0, ref Number4 src1)
         {
             return new Number4
             {
-                Number0 = Number.FromUInt((src0.Number0.Int < src1.Number0.Int) ? TrueUInt : FalseUInt),
-                Number1 = Number.FromUInt((src0.Number1.Int < src1.Number1.Int) ? TrueUInt : FalseUInt),
-                Number2 = Number.FromUInt((src0.Number2.Int < src1.Number2.Int) ? TrueUInt : FalseUInt),
-                Number3 = Number.FromUInt((src0.Number3.Int < src1.Number3.Int) ? TrueUInt : FalseUInt),
+                Number0 = GetCompareResult(src0.Number0.Int < src1.Number0.Int),
+                Number1 = GetCompareResult(src0.Number1.Int < src1.Number1.Int),
+                Number2 = GetCompareResult(src0.Number2.Int < src1.Number2.Int),
+                Number3 = GetCompareResult(src0.Number3.Int < src1.Number3.Int),
+            };
+        }
+
+        /// <summary>
+        /// Component-wise signed integer multiply and add.
+        /// </summary>
+        /// <param name="src0">The multiplicand.</param>
+        /// <param name="src1">The multiplier.</param>
+        /// <param name="src2">The addend.</param>
+        /// <returns>The result of the operation. dest = src0 * src1 + src2.</returns>
+        public static Number4 IMad(ref Number4 src0, ref Number4 src1, ref Number4 src2)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt((src0.Number0.Int * src1.Number0.Int) + src2.Number0.Int),
+                Number1 = Number.FromInt((src0.Number1.Int * src1.Number0.Int) + src2.Number1.Int),
+                Number2 = Number.FromInt((src0.Number2.Int * src1.Number0.Int) + src2.Number2.Int),
+                Number3 = Number.FromInt((src0.Number3.Int * src1.Number0.Int) + src2.Number3.Int)
+            };
+        }
+
+        /// <summary>
+        /// Component-wise integer minimum.
+        /// </summary>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The components to compare to src1.</param>
+        /// <param name="src1">The components to compare to src0.</param>
+        /// <returns>The result of the operation. dest = src0 &lt; src1 ? src0 : src1.</returns>
+        public static Number4 IMin(bool saturate, ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromInt(IMin(src0.Number0.Int, src1.Number0.Int)),
+                Number1 = Number.FromInt(IMin(src0.Number1.Int, src1.Number1.Int)),
+                Number2 = Number.FromInt(IMin(src0.Number2.Int, src1.Number2.Int)),
+                Number3 = Number.FromInt(IMin(src0.Number3.Int, src1.Number3.Int))
+            };
+        }
+
+        private static int IMin(int src0, int src1)
+        {
+            return (src0 < src1) ? src0 : src1;
+        }
+
+        /// <summary>
+        /// Component-wise vector integer not-equal comparison.
+        /// </summary>
+        /// <remarks>
+        /// Performs the integer comparison (src0 != src1) for each component, and writes the result to dest.
+        /// If the comparison is true, then 0xFFFFFFFF is returned for that component. 
+        /// Otherwise 0x0000000 is returned.
+        /// </remarks>
+        /// <param name="src0">The value to compare to src1.</param>
+        /// <param name="src1">The value to compare to src0.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 INe(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                Number0 = GetCompareResult(src0.Number0.Int != src1.Number0.Int),
+                Number1 = GetCompareResult(src0.Number1.Int != src1.Number1.Int),
+                Number2 = GetCompareResult(src0.Number2.Int != src1.Number2.Int),
+                Number3 = GetCompareResult(src0.Number3.Int != src1.Number3.Int),
+            };
+        }
+
+        /// <summary>
+        /// Component-wise signed integer to floating point conversion.
+        /// </summary>
+        /// <remarks>
+        /// This signed integer-to-float conversion instruction assumes that src0 
+        /// contains a signed 32-bit integer 4-tuple. After the instruction executes, 
+        /// dest will contain a floating-point 4-tuple.
+        /// The conversion is performed per-component.
+        /// When an integer input value is too large in magnitude to be represented exactly 
+        /// in the floating point format, rounding to nearest even mode is strongly 
+        /// recommended but not required.
+        /// </remarks>
+        /// <param name="src0">The components to convert.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 ItoF(ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(Convert.ToSingle(src0.Number0.Int)),
+                Number1 = Number.FromFloat(Convert.ToSingle(src0.Number1.Int)),
+                Number2 = Number.FromFloat(Convert.ToSingle(src0.Number2.Int)),
+                Number3 = Number.FromFloat(Convert.ToSingle(src0.Number3.Int))
             };
         }
 
@@ -183,10 +372,29 @@ namespace SlimShader.VirtualMachine.Execution
         {
             return new Number4
             {
-                Number0 = Number.FromUInt((src0.Number0.Float < src1.Number0.Float) ? TrueUInt : FalseUInt),
-                Number1 = Number.FromUInt((src0.Number1.Float < src1.Number1.Float) ? TrueUInt : FalseUInt),
-                Number2 = Number.FromUInt((src0.Number2.Float < src1.Number2.Float) ? TrueUInt : FalseUInt),
-                Number3 = Number.FromUInt((src0.Number3.Float < src1.Number3.Float) ? TrueUInt : FalseUInt),
+                Number0 = GetCompareResult(src0.Number0.Float < src1.Number0.Float),
+                Number1 = GetCompareResult(src0.Number1.Float < src1.Number1.Float),
+                Number2 = GetCompareResult(src0.Number2.Float < src1.Number2.Float),
+                Number3 = GetCompareResult(src0.Number3.Float < src1.Number3.Float),
+            };
+        }
+
+        /// <summary>
+        /// Component-wise multiply and add.
+        /// </summary>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The multiplicand.</param>
+        /// <param name="src1">The multiplier.</param>
+        /// <param name="src2">The addend.</param>
+        /// <returns>The result of the operation. dest = src0 * src1 + src2.</returns>
+        public static Number4 Mad(bool saturate, ref Number4 src0, ref Number4 src1, ref Number4 src2)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat((src0.Number0.Float * src1.Number0.Float) + src2.Number0.Float, saturate),
+                Number1 = Number.FromFloat((src0.Number1.Float * src1.Number0.Float) + src2.Number1.Float, saturate),
+                Number2 = Number.FromFloat((src0.Number2.Float * src1.Number0.Float) + src2.Number2.Float, saturate),
+                Number3 = Number.FromFloat((src0.Number3.Float * src1.Number0.Float) + src2.Number3.Float, saturate)
             };
         }
 
@@ -291,6 +499,30 @@ namespace SlimShader.VirtualMachine.Execution
         }
 
         /// <summary>
+        /// Component-wise floating point not-equal comparison.
+        /// </summary>
+        /// <remarks>
+        /// Performs the integer comparison (src0 != src1) for each component, and writes the result to dest.
+        /// If the comparison is true, then 0xFFFFFFFF is returned for that component. 
+        /// Otherwise 0x0000000 is returned.
+        /// </remarks>
+        /// <param name="src0">The value to compare to src1.</param>
+        /// <param name="src1">The value to compare to src0.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 Ne(ref Number4 src0, ref Number4 src1)
+        {
+            return new Number4
+            {
+                // ReSharper disable CompareOfFloatsByEqualityOperator
+                Number0 = GetCompareResult(src0.Number0.Float != src1.Number0.Float),
+                Number1 = GetCompareResult(src0.Number1.Float != src1.Number1.Float),
+                Number2 = GetCompareResult(src0.Number2.Float != src1.Number2.Float),
+                Number3 = GetCompareResult(src0.Number3.Float != src1.Number3.Float),
+                // ReSharper restore CompareOfFloatsByEqualityOperator
+            };
+        }
+
+        /// <summary>
         /// Component-wise reciprocal square root.
         /// </summary>
         /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
@@ -331,12 +563,10 @@ namespace SlimShader.VirtualMachine.Execution
         /// <paramref name="src0"/> must contain an unsigned 32-bit integer 4-tuple. 
         /// After the instruction executes, dest will contain a floating-point 4-tuple. 
         /// The conversion is performed per-component.
-        /// TODO: When an integer input value is too large to be represented exactly in 
-        /// the floating point format, round to nearest even mode.
         /// </remarks>
         /// <param name="src0">The components to convert.</param>
         /// <returns>The result of the operation.</returns>
-        public static Number4 Utof(ref Number4 src0)
+        public static Number4 UtoF(ref Number4 src0)
         {
             return new Number4
             {

@@ -95,34 +95,45 @@ namespace SlimShader.VirtualMachine.Execution
 				    case ExecutableOpcodeType.EmitStream:
 				        yield return ExecutionResponse.Emit;
 				        break;
+                    case ExecutableOpcodeType.FtoI:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.FtoI);
+                        break;
+                    case ExecutableOpcodeType.FtoU:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.FtoU);
+                        break;
                     case ExecutableOpcodeType.Ge:
                         foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.Ge);
                         break;
+                    case ExecutableOpcodeType.IAdd:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.IAdd);
+                        break;
+                    case ExecutableOpcodeType.IGe:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.IGe);
+                        break;
 				    case ExecutableOpcodeType.ILt:
 				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction, InstructionImplementations.Ilt);
+				            Execute(thread, instruction, InstructionImplementations.ILt);
 				        break;
-				    case ExecutableOpcodeType.ItoF:
+                    case ExecutableOpcodeType.IMad:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.IMad);
+                        break;
+                    case ExecutableOpcodeType.IMin:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.IMin);
+                        break;
+                    case ExecutableOpcodeType.INe:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.INe);
+                        break;
+                    case ExecutableOpcodeType.ItoF:
 				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction, src => Number.FromFloat(Convert.ToSingle(src.Int), instruction.Saturate));
-				        break;
-				    case ExecutableOpcodeType.FtoI:
-				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction, src => Number.FromInt(Convert.ToInt32(src.Float)));
-				        break;
-				    case ExecutableOpcodeType.FtoU:
-				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction, src => Number.FromUInt(Convert.ToUInt32(src.Float)));
-				        break;
-				    case ExecutableOpcodeType.IAdd:
-				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction, (src0, src1) => Number.FromInt(src0.Int + src1.Int));
-				        break;
-				    case ExecutableOpcodeType.IGe:
-				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction,
-				                (src0, src1) => Number.FromUInt((src0.Int >= src1.Int) ? 0xFFFFFFFF : 0x0000000));
+				            Execute(thread, instruction, InstructionImplementations.ItoF);
 				        break;
 				    case ExecutableOpcodeType.Lt:
 				        foreach (var thread in activeExecutionContexts)
@@ -130,9 +141,7 @@ namespace SlimShader.VirtualMachine.Execution
 				        break;
 				    case ExecutableOpcodeType.Mad:
 				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction,
-				                (src0, src1, src2) =>
-				                    Number.FromFloat((src0.Float * src1.Float) + src2.Float, instruction.Saturate));
+				            Execute(thread, instruction, InstructionImplementations.Mad);
 				        break;
 				    case ExecutableOpcodeType.Max:
 				        foreach (var thread in activeExecutionContexts)
@@ -161,6 +170,10 @@ namespace SlimShader.VirtualMachine.Execution
 				        foreach (var thread in activeExecutionContexts)
 				            Execute(thread, instruction, InstructionImplementations.Mul);
 				        break;
+                    case ExecutableOpcodeType.Ne:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.Ne);
+                        break;
 				    case ExecutableOpcodeType.Ret:
 				        yield return ExecutionResponse.Finished;
 				        break;
@@ -261,9 +274,9 @@ namespace SlimShader.VirtualMachine.Execution
 				        foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.Sqrt);
 				        break;
-                    case ExecutableOpcodeType.Utof:
+                    case ExecutableOpcodeType.UtoF:
 				        foreach (var thread in activeExecutionContexts)
-				            Execute(thread, instruction, InstructionImplementations.Utof);
+				            Execute(thread, instruction, InstructionImplementations.UtoF);
 				        break;
 				    case ExecutableOpcodeType.Xor:
 				        foreach (var thread in activeExecutionContexts)
@@ -462,6 +475,30 @@ namespace SlimShader.VirtualMachine.Execution
         }
 
 	    private delegate Number Number4Number4ToNumberCallback(bool saturate, ref Number4 src0, ref Number4 src1);
+
+        private static void Execute(ExecutionContext context, ExecutableInstruction instruction, BoolNumber4Number4Number4ToNumber4Callback callback)
+        {
+            var src0 = GetOperandValue(context, instruction.Operands[1]);
+            var src1 = GetOperandValue(context, instruction.Operands[2]);
+            var src2 = GetOperandValue(context, instruction.Operands[3]);
+            var result = callback(instruction.Saturate, ref src0, ref src1, ref src2);
+
+            SetRegisterValue(context, instruction.Operands[0], result);
+        }
+
+        private delegate Number4 BoolNumber4Number4Number4ToNumber4Callback(bool saturate, ref Number4 src0, ref Number4 src1, ref Number4 src2);
+
+        private static void Execute(ExecutionContext context, ExecutableInstruction instruction, Number4Number4Number4ToNumber4Callback callback)
+        {
+            var src0 = GetOperandValue(context, instruction.Operands[1]);
+            var src1 = GetOperandValue(context, instruction.Operands[2]);
+            var src2 = GetOperandValue(context, instruction.Operands[3]);
+            var result = callback(ref src0, ref src1, ref src2);
+
+            SetRegisterValue(context, instruction.Operands[0], result);
+        }
+
+        private delegate Number4 Number4Number4Number4ToNumber4Callback(ref Number4 src0, ref Number4 src1, ref Number4 src2);
 
         private static void Execute(ExecutionContext context, ExecutableInstruction instruction, BoolNumber4Number4ToNumber4Callback callback)
         {

@@ -77,7 +77,7 @@
 		UMax,
 		UMin,
 		UShr,
-		Utof,
+		UtoF,
 		Xor,
 
 		Lod,
