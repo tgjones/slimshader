@@ -77,7 +77,6 @@ namespace SlimShader.VirtualMachine.Execution
 				        break;
                     case ExecutableOpcodeType.Discard:
 				        throw new NotImplementedException();
-				        break;
 				    case ExecutableOpcodeType.Div:
 				        foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.Div);
@@ -94,14 +93,14 @@ namespace SlimShader.VirtualMachine.Execution
 				        foreach (var thread in activeExecutionContexts)
                             ExecuteScalar(thread, instruction, InstructionImplementations.Dp4);
 				        break;
+                    case ExecutableOpcodeType.Emit:
+                    case ExecutableOpcodeType.EmitStream:
+                        yield return ExecutionResponse.Emit;
+                        break;
                     case ExecutableOpcodeType.Eq:
                         foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.Eq);
                         break;
-				    case ExecutableOpcodeType.Emit:
-				    case ExecutableOpcodeType.EmitStream:
-				        yield return ExecutionResponse.Emit;
-				        break;
                     case ExecutableOpcodeType.Exp:
                         foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.Exp);
@@ -184,14 +183,7 @@ namespace SlimShader.VirtualMachine.Execution
 				        break;
 				    case ExecutableOpcodeType.MovC:
 				        foreach (var thread in activeExecutionContexts)
-				        {
-				            // If src0, then dest = src1 else dest = src2
-				            var src0 = GetOperandValue(thread, instruction.Operands[1]);
-				            bool result = TestCondition(ref src0, instruction.TestBoolean);
-				            SetRegisterValue(thread, instruction.Operands[0], result
-				                ? GetOperandValue(thread, instruction.Operands[2])
-				                : GetOperandValue(thread, instruction.Operands[3]));
-				        }
+				            Execute(thread, instruction, InstructionImplementations.MovC);
 				        break;
 				    case ExecutableOpcodeType.Mul:
 				        foreach (var thread in activeExecutionContexts)
@@ -204,6 +196,22 @@ namespace SlimShader.VirtualMachine.Execution
 				    case ExecutableOpcodeType.Ret:
 				        yield return ExecutionResponse.Finished;
 				        break;
+                    case ExecutableOpcodeType.RoundNe:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.RoundNe);
+                        break;
+                    case ExecutableOpcodeType.RoundNi:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.RoundNi);
+                        break;
+                    case ExecutableOpcodeType.RoundPi:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.RoundPi);
+                        break;
+                    case ExecutableOpcodeType.RoundZ:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.RoundZ);
+                        break;
 				    case ExecutableOpcodeType.Rsq:
 				        foreach (var thread in activeExecutionContexts)
 				            Execute(thread, instruction, InstructionImplementations.Rsq);

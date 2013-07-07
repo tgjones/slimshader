@@ -1,4 +1,5 @@
 ﻿using System;
+using SlimShader.Chunks.Shex;
 
 namespace SlimShader.VirtualMachine.Execution
 {
@@ -14,6 +15,19 @@ namespace SlimShader.VirtualMachine.Execution
         private static Number GetCompareResult(bool result)
         {
             return Number.FromUInt(result ? 0xFFFFFFFF : 0x0000000);
+        }
+
+        private static bool TestCondition(ref Number4 number, InstructionTestBoolean testBoolean)
+        {
+            switch (testBoolean)
+            {
+                case InstructionTestBoolean.Zero:
+                    return number.AllZero;
+                case InstructionTestBoolean.NonZero:
+                    return number.AnyNonZero;
+                default:
+                    throw new ArgumentOutOfRangeException("testBoolean");
+            }
         }
 
         /// <summary>
@@ -594,13 +608,7 @@ namespace SlimShader.VirtualMachine.Execution
         public static Number4 Mov(bool saturate, ref Number4 src0)
         {
             if (saturate)
-                return new Number4
-                {
-                    Number0 = Number.FromFloat(src0.Number0.Float, true),
-                    Number1 = Number.FromFloat(src0.Number0.Float, true),
-                    Number2 = Number.FromFloat(src0.Number0.Float, true),
-                    Number3 = Number.FromFloat(src0.Number0.Float, true)
-                };
+                return Number4.Saturate(ref src0);
 
             return new Number4
             {
@@ -609,6 +617,27 @@ namespace SlimShader.VirtualMachine.Execution
                 Number2 = src0.Number2,
                 Number3 = src0.Number3
             };
+        }
+
+        /// <summary>
+        /// Component-wise conditional move.
+        /// </summary>
+        /// <remarks>
+        /// The modifiers, other than swizzle, assume the data is floating point.
+        /// The absence of modifiers just moves data without altering bits.
+        /// </remarks>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The components on which to test the condition.</param>
+        /// <param name="src1">The components to move.</param>
+        /// <param name="src2">The components to move.</param>
+        /// <returns>The result of the operation. If src0, then dest = src1 else dest = src2.</returns>
+        public static Number4 MovC(bool saturate, ref Number4 src0, ref Number4 src1, ref Number4 src2)
+        {
+            var result = TestCondition(ref src0, InstructionTestBoolean.NonZero);
+            if (saturate)
+                return (result) ? Number4.Saturate(ref src1) : Number4.Saturate(ref src2);
+
+            return (result) ? src1 : src2;
         }
 
         /// <summary>
@@ -651,6 +680,116 @@ namespace SlimShader.VirtualMachine.Execution
                 Number3 = GetCompareResult(src0.Number3.Float != src1.Number3.Float),
                 // ReSharper restore CompareOfFloatsByEqualityOperator
             };
+        }
+
+        /// <summary>
+        /// Floating-point round to integral float.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs a component-wise floating-point round of the values in src0, 
+        /// writing integral floating-point values to dest. round_ne rounds toward nearest even.
+        /// </remarks>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The components in the operation.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 RoundNe(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(RoundNe(src0.Number0.Float), saturate),
+                Number1 = Number.FromFloat(RoundNe(src0.Number1.Float), saturate),
+                Number2 = Number.FromFloat(RoundNe(src0.Number2.Float), saturate),
+                Number3 = Number.FromFloat(RoundNe(src0.Number3.Float), saturate)
+            };
+        }
+
+        private static float RoundNe(float value)
+        {
+            return (float) Math.Round(value, MidpointRounding.ToEven);
+        }
+
+        /// <summary>
+        /// Floating-point round to integral float.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs a component-wise floating-point round of the values in src0, 
+        /// writing integral floating-point values to dest.
+        /// 
+        /// round_ni rounds toward -infinity, commonly known as floor().
+        /// </remarks>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The components in the operation.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 RoundNi(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(RoundNi(src0.Number0.Float), saturate),
+                Number1 = Number.FromFloat(RoundNi(src0.Number1.Float), saturate),
+                Number2 = Number.FromFloat(RoundNi(src0.Number2.Float), saturate),
+                Number3 = Number.FromFloat(RoundNi(src0.Number3.Float), saturate)
+            };
+        }
+
+        private static float RoundNi(float value)
+        {
+            return (float) Math.Floor(value);
+        }
+
+        /// <summary>
+        /// Floating-point round to integral float.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs a component-wise floating-point round of the values in src0, 
+        /// writing integral floating-point values to dest.
+        /// 
+        /// round_pi rounds toward +infinity, commonly known as ceil().
+        /// </remarks>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The components in the operation.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 RoundPi(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(RoundPi(src0.Number0.Float), saturate),
+                Number1 = Number.FromFloat(RoundPi(src0.Number1.Float), saturate),
+                Number2 = Number.FromFloat(RoundPi(src0.Number2.Float), saturate),
+                Number3 = Number.FromFloat(RoundPi(src0.Number3.Float), saturate)
+            };
+        }
+
+        private static float RoundPi(float value)
+        {
+            return (float) Math.Ceiling(value);
+        }
+
+        /// <summary>
+        /// Floating-point round to integral float.
+        /// </summary>
+        /// <remarks>
+        /// This instruction performs a component-wise floating-point round of the values in src0, 
+        /// writing integral floating-point values to dest.
+        /// 
+        /// round_z rounds toward zero.
+        /// </remarks>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The components in the operation.</param>
+        /// <returns>The result of the operation.</returns>
+        public static Number4 RoundZ(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(RoundZ(src0.Number0.Float), saturate),
+                Number1 = Number.FromFloat(RoundZ(src0.Number1.Float), saturate),
+                Number2 = Number.FromFloat(RoundZ(src0.Number2.Float), saturate),
+                Number3 = Number.FromFloat(RoundZ(src0.Number3.Float), saturate)
+            };
+        }
+
+        private static float RoundZ(float value)
+        {
+            return (float) Math.Truncate(value);
         }
 
         /// <summary>

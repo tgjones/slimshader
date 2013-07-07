@@ -49,6 +49,17 @@ namespace SlimShader
 			}
 		}
 
+	    public static Number4 Saturate(ref Number4 original)
+	    {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(original.Number0.Float, true),
+                Number1 = Number.FromFloat(original.Number1.Float, true),
+                Number2 = Number.FromFloat(original.Number2.Float, true),
+                Number3 = Number.FromFloat(original.Number3.Float, true)
+            };
+	    }
+
         public static Number4 Subtract(ref Number4 left, ref Number4 right)
         {
             return new Number4(
