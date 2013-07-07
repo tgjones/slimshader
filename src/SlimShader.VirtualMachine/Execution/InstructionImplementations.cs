@@ -186,6 +186,23 @@ namespace SlimShader.VirtualMachine.Execution
         }
 
         /// <summary>
+        /// Component-wise, extract fractional component.
+        /// </summary>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The component in the operation.</param>
+        /// <returns>The result of the operation. dest = src0 - round_ni(src0).</returns>
+        public static Number4 Frc(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(src0.Number0.Float - RoundNi(src0.Number0.Float), saturate),
+                Number1 = Number.FromFloat(src0.Number1.Float - RoundNi(src0.Number1.Float), saturate),
+                Number2 = Number.FromFloat(src0.Number2.Float - RoundNi(src0.Number2.Float), saturate),
+                Number3 = Number.FromFloat(src0.Number3.Float - RoundNi(src0.Number3.Float), saturate),
+            };
+        }
+
+        /// <summary>
         /// Component-wise signed floating point to integer conversion.
         /// </summary>
         /// <remarks>
@@ -498,6 +515,23 @@ namespace SlimShader.VirtualMachine.Execution
                 Number1 = Number.FromFloat(Convert.ToSingle(src0.Number1.Int)),
                 Number2 = Number.FromFloat(Convert.ToSingle(src0.Number2.Int)),
                 Number3 = Number.FromFloat(Convert.ToSingle(src0.Number3.Int))
+            };
+        }
+
+        /// <summary>
+        /// Component-wise log base 2.
+        /// </summary>
+        /// <param name="saturate">True to clamp the result to [0...1], otherwise false.</param>
+        /// <param name="src0">The value for the operation.</param>
+        /// <returns>The result of the operation. dest = log2(src0).</returns>
+        public static Number4 Log(bool saturate, ref Number4 src0)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat((float) Math.Log(src0.Number0.Float, 2), saturate),
+                Number1 = Number.FromFloat((float) Math.Log(src0.Number1.Float, 2), saturate),
+                Number2 = Number.FromFloat((float) Math.Log(src0.Number2.Float, 2), saturate),
+                Number3 = Number.FromFloat((float) Math.Log(src0.Number3.Float, 2), saturate)
             };
         }
 

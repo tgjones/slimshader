@@ -105,6 +105,10 @@ namespace SlimShader.VirtualMachine.Execution
                         foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.Exp);
                         break;
+                    case ExecutableOpcodeType.Frc:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.Frc);
+                        break;
                     case ExecutableOpcodeType.FtoI:
                         foreach (var thread in activeExecutionContexts)
                             Execute(thread, instruction, InstructionImplementations.FtoI);
@@ -161,6 +165,10 @@ namespace SlimShader.VirtualMachine.Execution
 				        foreach (var thread in activeExecutionContexts)
 				            Execute(thread, instruction, InstructionImplementations.ItoF);
 				        break;
+                    case ExecutableOpcodeType.Log:
+                        foreach (var thread in activeExecutionContexts)
+                            Execute(thread, instruction, InstructionImplementations.Log);
+                        break;
 				    case ExecutableOpcodeType.Lt:
 				        foreach (var thread in activeExecutionContexts)
 				            Execute(thread, instruction, InstructionImplementations.Lt);
