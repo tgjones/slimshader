@@ -11,6 +11,17 @@ namespace SlimShader
 	[StructLayout(LayoutKind.Explicit, Size = Number.SizeInBytes * 4 + 4)]
 	public struct Number4
 	{
+        public static Number4 FromByteArray(byte[] bytes, int startIndex)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromByteArray(bytes, startIndex + 0),
+                Number1 = Number.FromByteArray(bytes, startIndex + 4),
+                Number2 = Number.FromByteArray(bytes, startIndex + 8),
+                Number3 = Number.FromByteArray(bytes, startIndex + 12),
+            };
+        }
+
 		public static Number4 Abs(Number4 original)
 		{
 			switch (original.Type)
