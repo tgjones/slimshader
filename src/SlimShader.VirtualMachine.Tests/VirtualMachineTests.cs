@@ -16,7 +16,7 @@ namespace SlimShader.VirtualMachine.Tests
 		public void CanExecuteSimplePixelShader()
 		{
 			// Arrange.
-			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")), 1);
+			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")), 4);
 
 			// Act.
 			vm.Execute();
