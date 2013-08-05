@@ -211,7 +211,7 @@ namespace SlimShader.Chunks.Stat
 			Debug.Assert(unknown1 == 0 || unknown1 == 1);
 
 			var unknown2 = reader.ReadUInt32();
-			Debug.Assert(unknown2 == 0); 
+			Debug.Assert(unknown2 == 0 || unknown2 == 2); // TODO
 
 			result.IsSampleFrequencyShader = (reader.ReadUInt32() == 1);
 

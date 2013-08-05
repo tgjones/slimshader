@@ -87,6 +87,8 @@ namespace SlimShader.Chunks.Shex.Tokens
 		public static Operand Parse(BytecodeReader reader, OpcodeType parentType)
 		{
 			uint token0 = reader.ReadUInt32();
+		    if (token0 == 0)
+		        return null;
 
 			var operand = new Operand(parentType);
 
