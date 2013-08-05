@@ -5,6 +5,9 @@ CLS
 ECHO Compiling shaders...
 ECHO.
 
+CALL CompileShader.bat Internal Textures.hlsl Textures_VS vs_5_0 VS || GOTO :error
+CALL CompileShader.bat Internal Textures.hlsl Textures_PS ps_5_0 PS || GOTO :error
+
 CALL CompileShader.bat FxDis test test_VS vs_5_0 VS || GOTO :error
 CALL CompileShader.bat FxDis test test_PS ps_5_0 PS || GOTO :error
 
