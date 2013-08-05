@@ -1,8 +1,11 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SharpDX;
 using SlimShader.Chunks.Shex;
 using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Tests.Shaders.VS;
+using SlimShader.VirtualMachine.Tests.Util;
 
 namespace SlimShader.VirtualMachine.Tests
 {
@@ -28,14 +31,26 @@ namespace SlimShader.VirtualMachine.Tests
 
 	    [Test]
 		public void CanExecuteVertexShaderBasicHlsl()
-		{
+	    {
 			// Arrange.
 			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/BasicHLSL_VS.o")), 1);
 
-            // Set g_mWorldViewProjection matrix.
-		    var wvp = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
-		        * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10);
-	        SetMatrix(vm, 0, 20, wvp);
+	        var globals = new BasicHlsl.ConstantBufferGlobals
+	        {
+	            WorldViewProjection = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
+	                * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10)
+	        };
+
+	        var vertexInput = new VertexPositionNormalTexture
+	        {
+	            Position = new Vector4(3, 0, 2, 1),
+	            Normal = new Vector3(0, 1, 0),
+	            TextureCoordinate = new Vector2(0, 1)
+	        };
+
+            var direct3DResult = Direct3DUtility.ExecuteVertexShader("Shaders/VS/BasicHLSL_VS.o", globals, vertexInput);
+
+	        SetConstantBuffer(vm, 0, globals);
 
 			vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(1, 0), new Number4
 			{
@@ -43,19 +58,19 @@ namespace SlimShader.VirtualMachine.Tests
 				Number1 = Number.FromInt(1) // bTexture = true
 			});
 
-			vm.SetRegister(0, OperandType.Input, new RegisterIndex(0), new Number4(3.0f, 0.0f, 2.0f, 1.0f)); // vPos
-			vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), new Number4(0.0f, 1.0f, 0.0f, 0.0f)); // vNormal
-			vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), new Number4(0.0f, 1.0f, 0.0f, 0.0f)); // vTexCoord0
+			vm.SetRegister(0, OperandType.Input, new RegisterIndex(0), vertexInput.Position.ToNumber4());
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), vertexInput.Normal.ToNumber4());
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), vertexInput.TextureCoordinate.ToNumber4());
 
 			// Act.
 			vm.Execute();
 
 			// Assert.
 			var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
-			Assert.That(output0.Number0.Float, Is.EqualTo(0.0f));
-			Assert.That(output0.Number1.Float, Is.EqualTo(0.0f));
-			Assert.That(output0.Number2.Float, Is.EqualTo(0.0f));
-			Assert.That(output0.Number3.Float, Is.EqualTo(0.0f));
+			Assert.That(output0.Number0.Float, Is.EqualTo(direct3DResult.Position.X));
+            Assert.That(output0.Number1.Float, Is.EqualTo(direct3DResult.Position.Y));
+            Assert.That(output0.Number2.Float, Is.EqualTo(direct3DResult.Position.Z));
+            Assert.That(output0.Number3.Float, Is.EqualTo(direct3DResult.Position.W));
 		}
 
 	    [Test]
@@ -92,25 +107,14 @@ namespace SlimShader.VirtualMachine.Tests
 			Assert.That(output2.Number1.Float, Is.EqualTo(0.3f));
 		}
 
-	    private static void SetMatrix(VirtualMachine vm, ushort constantBufferIndex, ushort startIndex, Matrix matrix)
+	    private static void SetConstantBuffer<T>(VirtualMachine vm, ushort constantBufferIndex, T data)
 	    {
-	        vm.SetRegister(0, OperandType.ConstantBuffer, 
-                new RegisterIndex(constantBufferIndex, startIndex),
-                ToNumber4(matrix.Row1));
-            vm.SetRegister(0, OperandType.ConstantBuffer,
-                new RegisterIndex(constantBufferIndex, (ushort) (startIndex + 1)),
-                ToNumber4(matrix.Row2));
-            vm.SetRegister(0, OperandType.ConstantBuffer,
-                new RegisterIndex(constantBufferIndex, (ushort) (startIndex + 2)),
-                ToNumber4(matrix.Row3));
-            vm.SetRegister(0, OperandType.ConstantBuffer,
-                new RegisterIndex(constantBufferIndex, (ushort) (startIndex + 3)),
-                ToNumber4(matrix.Row4));
-	    }
+            var bytes = StructUtility.ToBytes(data);
 
-	    private static Number4 ToNumber4(Vector4 vector)
-	    {
-	        return new Number4(vector.X, vector.Y, vector.Z, vector.W);
+	        for (var i = 0; i < bytes.Length; i += 16)
+	            vm.SetRegister(0, OperandType.ConstantBuffer,
+	                new RegisterIndex(constantBufferIndex, (ushort) (i / 16)),
+	                Number4.FromByteArray(bytes, i));
 	    }
 	}
 }

@@ -40,6 +40,18 @@ namespace SlimShader
 			return Math.Min(1.0f, Math.Max(0.0f, value));
 		}
 
+        public static Number FromByteArray(byte[] bytes, int startIndex)
+        {
+            return new Number
+            {
+                Type = NumberType.Unknown,
+                Byte0 = bytes[startIndex + 0],
+                Byte1 = bytes[startIndex + 1],
+                Byte2 = bytes[startIndex + 2],
+                Byte3 = bytes[startIndex + 3]
+            };
+        }
+
 		public static Number FromFloat(float value, bool saturate)
 		{
 			return FromFloat((saturate) ? Saturate(value) : value);
@@ -110,6 +122,13 @@ namespace SlimShader
 		public byte[] RawBytes
 		{
 			get { return new[] { Byte0, Byte1, Byte2, Byte3 }; }
+		    set
+		    {
+		        Byte0 = value[0];
+		        Byte1 = value[1];
+		        Byte2 = value[2];
+		        Byte3 = value[3];
+		    }
 		}
 
 		public Number(byte[] rawBytes, NumberType type)
