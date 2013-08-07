@@ -22,9 +22,9 @@ namespace SlimShader
             };
         }
 
-		public static Number4 Abs(Number4 original)
+		public static Number4 Abs(Number4 original, Number4Type type)
 		{
-			switch (original.Type)
+            switch (type)
 			{
 				case Number4Type.Number:
 					return new Number4(
@@ -37,13 +37,13 @@ namespace SlimShader
 						Math.Abs(original.Double0),
 						Math.Abs(original.Double1));
 				default:
-					throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", original.Type));
+                    throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", type));
 			}
 		}
 
-		public static Number4 Negate(Number4 original)
+		public static Number4 Negate(Number4 original, Number4Type type)
 		{
-			switch (original.Type)
+            switch (type)
 			{
 				case Number4Type.Number:
 					return new Number4(
@@ -56,7 +56,7 @@ namespace SlimShader
 						-original.Double0,
 						-original.Double1);
 				default:
-					throw new InvalidOperationException(string.Format("Negate is not a valid operation for number type '{0}'.", original.Type));
+                    throw new InvalidOperationException(string.Format("Negate is not a valid operation for number type '{0}'.", type));
 			}
 		}
 
@@ -89,6 +89,15 @@ namespace SlimShader
 				original.GetNumber((int) swizzles[3]));
 		}
 
+        // The following FieldOffset attributes are there because there
+        // are multiple ways of "looking at" a Number4. It can be used
+        // to store:
+        // (1) 2 doubles
+        // (2) 4 ints
+        // (3) 4 uints
+        // (4) 4 floats
+        // (5) 16 bytes
+
 		[FieldOffset(0)]
 		public Number Number0;
 
@@ -107,9 +116,6 @@ namespace SlimShader
 		[FieldOffset(sizeof(double))]
 		public double Double1;
 
-		[FieldOffset(Number.SizeInBytes * 4)]
-		public Number4Type Type;
-
 		public bool AllZero
 		{
 			get { return Number0.UInt == 0 && Number1.UInt == 0 && Number2.UInt == 0 && Number3.UInt == 0; }
@@ -123,7 +129,6 @@ namespace SlimShader
 		public Number4(Number number0, Number number1, Number number2, Number number3)
 			: this()
 		{
-			Type = Number4Type.Number;
 			Number0 = number0;
 			Number1 = number1;
 			Number2 = number2;
@@ -133,7 +138,6 @@ namespace SlimShader
 		public Number4(float float0, float float1, float float2, float float3)
 			: this()
 		{
-			Type = Number4Type.Number;
 			Number0 = Number.FromFloat(float0);
 			Number1 = Number.FromFloat(float1);
 			Number2 = Number.FromFloat(float2);
@@ -143,7 +147,6 @@ namespace SlimShader
 		public Number4(double double0, double double1)
 			: this()
 		{
-			Type = Number4Type.Double;
 			Double0 = double0;
 			Double1 = double1;
 		}
@@ -180,7 +183,6 @@ namespace SlimShader
 
 		public void SetNumber(int i, Number value)
 		{
-			Type = Number4Type.Number;
 			switch (i)
 			{
 				case 0:
@@ -202,7 +204,6 @@ namespace SlimShader
 
 		public void SetDouble(int i, double value)
 		{
-			Type = Number4Type.Double;
 			switch (i)
 			{
 				case 0:

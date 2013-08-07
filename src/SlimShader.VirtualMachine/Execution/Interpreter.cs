@@ -385,9 +385,10 @@ namespace SlimShader.VirtualMachine.Execution
 			switch (operand.OperandType)
 			{
 				case OperandType.Immediate32:
-				case OperandType.Immediate64:
-					return OperandUtility.ApplyOperandModifier(operand.ImmediateValues, operand.Modifier);
-				case OperandType.ConstantBuffer:
+                    return OperandUtility.ApplyOperandModifier(operand.ImmediateValues, Number4Type.Number, operand.Modifier);
+                case OperandType.Immediate64:
+                    return OperandUtility.ApplyOperandModifier(operand.ImmediateValues, Number4Type.Double, operand.Modifier);
+                case OperandType.ConstantBuffer:
 				case OperandType.IndexableTemp:
 				case OperandType.Input:
 				case OperandType.Temp:
@@ -395,7 +396,7 @@ namespace SlimShader.VirtualMachine.Execution
 					int index;
 					GetRegister(context, operand, out register, out index);
 					var swizzledNumber = OperandUtility.ApplyOperandSelectionMode(register[index], operand);
-					return OperandUtility.ApplyOperandModifier(swizzledNumber, operand.Modifier);
+					return OperandUtility.ApplyOperandModifier(swizzledNumber, Number4Type.Number, operand.Modifier);
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
 			}
