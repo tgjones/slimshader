@@ -11,27 +11,27 @@ namespace SlimShader
 	[StructLayout(LayoutKind.Explicit, Size = SizeInBytes)]
 	public struct Number
 	{
-		public static Number Abs(Number value)
+		public static Number Abs(Number value, NumberType type)
 		{
-			switch (value.Type)
+            switch (type)
 			{
 				case NumberType.Float:
 					return FromFloat(Math.Abs(value.Float));
 				default:
-					throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", value.Type));
+                    throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", type));
 			}
 		}
 
-		public static Number Negate(Number value)
+		public static Number Negate(Number value, NumberType type)
 		{
-			switch (value.Type)
+            switch (type)
 			{
 				case NumberType.Int:
 					return FromInt(-value.Int);
 				case NumberType.Float:
 					return FromFloat(-value.Float);
 				default:
-					throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", value.Type));
+                    throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", type));
 			}
 		}
 
@@ -44,7 +44,6 @@ namespace SlimShader
         {
             return new Number
             {
-                Type = NumberType.Unknown,
                 Byte0 = bytes[startIndex + 0],
                 Byte1 = bytes[startIndex + 1],
                 Byte2 = bytes[startIndex + 2],
@@ -61,7 +60,6 @@ namespace SlimShader
 		{
 			return new Number
 			{
-				Type = NumberType.Float,
 				Float = value
 			};
 		}
@@ -70,7 +68,6 @@ namespace SlimShader
 		{
 			return new Number
 			{
-				Type = NumberType.Int,
 				Int = value
 			};
 		}
@@ -79,21 +76,20 @@ namespace SlimShader
 		{
 			return new Number
 			{
-				Type = NumberType.UInt,
 				UInt = value
 			};
 		}
 
-		public static Number Parse(BytecodeReader reader, NumberType type)
+		public static Number Parse(BytecodeReader reader)
 		{
 			const int byteCount = 4;
 			var bytes = new byte[byteCount];
 			for (int i = 0; i < byteCount; i++)
 				bytes[i] = reader.ReadByte();
-			return new Number(bytes, type);
+			return new Number(bytes);
 		}
 
-		public const int SizeInBytes = sizeof(byte) * 4 + sizeof(int);
+		public const int SizeInBytes = sizeof(byte) * 4;
 
 		[FieldOffset(0)]
 		public byte Byte0;
@@ -116,9 +112,6 @@ namespace SlimShader
 		[FieldOffset(0)]
 		public float Float;
 
-		[FieldOffset(4)]
-		public NumberType Type;
-
 		public byte[] RawBytes
 		{
 			get { return new[] { Byte0, Byte1, Byte2, Byte3 }; }
@@ -131,31 +124,28 @@ namespace SlimShader
 		    }
 		}
 
-		public Number(byte[] rawBytes, NumberType type)
+		public Number(byte[] rawBytes)
 			: this()
 		{
-			Type = type;
 			Byte0 = rawBytes[0];
 			Byte1 = rawBytes[1];
 			Byte2 = rawBytes[2];
 			Byte3 = rawBytes[3];
 		}
 
-		public Number ConvertToType(NumberType type)
-		{
-			var result = this;
-			result.Type = type;
-			return result;
-		}
+        public override string ToString()
+        {
+            return ToString(NumberType.Unknown);
+        }
 
-		public override string ToString()
+		public string ToString(NumberType type)
 		{
 			const int hexThreshold = 10000; // This is the correct value, derived through fxc.exe and a bisect-search.
 			const uint negThreshold = 0xFFFFFFF0; // TODO: Work out the actual negative threshold.
 			const int floatThresholdPos = 0x00700000; // TODO: Work out the actual float threshold.
 			const int floatThresholdNeg = -0x00700000; // TODO: Work out the actual float threshold.
 			const uint uintThresholdPos = 0xfff00000; // TODO: Work out the actual float threshold.
-			switch (Type)
+            switch (type)
 			{
 				case NumberType.Int:
 					if (Int > hexThreshold)
@@ -189,7 +179,7 @@ namespace SlimShader
 						goto case NumberType.Float;
 					goto case NumberType.Int;
 				default:
-					throw new InvalidOperationException(string.Format("Type '{0}' is not supported.", Type));
+					throw new InvalidOperationException(string.Format("Type '{0}' is not supported.", type));
 			}
 		}
 	}

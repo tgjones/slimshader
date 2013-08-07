@@ -34,7 +34,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 			};
 
 			for (int i = 0; i < length; i++)
-				result.Data[i] = Number.Parse(reader, NumberType.Unknown);
+				result.Data[i] = Number.Parse(reader);
 
 			return result;
 		}

@@ -192,7 +192,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 				{
 					var immediateValues = new Number4();
 					for (var i = 0; i < operand.NumComponents; i++)
-						immediateValues.SetNumber(i, Number.Parse(reader, numberType));
+						immediateValues.SetNumber(i, Number.Parse(reader));
 					operand.ImmediateValues = immediateValues;
 					break;
 				}
@@ -263,7 +263,7 @@ namespace SlimShader.Chunks.Shex.Tokens
 						{
 							result += (OperandType == OperandType.Immediate64)
 								? ImmediateValues.GetDouble(i).ToString()
-								: ImmediateValues.GetNumber(i).ToString();
+								: ImmediateValues.GetNumber(i).ToString(_parentType.GetNumberType());
 
 							if (i < NumComponents - 1)
 							{

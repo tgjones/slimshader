@@ -22,17 +22,19 @@ namespace SlimShader
             };
         }
 
-		public static Number4 Abs(Number4 original, Number4Type type)
+		public static Number4 Abs(Number4 original, NumberType type)
 		{
             switch (type)
 			{
-				case Number4Type.Number:
+                case NumberType.Float:
+                case NumberType.Int:
+                case NumberType.UInt:
 					return new Number4(
-						Number.Abs(original.Number0),
-						Number.Abs(original.Number1),
-						Number.Abs(original.Number2),
-						Number.Abs(original.Number3));
-				case Number4Type.Double:
+						Number.Abs(original.Number0, type),
+                        Number.Abs(original.Number1, type),
+                        Number.Abs(original.Number2, type),
+                        Number.Abs(original.Number3, type));
+				case NumberType.Double:
 					return new Number4(
 						Math.Abs(original.Double0),
 						Math.Abs(original.Double1));
@@ -41,17 +43,19 @@ namespace SlimShader
 			}
 		}
 
-		public static Number4 Negate(Number4 original, Number4Type type)
+		public static Number4 Negate(Number4 original, NumberType type)
 		{
             switch (type)
 			{
-				case Number4Type.Number:
+				case NumberType.Float:
+                case NumberType.Int:
+                case NumberType.UInt:
 					return new Number4(
-						Number.Negate(original.Number0),
-						Number.Negate(original.Number1),
-						Number.Negate(original.Number2),
-						Number.Negate(original.Number3));
-				case Number4Type.Double:
+						Number.Negate(original.Number0, type),
+                        Number.Negate(original.Number1, type),
+                        Number.Negate(original.Number2, type),
+                        Number.Negate(original.Number3, type));
+				case NumberType.Double:
 					return new Number4(
 						-original.Double0,
 						-original.Double1);

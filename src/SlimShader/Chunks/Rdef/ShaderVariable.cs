@@ -109,7 +109,7 @@ namespace SlimShader.Chunks.Rdef
 				if (size % 4 != 0)
 					throw new ParseException("Can only deal with 4-byte default values at the moment.");
 				for (int i = 0; i < size; i += 4)
-					defaultValue.Add(new Number(defaultValueReader.ReadBytes(4), NumberType.Unknown));
+					defaultValue.Add(new Number(defaultValueReader.ReadBytes(4)));
 			}
 
 			var name = nameReader.ReadString();
