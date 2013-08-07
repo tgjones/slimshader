@@ -114,11 +114,13 @@ namespace SlimShader
 		[FieldOffset(Number.SizeInBytes * 3)]
 		public Number Number3;
 
+
 		[FieldOffset(0)]
 		public double Double0;
 
 		[FieldOffset(sizeof(double))]
 		public double Double1;
+
 
         [FieldOffset(0)]
 	    public float X;
@@ -131,6 +133,20 @@ namespace SlimShader
 
         [FieldOffset(sizeof(float) * 3)]
         public float W;
+
+
+        [FieldOffset(0)]
+        public float R;
+
+        [FieldOffset(sizeof(float) * 1)]
+        public float G;
+
+        [FieldOffset(sizeof(float) * 2)]
+        public float B;
+
+        [FieldOffset(sizeof(float) * 3)]
+        public float A;
+
 
 		public bool AllZero
 		{
