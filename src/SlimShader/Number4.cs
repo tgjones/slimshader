@@ -43,6 +43,43 @@ namespace SlimShader
 			}
 		}
 
+        public static Number4 Average(ref Number4 v0, ref Number4 v1, ref Number4 v2, ref Number4 v3)
+        {
+            return new Number4(
+                (v0.X + v1.X + v2.X + v3.X) / 4.0f,
+                (v0.Y + v1.Y + v2.Y + v3.Y) / 4.0f,
+                (v0.Z + v1.Z + v2.Z + v3.Z) / 4.0f,
+                (v0.W + v1.W + v2.W + v3.W) / 4.0f);
+        }
+
+        public static Number4 Invert(Number4 value)
+        {
+            return new Number4(1 - value.R, 1 - value.G, 1 - value.B, 1 - value.A);
+        }
+
+        public static Number4 Invert(ref Number4 value)
+        {
+            return new Number4(1 - value.R, 1 - value.G, 1 - value.B, 1 - value.A);
+        }
+
+        public static Number4 Lerp(ref Number4 left, ref Number4 right, float value)
+        {
+            return new Number4(
+                left.X * (1 - value) + right.X * value,
+                left.Y * (1 - value) + right.Y * value,
+                left.Z * (1 - value) + right.Z * value,
+                left.W * (1 - value) + right.W * value);
+        }
+
+        public static Number4 Multiply(ref Number4 left, ref Number4 right)
+        {
+            return new Number4(
+                left.X * right.X,
+                left.Y * right.Y,
+                left.Z * right.Z,
+                left.W * right.W);
+        }
+
 		public static Number4 Negate(Number4 original, NumberType type)
 		{
             switch (type)
@@ -74,6 +111,17 @@ namespace SlimShader
                 Number3 = Number.FromFloat(original.Number3.Float, true)
             };
 	    }
+
+        public static Number4 Saturate(Number4 original)
+        {
+            return new Number4
+            {
+                Number0 = Number.FromFloat(original.Number0.Float, true),
+                Number1 = Number.FromFloat(original.Number1.Float, true),
+                Number2 = Number.FromFloat(original.Number2.Float, true),
+                Number3 = Number.FromFloat(original.Number3.Float, true)
+            };
+        }
 
         public static Number4 Subtract(ref Number4 left, ref Number4 right)
         {
@@ -159,7 +207,7 @@ namespace SlimShader
 		}
 
 		public Number4(Number number0, Number number1, Number number2, Number number3)
-			: this()
+            : this()
 		{
 			Number0 = number0;
 			Number1 = number1;
@@ -168,16 +216,16 @@ namespace SlimShader
 		}
 
 		public Number4(float float0, float float1, float float2, float float3)
-			: this()
+            : this()
 		{
-			Number0 = Number.FromFloat(float0);
-			Number1 = Number.FromFloat(float1);
-			Number2 = Number.FromFloat(float2);
-			Number3 = Number.FromFloat(float3);
+			X = float0;
+			Y = float1;
+			Z = float2;
+			W = float3;
 		}
 
 		public Number4(double double0, double double1)
-			: this()
+            : this()
 		{
 			Double0 = double0;
 			Double1 = double1;
