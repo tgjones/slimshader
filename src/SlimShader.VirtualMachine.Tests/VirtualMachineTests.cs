@@ -112,9 +112,11 @@ namespace SlimShader.VirtualMachine.Tests
             var bytes = StructUtility.ToBytes(data);
 
 	        for (var i = 0; i < bytes.Length; i += 16)
+	        {
 	            vm.SetRegister(0, OperandType.ConstantBuffer,
 	                new RegisterIndex(constantBufferIndex, (ushort) (i / 16)),
 	                Number4.FromByteArray(bytes, i));
+	        }
 	    }
 	}
 }

@@ -66,5 +66,15 @@ namespace SlimShader.VirtualMachine
 					throw new ArgumentException("Unsupported operand type: " + operandType);
 			}
 		}
+
+        public void SetInputRegisterValue(int index0, int index1, ref Number4 value)
+        {
+            Inputs[index0][index1] = value;
+        }
+
+        public Number4 GetOutputRegisterValue(int index)
+        {
+            return Outputs[index];
+        }
 	}
 }

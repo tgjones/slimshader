@@ -76,13 +76,28 @@ namespace SlimShader.VirtualMachine
 			return register[index];
 		}
 
-		public void SetRegister(int contextIndex, OperandType registerType, RegisterIndex registerIndex, Number4 value)
+        public Number4 GetOutputRegisterValue(int contextIndex, int registerIndex)
+        {
+            return _executionContexts[contextIndex].GetOutputRegisterValue(registerIndex);
+        }
+
+		public void SetRegister(int contextIndex, OperandType registerType, RegisterIndex registerIndex, ref Number4 value)
 		{
 			Number4[] register;
 			int index;
 			_executionContexts[contextIndex].GetRegister(registerType, registerIndex, out register, out index);
 			register[index] = value;
 		}
+
+        public void SetRegister(int contextIndex, OperandType registerType, RegisterIndex registerIndex, Number4 value)
+        {
+            SetRegister(contextIndex, registerType, registerIndex, ref value);
+        }
+
+        public void SetInputRegisterValue(int contextIndex, int index0, int index1, ref Number4 value)
+        {
+            _executionContexts[contextIndex].SetInputRegisterValue(index0, index1, ref value);
+        }
 
 		public void SetTexture(RegisterIndex registerIndex, ITexture texture)
 		{
