@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SharpDX;
 using SlimShader.Chunks.Shex;

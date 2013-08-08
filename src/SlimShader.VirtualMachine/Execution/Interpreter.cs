@@ -288,8 +288,11 @@ namespace SlimShader.VirtualMachine.Execution
                         break;
                     case ExecutableOpcodeType.Sample:
 				    {
-				        var srcResource = GetTexture(instruction.Operands[2]);
-				        var srcSampler = GetSampler(instruction.Operands[3]);
+				        var srcResourceIndex = instruction.Operands[2].Indices[0].Value;
+                        var srcResource = _virtualMachine.Textures[srcResourceIndex];
+				        var srcSampler = _virtualMachine.Samplers[instruction.Operands[3].Indices[0].Value];
+				        var textureSampler = _virtualMachine.TextureSamplers[srcResourceIndex];
+
 				        for (var i = 0; i < _executionContexts.Length; i += 4)
 				        {
                             var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
@@ -301,16 +304,16 @@ namespace SlimShader.VirtualMachine.Execution
                             var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
 
 				            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0],
-				                srcResource.SampleGrad(srcSampler, ref topLeft,
+                                textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft,
 				                    ref deltaX, ref deltaY));
                             SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0],
-                                srcResource.SampleGrad(srcSampler, ref topRight,
+                                textureSampler.SampleGrad(srcResource, srcSampler, ref topRight,
                                     ref deltaX, ref deltaY));
                             SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0],
-                                srcResource.SampleGrad(srcSampler, ref bottomLeft,
+                                textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft,
                                     ref deltaX, ref deltaY));
                             SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0],
-                                srcResource.SampleGrad(srcSampler, ref bottomRight,
+                                textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight,
                                     ref deltaX, ref deltaY));
 				        }
 				        break;
@@ -396,28 +399,6 @@ namespace SlimShader.VirtualMachine.Execution
 					GetRegister(context, operand, out register, out index);
 					var swizzledNumber = OperandUtility.ApplyOperandSelectionMode(register[index], operand);
 					return OperandUtility.ApplyOperandModifier(swizzledNumber, numberType, operand.Modifier);
-				default:
-					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
-			}
-		}
-
-		private ITexture GetTexture(Operand operand)
-		{
-			switch (operand.OperandType)
-			{
-				case OperandType.Resource:
-					return _virtualMachine.Textures[operand.Indices[0].Value];
-				default:
-					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
-			}
-		}
-
-		private ISamplerState GetSampler(Operand operand)
-		{
-			switch (operand.OperandType)
-			{
-				case OperandType.Sampler:
-                    return _virtualMachine.Samplers[operand.Indices[0].Value];
 				default:
 					throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
 			}

@@ -27,8 +27,9 @@ namespace SlimShader.VirtualMachine
 
 		private readonly RequiredRegisters _requiredRegisters;
 
+        internal TextureSampler[] TextureSamplers { get; private set; }
         internal ITexture[] Textures { get; private set; }
-        internal ISamplerState[] Samplers { get; private set; }
+        internal SamplerState[] Samplers { get; private set; }
 
 		public int NumPrimitives
 		{
@@ -54,8 +55,9 @@ namespace SlimShader.VirtualMachine
 				_executionContexts[i] = new ExecutionContext(i, _requiredRegisters);
 			_shaderExecutor = new Interpreter(this, _executionContexts, executableInstructions.ToArray());
 
+		    TextureSamplers = new TextureSampler[_requiredRegisters.Resources];
             Textures = new ITexture[_requiredRegisters.Resources];
-            Samplers = new ISamplerState[_requiredRegisters.Samplers];
+            Samplers = new SamplerState[_requiredRegisters.Samplers];
 		}
 
 		public IEnumerable<ExecutionResponse> ExecuteMultiple()
@@ -101,12 +103,13 @@ namespace SlimShader.VirtualMachine
 
 		public void SetTexture(RegisterIndex registerIndex, ITexture texture)
 		{
+		    TextureSamplers[registerIndex.Index1D] = TextureSamplerFactory.Create(texture.Dimension);
 			Textures[registerIndex.Index1D] = texture;
 		}
 
-		public void SetSampler(RegisterIndex registerIndex, ISamplerState samplerState)
+		public void SetSampler(RegisterIndex registerIndex, SamplerState sampler)
 		{
-			Samplers[registerIndex.Index1D] = samplerState;
+			Samplers[registerIndex.Index1D] = sampler;
 		}
 	}
 }

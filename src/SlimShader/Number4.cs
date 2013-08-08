@@ -196,6 +196,32 @@ namespace SlimShader
         public float A;
 
 
+        [FieldOffset(0)]
+        public float Float0;
+
+        [FieldOffset(sizeof(float) * 1)]
+        public float Float1;
+
+        [FieldOffset(sizeof(float) * 2)]
+        public float Float2;
+
+        [FieldOffset(sizeof(float) * 3)]
+        public float Float3;
+
+
+        [FieldOffset(0)]
+        public int Int0;
+
+        [FieldOffset(sizeof(int) * 1)]
+        public int Int1;
+
+        [FieldOffset(sizeof(int) * 2)]
+        public int Int2;
+
+        [FieldOffset(sizeof(int) * 3)]
+        public int Int3;
+
+
 		public bool AllZero
 		{
 			get { return Number0.UInt == 0 && Number1.UInt == 0 && Number2.UInt == 0 && Number3.UInt == 0; }
