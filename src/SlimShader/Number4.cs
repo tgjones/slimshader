@@ -239,6 +239,11 @@ namespace SlimShader
             get { return new Number4(Number0, Number0, Number0, Number0); }
         }
 
+        public Number4 Xxyz
+        {
+            get { return new Number4(Number0, Number0, Number1, Number2); }
+        }
+
         public Number4 Xyxx
         {
             get { return new Number4(Number0, Number1, Number0, Number0); }
@@ -254,9 +259,24 @@ namespace SlimShader
 	        get { return new Number4(Number1, Number1, Number1, Number1); }
 	    }
 
+        public Number4 Yyzw
+        {
+            get { return new Number4(Number1, Number1, Number2, Number3); }
+        }
+
+        public Number4 Yzwy
+        {
+            get { return new Number4(Number1, Number2, Number3, Number1); }
+        }
+
         public Number4 Zzzz
         {
             get { return new Number4(Number2, Number2, Number2, Number2); }
+        }
+
+        public Number4 Wwww
+        {
+            get { return new Number4(Number3, Number3, Number3, Number3); }
         }
 
         #endregion

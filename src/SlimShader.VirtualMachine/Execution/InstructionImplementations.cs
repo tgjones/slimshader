@@ -668,7 +668,7 @@ namespace SlimShader.VirtualMachine.Execution
         public static Number4 MovC(bool saturate, ref Number4 src0, ref Number4 src1, ref Number4 src2)
         {
             // TODO: This is not yet component-wise - it should be.
-            var result = TestCondition(ref src0, InstructionTestBoolean.NonZero);
+            var result = src0.AnyNonZero;
             if (saturate)
                 return (result) ? Number4.Saturate(ref src1) : Number4.Saturate(ref src2);
 

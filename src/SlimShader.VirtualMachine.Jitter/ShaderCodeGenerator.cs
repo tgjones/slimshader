@@ -22,6 +22,7 @@ namespace SlimShader.VirtualMachine.Jitter
             }
 
             return @"
+using System.Collections;
 using System.Collections.Generic;
 using SlimShader;
 using SlimShader.VirtualMachine;
@@ -46,8 +47,42 @@ public static class DynamicShaderExecutor
         {
             switch (instruction.OpcodeType)
             {
+                case Execution.ExecutableOpcodeType.Branch :
+                    break;
+                case Execution.ExecutableOpcodeType.BranchC :
+                    sb.AppendLineIndent(2, "var activeMasks = new List<BitArray>");
+                    sb.AppendLineIndent(2, "{");
+                    sb.AppendLineIndent(2, "    new BitArray(executionContexts.Length),");
+                    sb.AppendLineIndent(2, "    new BitArray(executionContexts.Length)");
+                    sb.AppendLineIndent(2, "};");
+                    sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
+                    sb.AppendLineIndent(2, "{");
+                    sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[0], NumberType.UInt));
+                    sb.AppendLineIndent(2, "    var result = src0.{0};", GenerateTestCondition(instruction.TestBoolean));
+                    sb.AppendLineIndent(2, "    activeMasks[0][context.Index] = result;");
+                    sb.AppendLineIndent(2, "    activeMasks[1][context.Index] = !result;");
+                    sb.AppendLineIndent(2, "}");
+                    break;
+                case Execution.ExecutableOpcodeType.Dp2:
+                    GenerateExecuteScalar2(sb, instruction, "Dp2");
+                    break;
+                case Execution.ExecutableOpcodeType.Dp3:
+                    GenerateExecuteScalar2(sb, instruction, "Dp3");
+                    break;
+                case Execution.ExecutableOpcodeType.Dp4:
+                    GenerateExecuteScalar2(sb, instruction, "Dp4");
+                    break;
+                case Execution.ExecutableOpcodeType.IAdd:
+                    GenerateExecute2NoSat(sb, instruction, "IAdd");
+                    break;
+                case Execution.ExecutableOpcodeType.IGe:
+                    GenerateExecute2NoSat(sb, instruction, "IGe");
+                    break;
                 case Execution.ExecutableOpcodeType.Mad:
                     GenerateExecute3(sb, instruction, "Mad");
+                    break;
+                case Execution.ExecutableOpcodeType.Max:
+                    GenerateExecute2(sb, instruction, "Max");
                     break;
                 case Execution.ExecutableOpcodeType.Mul:
                     GenerateExecute2(sb, instruction, "Mul");
@@ -55,11 +90,30 @@ public static class DynamicShaderExecutor
                 case Execution.ExecutableOpcodeType.Mov :
                     GenerateExecute1(sb, instruction, "Mov");
                     break;
+                case Execution.ExecutableOpcodeType.MovC:
+                    GenerateExecute3(sb, instruction, "MovC");
+                    break;
                 case Execution.ExecutableOpcodeType.Ret :
                     sb.AppendLineIndent(2, "yield return ExecutionResponse.Finished;");
                     break;
+                case Execution.ExecutableOpcodeType.Rsq:
+                    GenerateExecute1(sb, instruction, "Rsq");
+                    break;
                 default :
                     throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
+            }
+        }
+
+        private static string GenerateTestCondition(InstructionTestBoolean testBoolean)
+        {
+            switch (testBoolean)
+            {
+                case InstructionTestBoolean.Zero:
+                    return "AllZero";
+                case InstructionTestBoolean.NonZero:
+                    return "AnyNonZero";
+                default:
+                    throw new ArgumentOutOfRangeException("testBoolean");
             }
         }
 
@@ -82,6 +136,29 @@ public static class DynamicShaderExecutor
             sb.AppendLineIndent(2, "    var src1 = {0};", GenerateGetOperandValue(instruction.Operands[2], NumberType.Float));
             sb.AppendLineIndent(2, "    var result = InstructionImplementations.{0}({1}, ref src0, ref src1);",
                 methodName, instruction.Saturate.ToString().ToLower());
+            GenerateSetRegisterValue(sb, instruction.Operands[0]);
+            sb.AppendLineIndent(2, "}");
+        }
+
+        private static void GenerateExecuteScalar2(StringBuilder sb, ExecutableInstruction instruction, string methodName)
+        {
+            sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
+            sb.AppendLineIndent(2, "{");
+            sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float));
+            sb.AppendLineIndent(2, "    var src1 = {0};", GenerateGetOperandValue(instruction.Operands[2], NumberType.Float));
+            sb.AppendLineIndent(2, "    var result = InstructionImplementations.{0}({1}, ref src0, ref src1);",
+                methodName, instruction.Saturate.ToString().ToLower());
+            GenerateSetRegisterValueScalar(sb, instruction.Operands[0]);
+            sb.AppendLineIndent(2, "}");
+        }
+
+        private static void GenerateExecute2NoSat(StringBuilder sb, ExecutableInstruction instruction, string methodName)
+        {
+            sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
+            sb.AppendLineIndent(2, "{");
+            sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float));
+            sb.AppendLineIndent(2, "    var src1 = {0};", GenerateGetOperandValue(instruction.Operands[2], NumberType.Float));
+            sb.AppendLineIndent(2, "    var result = InstructionImplementations.{0}(ref src0, ref src1);", methodName);
             GenerateSetRegisterValue(sb, instruction.Operands[0]);
             sb.AppendLineIndent(2, "}");
         }
@@ -120,6 +197,20 @@ public static class DynamicShaderExecutor
                 sb.AppendLineIndent(2, "    {0}.Number2 = result.Number2;", register);
             if (operand.ComponentMask.HasFlag(ComponentMask.W))
                 sb.AppendLineIndent(2, "    {0}.Number3 = result.Number3;", register);
+        }
+
+        private static void GenerateSetRegisterValueScalar(StringBuilder sb, Operand operand)
+        {
+            var register = GetRegister(operand);
+
+            if (operand.ComponentMask.HasFlag(ComponentMask.X))
+                sb.AppendLineIndent(2, "    {0}.Number0 = result;", register);
+            if (operand.ComponentMask.HasFlag(ComponentMask.Y))
+                sb.AppendLineIndent(2, "    {0}.Number1 = result;", register);
+            if (operand.ComponentMask.HasFlag(ComponentMask.Z))
+                sb.AppendLineIndent(2, "    {0}.Number2 = result;", register);
+            if (operand.ComponentMask.HasFlag(ComponentMask.W))
+                sb.AppendLineIndent(2, "    {0}.Number3 = result;", register);
         }
 
         private static string GetRegister(Operand operand)
