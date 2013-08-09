@@ -34,7 +34,7 @@ namespace SlimShader.VirtualMachine
 
 		private readonly RequiredRegisters _requiredRegisters;
 
-	    internal BytecodeContainer BytecodeContainer
+	    public BytecodeContainer Bytecode
 	    {
             get { return _bytecode; }
 	    }

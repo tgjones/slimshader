@@ -47,6 +47,10 @@
       <Project>{167769B9-A10E-4DFD-B09F-43BFEF4EB673}</Project>
       <Name>SlimShader.VirtualMachine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SlimShader\SlimShader.csproj">
+      <Project>{D75528F5-54F9-4E31-94F6-03C194F74CF2}</Project>
+      <Name>SlimShader</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
