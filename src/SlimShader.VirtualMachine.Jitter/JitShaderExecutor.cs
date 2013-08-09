@@ -44,6 +44,7 @@ namespace SlimShader.VirtualMachine.Jitter
             var assemblyReferences = new[]
             {
                 MetadataReference.CreateAssemblyReference("mscorlib"),
+                new MetadataFileReference(typeof(Number4).Assembly.Location),
                 new MetadataFileReference(typeof(VirtualMachine).Assembly.Location)
             };
 

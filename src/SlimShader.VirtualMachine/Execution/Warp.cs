@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Execution
@@ -22,6 +24,13 @@ namespace SlimShader.VirtualMachine.Execution
 
             _divergenceStack = new DivergenceStack();
             _divergenceStack.Push(0, _allOne, -1);
+        }
+
+        public static IList<ExecutionContext> GetActiveExecutionContexts(
+            ExecutionContext[] executionContexts,
+            DivergenceStackEntry divergenceStackEntry)
+        {
+            return executionContexts.Where(x => divergenceStackEntry.ActiveMask[x.Index]).ToList();
         }
     }
 }

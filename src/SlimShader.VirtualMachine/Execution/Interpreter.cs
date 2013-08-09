@@ -27,7 +27,7 @@ namespace SlimShader.VirtualMachine.Execution
             ExecutableInstruction[] instructions)
 		{
 		    var warp = new Warp(executionContexts.Length);
-		    var activeExecutionContexts = GetActiveExecutionContexts(executionContexts, warp.DivergenceStack.Peek());
+		    var activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, warp.DivergenceStack.Peek());
 			while (warp.DivergenceStack.Peek().NextPC < instructions.Length)
 			{
 				var topOfDivergenceStack = warp.DivergenceStack.Peek();
@@ -343,14 +343,8 @@ namespace SlimShader.VirtualMachine.Execution
 				// - Reconvergence (next PC = reconv. PC of TOS)
 				//     => Pop TOS entry from the stack.
 				if (instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks))
-                    activeExecutionContexts = GetActiveExecutionContexts(executionContexts, topOfDivergenceStack);
+                    activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, topOfDivergenceStack);
 			}
-		}
-
-        private static IList<ExecutionContext> GetActiveExecutionContexts(
-            ExecutionContext[] executionContexts, DivergenceStackEntry divergenceStackEntry)
-		{
-            return executionContexts.Where(x => divergenceStackEntry.ActiveMask[x.Index]).ToList();
 		}
 
 		private static bool TestCondition(ref Number4 number, InstructionTestBoolean testBoolean)
