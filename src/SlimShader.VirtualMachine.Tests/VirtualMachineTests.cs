@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
 using SharpDX;
 using SlimShader.Chunks.Shex;
+using SlimShader.VirtualMachine.Execution;
+using SlimShader.VirtualMachine.Jitter;
 using SlimShader.VirtualMachine.Registers;
 using SlimShader.VirtualMachine.Tests.Shaders.VS;
 using SlimShader.VirtualMachine.Tests.Util;
@@ -11,10 +14,11 @@ namespace SlimShader.VirtualMachine.Tests
 	[TestFixture]
 	public class VirtualMachineTests
 	{
-	    [Test]
-		public void CanExecuteSimplePixelShader()
+        [TestCaseSource("ShaderExecutors")]
+        public void CanExecuteSimplePixelShader(IShaderExecutor shaderExecutor)
 		{
 			// Arrange.
+            VirtualMachine.ShaderExecutor = shaderExecutor;
 			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")), 4);
 
 			// Act.
@@ -28,10 +32,11 @@ namespace SlimShader.VirtualMachine.Tests
 			Assert.That(output0.Number3.Float, Is.EqualTo(1.0f));
 		}
 
-	    [Test]
-		public void CanExecuteVertexShaderBasicHlsl()
+        [TestCaseSource("ShaderExecutors")]
+		public void CanExecuteVertexShaderBasicHlsl(IShaderExecutor shaderExecutor)
 	    {
 			// Arrange.
+            VirtualMachine.ShaderExecutor = shaderExecutor;
 			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/BasicHLSL_VS.o")), 1);
 
 	        var globals = new BasicHlsl.ConstantBufferGlobals
@@ -72,10 +77,11 @@ namespace SlimShader.VirtualMachine.Tests
             Assert.That(output0.Number3.Float, Is.EqualTo(direct3DResult.Position.W));
 		}
 
-	    [Test]
-		public void CanExecuteSimpleVertexShader()
+        [TestCaseSource("ShaderExecutors")]
+		public void CanExecuteSimpleVertexShader(IShaderExecutor shaderExecutor)
 		{
 			// Arrange.
+            VirtualMachine.ShaderExecutor = shaderExecutor;
 			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/Simple.o")), 1);
 
 			// Set WorldViewProjection matrix into constant buffer
@@ -105,6 +111,15 @@ namespace SlimShader.VirtualMachine.Tests
 			Assert.That(output2.Number0.Float, Is.EqualTo(0.5f));
 			Assert.That(output2.Number1.Float, Is.EqualTo(0.3f));
 		}
+
+	    private IEnumerable<IShaderExecutor> ShaderExecutors
+	    {
+	        get
+	        {
+	            yield return new Interpreter();
+	            yield return new JitShaderExecutor();
+	        }
+	    }
 
 	    private static void SetConstantBuffer<T>(VirtualMachine vm, ushort constantBufferIndex, T data)
 	    {

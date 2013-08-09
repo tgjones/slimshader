@@ -118,6 +118,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SlimShader.VirtualMachine.Jitter\SlimShader.VirtualMachine.Jitter.csproj">
+      <Project>{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}</Project>
+      <Name>SlimShader.VirtualMachine.Jitter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SlimShader.VirtualMachine\SlimShader.VirtualMachine.csproj">
       <Project>{167769b9-a10e-4dfd-b09f-43bfef4eb673}</Project>
       <Name>SlimShader.VirtualMachine</Name>

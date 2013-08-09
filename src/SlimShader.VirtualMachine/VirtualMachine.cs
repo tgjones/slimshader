@@ -20,12 +20,24 @@ namespace SlimShader.VirtualMachine
     // 3 = bottom right
 	public class VirtualMachine
 	{
+        public static IShaderExecutor ShaderExecutor { get; set; }
+
+        static VirtualMachine()
+        {
+            ShaderExecutor = new Interpreter();
+        }
+
 		private readonly BytecodeContainer _bytecode;
 
 		private readonly ExecutionContext[] _executionContexts;
-		private readonly IShaderExecutor _shaderExecutor;
+	    private readonly ExecutableInstruction[] _executableInstructions;
 
 		private readonly RequiredRegisters _requiredRegisters;
+
+	    internal BytecodeContainer BytecodeContainer
+	    {
+            get { return _bytecode; }
+	    }
 
         internal TextureSampler[] TextureSamplers { get; private set; }
         internal ITexture[] Textures { get; private set; }
@@ -46,14 +58,13 @@ namespace SlimShader.VirtualMachine
 			var instructionTokens = bytecode.Shader.Tokens.OfType<InstructionToken>().ToArray();
 			var branchingInstructions = ExplicitBranchingRewriter.Rewrite(instructionTokens);
 			var controlFlowGraph = ControlFlowGraph.FromInstructions(branchingInstructions);
-			var executableInstructions = ExecutableInstructionRewriter.Rewrite(controlFlowGraph);
+            _executableInstructions = ExecutableInstructionRewriter.Rewrite(controlFlowGraph).ToArray();
 
 			_requiredRegisters = RequiredRegisters.FromShader(bytecode.Shader);
 
 			_executionContexts = new ExecutionContext[numContexts];
 			for (int i = 0; i < _executionContexts.Length; i++)
 				_executionContexts[i] = new ExecutionContext(i, _requiredRegisters);
-			_shaderExecutor = new Interpreter(this, _executionContexts, executableInstructions.ToArray());
 
 		    TextureSamplers = new TextureSampler[_requiredRegisters.Resources];
             Textures = new ITexture[_requiredRegisters.Resources];
@@ -62,7 +73,7 @@ namespace SlimShader.VirtualMachine
 
 		public IEnumerable<ExecutionResponse> ExecuteMultiple()
 		{
-			return _shaderExecutor.Execute();
+            return ShaderExecutor.Execute(this, _executionContexts, _executableInstructions);
 		}
 
 		public void Execute()

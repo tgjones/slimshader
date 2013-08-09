@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimShader.Studio", "SlimSh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimShader.Compiler", "SlimShader.Compiler\SlimShader.Compiler.csproj", "{B0930EDC-6303-4641-B44D-3AE73A9D00A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimShader.VirtualMachine.Jitter", "SlimShader.VirtualMachine.Jitter\SlimShader.VirtualMachine.Jitter.csproj", "{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{B0930EDC-6303-4641-B44D-3AE73A9D00A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0930EDC-6303-4641-B44D-3AE73A9D00A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0930EDC-6303-4641-B44D-3AE73A9D00A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

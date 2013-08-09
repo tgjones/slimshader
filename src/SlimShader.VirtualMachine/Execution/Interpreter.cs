@@ -6,7 +6,6 @@ using SlimShader.Chunks.Shex;
 using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
 using SlimShader.VirtualMachine.Registers;
-using SlimShader.VirtualMachine.Resources;
 using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Execution
@@ -15,17 +14,6 @@ namespace SlimShader.VirtualMachine.Execution
     // AFAIK, this is enforced by the HLSL compiler. TODO: Check this.
 	public class Interpreter : IShaderExecutor
 	{
-	    private readonly VirtualMachine _virtualMachine;
-	    private readonly ExecutionContext[] _executionContexts;
-		private readonly ExecutableInstruction[] _instructions;
-		
-        public Interpreter(VirtualMachine virtualMachine, ExecutionContext[] executionContexts, ExecutableInstruction[] instructions)
-		{
-            _virtualMachine = virtualMachine;
-            _executionContexts = executionContexts;
-			_instructions = instructions;
-		}
-
 		/// <summary>
 		/// http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter34.html
 		/// http://people.maths.ox.ac.uk/gilesm/pp10/lec2_2x2.pdf
@@ -33,15 +21,18 @@ namespace SlimShader.VirtualMachine.Execution
 		/// http://www.istc-cc.cmu.edu/publications/papers/2011/SIMD.pdf
 		/// http://hal.archives-ouvertes.fr/docs/00/62/26/54/PDF/collange_sympa2011_en.pdf
 		/// </summary>
-		public IEnumerable<ExecutionResponse> Execute()
+        public IEnumerable<ExecutionResponse> Execute(
+            VirtualMachine virtualMachine, 
+            ExecutionContext[] executionContexts, 
+            ExecutableInstruction[] instructions)
 		{
-		    var warp = new Warp(_executionContexts.Length);
-		    var activeExecutionContexts = GetActiveExecutionContexts(warp.DivergenceStack.Peek());
-			while (warp.DivergenceStack.Peek().NextPC < _instructions.Length)
+		    var warp = new Warp(executionContexts.Length);
+		    var activeExecutionContexts = GetActiveExecutionContexts(executionContexts, warp.DivergenceStack.Peek());
+			while (warp.DivergenceStack.Peek().NextPC < instructions.Length)
 			{
 				var topOfDivergenceStack = warp.DivergenceStack.Peek();
 				int pc = topOfDivergenceStack.NextPC;
-				var instruction = _instructions[pc];
+				var instruction = instructions[pc];
 
 			    List<BitArray> activeMasks = null;
 
@@ -60,8 +51,8 @@ namespace SlimShader.VirtualMachine.Execution
 				    case ExecutableOpcodeType.BranchC:
                         activeMasks = new List<BitArray>
                         {
-                            new BitArray(_executionContexts.Length),
-                            new BitArray(_executionContexts.Length)
+                            new BitArray(executionContexts.Length),
+                            new BitArray(executionContexts.Length)
                         };
 				        foreach (var thread in activeExecutionContexts)
 				        {
@@ -226,93 +217,93 @@ namespace SlimShader.VirtualMachine.Execution
 				        break;
                     case ExecutableOpcodeType.DerivRtx:
 				    case ExecutableOpcodeType.RtxCoarse:
-				        for (var i = 0; i < _executionContexts.Length; i += 4)
+				        for (var i = 0; i < executionContexts.Length; i += 4)
 				        {
-				            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
-                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
+				            var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
+                            var topRight = GetOperandValue(executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
 
 				            var deltaX = Number4.Subtract(ref topRight, ref topLeft);
 
 				            for (var j = i; j < i + 4; j++)
-				                SetRegisterValue(_executionContexts[j], instruction.Operands[0], deltaX);
+				                SetRegisterValue(executionContexts[j], instruction.Operands[0], deltaX);
 				        }
 				        break;
 				    case ExecutableOpcodeType.RtxFine:
-                        for (var i = 0; i < _executionContexts.Length; i += 4)
+                        for (var i = 0; i < executionContexts.Length; i += 4)
                         {
-                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
-                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
-                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
-                            var bottomRight = GetOperandValue(_executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
+                            var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
+                            var topRight = GetOperandValue(executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
+                            var bottomLeft = GetOperandValue(executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
+                            var bottomRight = GetOperandValue(executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
 
                             var topDeltaX = Number4.Subtract(ref topRight, ref topLeft);
                             var bottomDeltaX = Number4.Subtract(ref bottomRight, ref bottomLeft);
 
-                            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0], topDeltaX);
-                            SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0], topDeltaX);
+                            SetRegisterValue(executionContexts[i + 0], instruction.Operands[0], topDeltaX);
+                            SetRegisterValue(executionContexts[i + 1], instruction.Operands[0], topDeltaX);
 
-                            SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0], bottomDeltaX);
-                            SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0], bottomDeltaX);
+                            SetRegisterValue(executionContexts[i + 2], instruction.Operands[0], bottomDeltaX);
+                            SetRegisterValue(executionContexts[i + 3], instruction.Operands[0], bottomDeltaX);
                         }
 				        break;
                     case ExecutableOpcodeType.DerivRty:
                     case ExecutableOpcodeType.RtyCoarse:
-                        for (var i = 0; i < _executionContexts.Length; i += 4)
+                        for (var i = 0; i < executionContexts.Length; i += 4)
                         {
-                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
-                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
+                            var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
+                            var bottomLeft = GetOperandValue(executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
 
                             var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
 
                             for (var j = i; j < i + 4; j++)
-                                SetRegisterValue(_executionContexts[j], instruction.Operands[0], deltaY);
+                                SetRegisterValue(executionContexts[j], instruction.Operands[0], deltaY);
                         }
                         break;
                     case ExecutableOpcodeType.RtyFine:
-                        for (var i = 0; i < _executionContexts.Length; i += 4)
+                        for (var i = 0; i < executionContexts.Length; i += 4)
                         {
-                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
-                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
-                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
-                            var bottomRight = GetOperandValue(_executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
+                            var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
+                            var topRight = GetOperandValue(executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
+                            var bottomLeft = GetOperandValue(executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
+                            var bottomRight = GetOperandValue(executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
 
                             var leftDeltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
                             var rightDeltaY = Number4.Subtract(ref bottomRight, ref topRight);
 
-                            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0], leftDeltaY);
-                            SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0], rightDeltaY);
+                            SetRegisterValue(executionContexts[i + 0], instruction.Operands[0], leftDeltaY);
+                            SetRegisterValue(executionContexts[i + 1], instruction.Operands[0], rightDeltaY);
 
-                            SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0], leftDeltaY);
-                            SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0], rightDeltaY);
+                            SetRegisterValue(executionContexts[i + 2], instruction.Operands[0], leftDeltaY);
+                            SetRegisterValue(executionContexts[i + 3], instruction.Operands[0], rightDeltaY);
                         }
                         break;
                     case ExecutableOpcodeType.Sample:
 				    {
 				        var srcResourceIndex = instruction.Operands[2].Indices[0].Value;
-                        var srcResource = _virtualMachine.Textures[srcResourceIndex];
-				        var srcSampler = _virtualMachine.Samplers[instruction.Operands[3].Indices[0].Value];
-				        var textureSampler = _virtualMachine.TextureSamplers[srcResourceIndex];
+                        var srcResource = virtualMachine.Textures[srcResourceIndex];
+				        var srcSampler = virtualMachine.Samplers[instruction.Operands[3].Indices[0].Value];
+				        var textureSampler = virtualMachine.TextureSamplers[srcResourceIndex];
 
-				        for (var i = 0; i < _executionContexts.Length; i += 4)
+				        for (var i = 0; i < executionContexts.Length; i += 4)
 				        {
-                            var topLeft = GetOperandValue(_executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
-                            var topRight = GetOperandValue(_executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
-                            var bottomLeft = GetOperandValue(_executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
-                            var bottomRight = GetOperandValue(_executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
+                            var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
+                            var topRight = GetOperandValue(executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
+                            var bottomLeft = GetOperandValue(executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
+                            var bottomRight = GetOperandValue(executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
 
                             var deltaX = Number4.Subtract(ref topRight, ref topLeft);
                             var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
 
-				            SetRegisterValue(_executionContexts[i + 0], instruction.Operands[0],
+				            SetRegisterValue(executionContexts[i + 0], instruction.Operands[0],
                                 textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft,
 				                    ref deltaX, ref deltaY));
-                            SetRegisterValue(_executionContexts[i + 1], instruction.Operands[0],
+                            SetRegisterValue(executionContexts[i + 1], instruction.Operands[0],
                                 textureSampler.SampleGrad(srcResource, srcSampler, ref topRight,
                                     ref deltaX, ref deltaY));
-                            SetRegisterValue(_executionContexts[i + 2], instruction.Operands[0],
+                            SetRegisterValue(executionContexts[i + 2], instruction.Operands[0],
                                 textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft,
                                     ref deltaX, ref deltaY));
-                            SetRegisterValue(_executionContexts[i + 3], instruction.Operands[0],
+                            SetRegisterValue(executionContexts[i + 3], instruction.Operands[0],
                                 textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight,
                                     ref deltaX, ref deltaY));
 				        }
@@ -352,13 +343,14 @@ namespace SlimShader.VirtualMachine.Execution
 				// - Reconvergence (next PC = reconv. PC of TOS)
 				//     => Pop TOS entry from the stack.
 				if (instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks))
-                    activeExecutionContexts = GetActiveExecutionContexts(topOfDivergenceStack);
+                    activeExecutionContexts = GetActiveExecutionContexts(executionContexts, topOfDivergenceStack);
 			}
 		}
 
-        private IList<ExecutionContext> GetActiveExecutionContexts(DivergenceStackEntry divergenceStackEntry)
+        private static IList<ExecutionContext> GetActiveExecutionContexts(
+            ExecutionContext[] executionContexts, DivergenceStackEntry divergenceStackEntry)
 		{
-            return _executionContexts.Where(x => divergenceStackEntry.ActiveMask[x.Index]).ToList();
+            return executionContexts.Where(x => divergenceStackEntry.ActiveMask[x.Index]).ToList();
 		}
 
 		private static bool TestCondition(ref Number4 number, InstructionTestBoolean testBoolean)
