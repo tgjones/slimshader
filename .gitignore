@@ -16,6 +16,9 @@ Bin
 *.suo
 *.cache
 Thumbs.db
+
+# NuGet Packages Directory
+packages
  
 # Other useful stuff
 *.bak
