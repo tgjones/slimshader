@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="JitShaderExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShaderCodeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SlimShader.VirtualMachine\SlimShader.VirtualMachine.csproj">

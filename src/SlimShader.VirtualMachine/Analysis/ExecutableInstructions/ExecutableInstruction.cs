@@ -8,11 +8,35 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 {
 	public abstract class ExecutableInstruction
 	{
-		public ExecutableOpcodeType OpcodeType { get; set; }
-		public bool Saturate { get; set; }
-		public InstructionTestBoolean TestBoolean { get; set; }
-		public List<Operand> Operands { get; set; }
+	    private readonly InstructionToken _instructionToken;
 
-		public abstract bool UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks);
+	    public ExecutableOpcodeType OpcodeType { get; set; }
+
+	    public bool Saturate
+	    {
+	        get { return _instructionToken.Saturate; }
+	    }
+
+	    public InstructionTestBoolean TestBoolean
+	    {
+	        get { return _instructionToken.TestBoolean; }
+	    }
+
+	    public List<Operand> Operands
+	    {
+	        get { return _instructionToken.Operands; }
+	    }
+
+	    protected ExecutableInstruction(InstructionToken instructionToken)
+        {
+            _instructionToken = instructionToken;
+        }
+
+	    public abstract bool UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks);
+
+        public override string ToString()
+        {
+            return _instructionToken.ToString();
+        }
 	}
 }

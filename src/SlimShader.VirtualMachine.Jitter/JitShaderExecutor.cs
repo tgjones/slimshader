@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Roslyn.Compilers;
@@ -32,7 +31,7 @@ namespace SlimShader.VirtualMachine.Jitter
             if (!_jittedShaderCache.TryGetValue(virtualMachine.Bytecode, out jittedShader))
             {
                 // If shader hasn't already been JITted, JIT it now.
-                jittedShader = JitCompileShader(virtualMachine.Bytecode);
+                jittedShader = JitCompileShader(instructions);
                 _jittedShaderCache.Add(virtualMachine.Bytecode, jittedShader);
             }
 
@@ -40,7 +39,7 @@ namespace SlimShader.VirtualMachine.Jitter
             return jittedShader(virtualMachine, executionContexts, instructions);
         }
 
-        private static ExecuteShaderDelegate JitCompileShader(BytecodeContainer bytecode)
+        private static ExecuteShaderDelegate JitCompileShader(ExecutableInstruction[] instructions)
         {
             var assemblyReferences = new[]
             {
@@ -49,22 +48,7 @@ namespace SlimShader.VirtualMachine.Jitter
             };
 
             var outputName = "DynamicShader";
-            var code = @"
-                using System.Collections.Generic;
-                using SlimShader.VirtualMachine;
-                using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
-
-                public static class DynamicShaderExecutor
-                {
-                    public static IEnumerable<ExecutionResponse> Execute(
-                        VirtualMachine virtualMachine, ExecutionContext[] executionContexts,
-                        ExecutableInstruction[] instructions)
-                    {
-                        // TODO
-                        yield return ExecutionResponse.Finished;
-                    }
-                }
-                ";
+            var code = ShaderCodeGenerator.Generate(instructions);
             
             var compilation = Compilation.Create(outputName)
                 .WithOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
@@ -75,6 +59,8 @@ namespace SlimShader.VirtualMachine.Jitter
                 .DefineDynamicAssembly(new AssemblyName(outputName),
                     AssemblyBuilderAccess.RunAndCollect)
                 .DefineDynamicModule(outputName);
+
+            System.Diagnostics.Debug.Write(code);
 
             var compilationResult = compilation.Emit(moduleBuilder);
             if (!compilationResult.Success)

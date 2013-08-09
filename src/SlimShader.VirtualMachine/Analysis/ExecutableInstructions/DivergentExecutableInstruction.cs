@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using SlimShader.Chunks.Shex.Tokens;
 using SlimShader.VirtualMachine.Execution;
 using SlimShader.VirtualMachine.Util;
 
@@ -9,6 +10,11 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
     {
         public List<int> NextPCs { get; set; }
         public int ReconvergencePC { get; set; }
+
+        public DivergentExecutableInstruction(InstructionToken instructionToken)
+            : base(instructionToken)
+        {
+        }
 
         public override bool UpdateDivergenceStack(DivergenceStack divergenceStack, IList<BitArray> activeMasks)
         {

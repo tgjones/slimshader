@@ -12,51 +12,44 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 	{
 		public static IEnumerable<ExecutableInstruction> Rewrite(ControlFlowGraph controlFlowGraph)
 		{
-			foreach (var explicitBranchingInsturction in controlFlowGraph.AllInstructions)
+			foreach (var explicitBranchingInstruction in controlFlowGraph.AllInstructions)
 			{
-				int thisPC = GetInstructionIndex(controlFlowGraph.AllInstructions, explicitBranchingInsturction);
+				int thisPC = GetInstructionIndex(controlFlowGraph.AllInstructions, explicitBranchingInstruction);
 
-				if (explicitBranchingInsturction is BranchingInstruction && !explicitBranchingInsturction.IsUnconditionalBranch)
+				if (explicitBranchingInstruction is BranchingInstruction && !explicitBranchingInstruction.IsUnconditionalBranch)
 				{
-					var branchingInstruction = (BranchingInstruction) explicitBranchingInsturction;
-					yield return new DivergentExecutableInstruction
+					var branchingInstruction = (BranchingInstruction) explicitBranchingInstruction;
+					yield return new DivergentExecutableInstruction(explicitBranchingInstruction.InstructionToken)
 					{
 						ReconvergencePC = GetReconvergencePoint(controlFlowGraph, branchingInstruction),
 						NextPCs = new List<int>
 						{
-							GetInstructionIndex(controlFlowGraph.AllInstructions, ((BranchingInstruction) explicitBranchingInsturction).BranchTarget),
+							GetInstructionIndex(controlFlowGraph.AllInstructions, ((BranchingInstruction) explicitBranchingInstruction).BranchTarget),
 							thisPC + 1
 						},
 
-						OpcodeType = ExecutableOpcodeType.BranchC,
-						Operands = explicitBranchingInsturction.InstructionToken.Operands,
-						Saturate = explicitBranchingInsturction.InstructionToken.Saturate,
-						TestBoolean = explicitBranchingInsturction.InstructionToken.TestBoolean
+						OpcodeType = ExecutableOpcodeType.BranchC
 					};
 				}
 				else
 				{
 					ExecutableOpcodeType opcodeType;
 					int nextPC;
-					if (explicitBranchingInsturction.IsUnconditionalBranch)
+					if (explicitBranchingInstruction.IsUnconditionalBranch)
 					{
 						opcodeType = ExecutableOpcodeType.Branch;
-						nextPC = GetInstructionIndex(controlFlowGraph.AllInstructions, ((BranchingInstruction) explicitBranchingInsturction).BranchTarget);
+						nextPC = GetInstructionIndex(controlFlowGraph.AllInstructions, ((BranchingInstruction) explicitBranchingInstruction).BranchTarget);
 					}
 					else
 					{
-						opcodeType = MapOpcodeType(explicitBranchingInsturction.InstructionToken.Header.OpcodeType);
+						opcodeType = MapOpcodeType(explicitBranchingInstruction.InstructionToken.Header.OpcodeType);
 						nextPC = thisPC + 1;
 					}
 
-					yield return new NonDivergentExecutableInstruction
+					yield return new NonDivergentExecutableInstruction(explicitBranchingInstruction.InstructionToken)
 					{
 						NextPC = nextPC,
-
 						OpcodeType = opcodeType,
-						Operands = explicitBranchingInsturction.InstructionToken.Operands,
-						Saturate = explicitBranchingInsturction.InstructionToken.Saturate,
-						TestBoolean = explicitBranchingInsturction.InstructionToken.TestBoolean
 					};
 				}
 			}
