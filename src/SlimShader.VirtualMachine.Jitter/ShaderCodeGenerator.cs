@@ -46,13 +46,14 @@ public static class DynamicShaderExecutor
         {
             switch (instruction.OpcodeType)
             {
+                case Execution.ExecutableOpcodeType.Mad:
+                    GenerateExecute3(sb, instruction, "Mad");
+                    break;
+                case Execution.ExecutableOpcodeType.Mul:
+                    GenerateExecute2(sb, instruction, "Mul");
+                    break;
                 case Execution.ExecutableOpcodeType.Mov :
-                    sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
-                    sb.AppendLineIndent(2, "{");
-                    sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float));
-                    sb.AppendLineIndent(2, "    var result = InstructionImplementations.Mov({0}, ref src0);", instruction.Saturate.ToString().ToLower());
-                    GenerateSetRegisterValue(sb, instruction.Operands[0]);
-                    sb.AppendLineIndent(2, "}");
+                    GenerateExecute1(sb, instruction, "Mov");
                     break;
                 case Execution.ExecutableOpcodeType.Ret :
                     sb.AppendLineIndent(2, "yield return ExecutionResponse.Finished;");
@@ -62,34 +63,90 @@ public static class DynamicShaderExecutor
             }
         }
 
+        private static void GenerateExecute1(StringBuilder sb, ExecutableInstruction instruction, string methodName)
+        {
+            sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
+            sb.AppendLineIndent(2, "{");
+            sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float));
+            sb.AppendLineIndent(2, "    var result = InstructionImplementations.{0}({1}, ref src0);",
+                methodName, instruction.Saturate.ToString().ToLower());
+            GenerateSetRegisterValue(sb, instruction.Operands[0]);
+            sb.AppendLineIndent(2, "}");
+        }
+
+        private static void GenerateExecute2(StringBuilder sb, ExecutableInstruction instruction, string methodName)
+        {
+            sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
+            sb.AppendLineIndent(2, "{");
+            sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float));
+            sb.AppendLineIndent(2, "    var src1 = {0};", GenerateGetOperandValue(instruction.Operands[2], NumberType.Float));
+            sb.AppendLineIndent(2, "    var result = InstructionImplementations.{0}({1}, ref src0, ref src1);",
+                methodName, instruction.Saturate.ToString().ToLower());
+            GenerateSetRegisterValue(sb, instruction.Operands[0]);
+            sb.AppendLineIndent(2, "}");
+        }
+
+        private static void GenerateExecute3(StringBuilder sb, ExecutableInstruction instruction, string methodName)
+        {
+            sb.AppendLineIndent(2, "foreach (var context in activeExecutionContexts)");
+            sb.AppendLineIndent(2, "{");
+            sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float));
+            sb.AppendLineIndent(2, "    var src1 = {0};", GenerateGetOperandValue(instruction.Operands[2], NumberType.Float));
+            sb.AppendLineIndent(2, "    var src2 = {0};", GenerateGetOperandValue(instruction.Operands[3], NumberType.Float));
+            sb.AppendLineIndent(2, "    var result = InstructionImplementations.{0}({1}, ref src0, ref src1, ref src2);",
+                methodName, instruction.Saturate.ToString().ToLower());
+            GenerateSetRegisterValue(sb, instruction.Operands[0]);
+            sb.AppendLineIndent(2, "}");
+        }
+
         private static void GenerateSetRegisterValue(StringBuilder sb, Operand operand)
         {
-            var registerName = GetRegisterName(operand.OperandType);
-            var registerIndex = GetRegisterIndex(operand);
+            var register = GetRegister(operand);
+
+            if (operand.ComponentMask.HasFlag(ComponentMask.X)
+                && operand.ComponentMask.HasFlag(ComponentMask.Y)
+                && operand.ComponentMask.HasFlag(ComponentMask.Z)
+                && operand.ComponentMask.HasFlag(ComponentMask.W))
+            {
+                sb.AppendLineIndent(2, "    {0} = result;", register);
+                return;
+            }
 
             if (operand.ComponentMask.HasFlag(ComponentMask.X))
-                sb.AppendLineIndent(2, "    context.{0}{1}.Number0 = result.Number0;", registerName, registerIndex);
+                sb.AppendLineIndent(2, "    {0}.Number0 = result.Number0;", register);
             if (operand.ComponentMask.HasFlag(ComponentMask.Y))
-                sb.AppendLineIndent(2, "    context.{0}{1}.Number1 = result.Number1;", registerName, registerIndex);
+                sb.AppendLineIndent(2, "    {0}.Number1 = result.Number1;", register);
             if (operand.ComponentMask.HasFlag(ComponentMask.Z))
-                sb.AppendLineIndent(2, "    context.{0}{1}.Number2 = result.Number2;", registerName, registerIndex);
+                sb.AppendLineIndent(2, "    {0}.Number2 = result.Number2;", register);
             if (operand.ComponentMask.HasFlag(ComponentMask.W))
-                sb.AppendLineIndent(2, "    context.{0}{1}.Number3 = result.Number3;", registerName, registerIndex);
+                sb.AppendLineIndent(2, "    {0}.Number3 = result.Number3;", register);
+        }
+
+        private static string GetRegister(Operand operand)
+        {
+            return string.Format("context.{0}{1}",
+                GetRegisterName(operand.OperandType),
+                GetRegisterIndex(operand));
         }
 
         private static string GetRegisterIndex(Operand operand)
         {
-            switch (operand.IndexDimension)
+            switch (operand.OperandType)
             {
-                case OperandIndexDimension._1D:
-                    return string.Format("[{0}]", 
+                case OperandType.Output:
+                case OperandType.Temp:
+                    return string.Format("[{0}]",
                         GetRegisterIndex(operand.Indices[0]));
-                case OperandIndexDimension._2D:
-                    return string.Format("[{0}][{1}]", 
+                case OperandType.Input:
+                    return string.Format("[0][{0}]",
+                        GetRegisterIndex(operand.Indices[0]));
+                case OperandType.ConstantBuffer:
+                case OperandType.IndexableTemp :
+                    return string.Format("[{0}][{1}]",
                         GetRegisterIndex(operand.Indices[0]),
                         GetRegisterIndex(operand.Indices[1]));
-                default:
-                    throw new ArgumentOutOfRangeException();
+                default :
+                    throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
             }
         }
 
@@ -126,11 +183,53 @@ public static class DynamicShaderExecutor
             switch (operand.OperandType)
             {
                 case OperandType.Immediate32 :
+                case OperandType.Immediate64:
                     var value = OperandUtility.ApplyOperandModifier(operand.ImmediateValues, numberType, operand.Modifier);
                     return string.Format("new Number4({0}f, {1}f, {2}f, {3}f)",
                         value.Float0, value.Float1, value.Float2, value.Float3);
+                case OperandType.ConstantBuffer:
+                case OperandType.IndexableTemp:
+                case OperandType.Input:
+                case OperandType.Temp:
+                    // TODO: Apply modifier and selection mode.
+                    return ApplyOperandSelectionMode(GetRegister(operand), operand);
                 default:
                     throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
+            }
+        }
+
+        private static string ApplyOperandSelectionMode(string register, Operand operand)
+        {
+            if (operand.SelectionMode != Operand4ComponentSelectionMode.Swizzle)
+                return register;
+
+            if (operand.Swizzles[0] == Operand4ComponentName.X
+                && operand.Swizzles[1] == Operand4ComponentName.Y
+                && operand.Swizzles[2] == Operand4ComponentName.Z
+                && operand.Swizzles[3] == Operand4ComponentName.W)
+                return register;
+
+            return string.Format("{0}.{1}{2}{3}{4}", register,
+                GetOperand4ComponentName(operand.Swizzles[0]),
+                GetOperand4ComponentName(operand.Swizzles[1]).ToLower(),
+                GetOperand4ComponentName(operand.Swizzles[2]).ToLower(),
+                GetOperand4ComponentName(operand.Swizzles[3]).ToLower());
+        }
+
+        private static string GetOperand4ComponentName(Operand4ComponentName name)
+        {
+            switch (name)
+            {
+                case Operand4ComponentName.X :
+                    return "X";
+                case Operand4ComponentName.Y:
+                    return "Y";
+                case Operand4ComponentName.Z:
+                    return "Z";
+                case Operand4ComponentName.W:
+                    return "W";
+                default :
+                    throw new NotImplementedException();
             }
         }
 

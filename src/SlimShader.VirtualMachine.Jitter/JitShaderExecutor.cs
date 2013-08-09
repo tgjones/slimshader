@@ -52,7 +52,7 @@ namespace SlimShader.VirtualMachine.Jitter
             var code = ShaderCodeGenerator.Generate(instructions);
             
             var compilation = Compilation.Create(outputName)
-                .WithOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
+                .WithOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary, debugInformationKind: Roslyn.Compilers.Common.DebugInformationKind.Full))
                 .AddReferences(assemblyReferences)
                 .AddSyntaxTrees(SyntaxTree.ParseText(code));
 

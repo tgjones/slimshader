@@ -232,7 +232,36 @@ namespace SlimShader
 			get { return Number0.UInt != 0 || Number1.UInt != 0 || Number2.UInt != 0 || Number3.UInt != 0; }
 		}
 
-		public Number4(Number number0, Number number1, Number number2, Number number3)
+        #region Swizzles
+
+        public Number4 Xxxx
+        {
+            get { return new Number4(Number0, Number0, Number0, Number0); }
+        }
+
+        public Number4 Xyxx
+        {
+            get { return new Number4(Number0, Number1, Number0, Number0); }
+        }
+
+        public Number4 Xyzx
+        {
+            get { return new Number4(Number0, Number1, Number2, Number0); }
+        }
+
+	    public Number4 Yyyy
+	    {
+	        get { return new Number4(Number1, Number1, Number1, Number1); }
+	    }
+
+        public Number4 Zzzz
+        {
+            get { return new Number4(Number2, Number2, Number2, Number2); }
+        }
+
+        #endregion
+
+        public Number4(Number number0, Number number1, Number number2, Number number3)
             : this()
 		{
 			Number0 = number0;
