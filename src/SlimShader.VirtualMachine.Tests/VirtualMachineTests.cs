@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using NUnit.Framework;
 using SharpDX;
@@ -35,39 +36,39 @@ namespace SlimShader.VirtualMachine.Tests
         [TestCaseSource("ShaderExecutors")]
 		public void CanExecuteVertexShaderBasicHlsl(IShaderExecutor shaderExecutor)
 	    {
-			// Arrange.
+            // Arrange.
             VirtualMachine.ShaderExecutor = shaderExecutor;
-			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/BasicHLSL_VS.o")), 1);
+            var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/BasicHLSL_VS.o")), 1);
 
-	        var globals = new BasicHlsl.ConstantBufferGlobals
-	        {
-	            WorldViewProjection = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
-	                * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10)
-	        };
+            var globals = new BasicHlsl.ConstantBufferGlobals
+            {
+                WorldViewProjection = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
+                    * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10)
+            };
 
-	        var vertexInput = new VertexPositionNormalTexture
-	        {
-	            Position = new Vector4(3, 0, 2, 1),
-	            Normal = new Vector3(0, 1, 0),
-	            TextureCoordinate = new Vector2(0, 1)
-	        };
+            var vertexInput = new VertexPositionNormalTexture
+            {
+                Position = new Vector4(3, 0, 2, 1),
+                Normal = new Vector3(0, 1, 0),
+                TextureCoordinate = new Vector2(0, 1)
+            };
 
             var direct3DResult = Direct3DUtility.ExecuteVertexShader("Shaders/VS/BasicHLSL_VS.o", globals, vertexInput);
 
-	        SetConstantBuffer(vm, 0, globals);
+            SetConstantBuffer(vm, 0, globals);
 
-			vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(1, 0), new Number4
-			{
-				Number0 = Number.FromInt(3), // nNumLights = 3
-				Number1 = Number.FromInt(1) // bTexture = true
-			});
+            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(1, 0), new Number4
+            {
+                Number0 = Number.FromInt(3), // nNumLights = 3
+                Number1 = Number.FromInt(1) // bTexture = true
+            });
 
-			vm.SetRegister(0, OperandType.Input, new RegisterIndex(0), vertexInput.Position.ToNumber4());
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(0), vertexInput.Position.ToNumber4());
             vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), vertexInput.Normal.ToNumber4());
             vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), vertexInput.TextureCoordinate.ToNumber4());
 
-			// Act.
-			vm.Execute();
+            // Act.
+            vm.Execute();
 
 			// Assert.
 			var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
@@ -76,6 +77,53 @@ namespace SlimShader.VirtualMachine.Tests
             Assert.That(output0.Number2.Float, Is.EqualTo(direct3DResult.Position.Z));
             Assert.That(output0.Number3.Float, Is.EqualTo(direct3DResult.Position.W));
 		}
+
+	    [TestCaseSource("ShaderExecutors"), Ignore]
+        public void PerformanceTest(IShaderExecutor shaderExecutor)
+	    {
+	        var bytecodeContainer = BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/BasicHLSL_VS.o"));
+            VirtualMachine.ShaderExecutor = shaderExecutor;
+            var vm = new VirtualMachine(bytecodeContainer, 1);
+
+            var globals = new BasicHlsl.ConstantBufferGlobals
+            {
+                WorldViewProjection = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
+                    * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10)
+            };
+
+            var vertexInput = new VertexPositionNormalTexture
+            {
+                Position = new Vector4(3, 0, 2, 1),
+                Normal = new Vector3(0, 1, 0),
+                TextureCoordinate = new Vector2(0, 1)
+            };
+
+            SetConstantBuffer(vm, 0, globals);
+
+            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(1, 0), new Number4
+            {
+                Number0 = Number.FromInt(3), // nNumLights = 3
+                Number1 = Number.FromInt(1) // bTexture = true
+            });
+
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(0), vertexInput.Position.ToNumber4());
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), vertexInput.Normal.ToNumber4());
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), vertexInput.TextureCoordinate.ToNumber4());
+
+            // Prime the pump by executing shader once.
+	        vm.Execute();
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            const int iterations = 100000;
+	        for (var i = 0; i < iterations; i++)
+	            vm.Execute();
+
+            stopwatch.Stop();
+
+            Debug.WriteLine("Time: " + stopwatch.Elapsed);
+        }
 
         [TestCaseSource("ShaderExecutors")]
 		public void CanExecuteSimpleVertexShader(IShaderExecutor shaderExecutor)
