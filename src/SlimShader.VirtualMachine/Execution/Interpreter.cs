@@ -20,6 +20,8 @@ namespace SlimShader.VirtualMachine.Execution
 		/// http://stackoverflow.com/questions/10119796/how-does-cuda-compiler-know-the-divergence-behaviour-of-warps
 		/// http://www.istc-cc.cmu.edu/publications/papers/2011/SIMD.pdf
 		/// http://hal.archives-ouvertes.fr/docs/00/62/26/54/PDF/collange_sympa2011_en.pdf
+        /// http://users.ece.cmu.edu/~omutlu/pub/large-gpu-warps_micro11.pdf
+        /// http://www.eecis.udel.edu/~cavazos/cisc879/papers/a3-han.pdf
 		/// </summary>
         public IEnumerable<ExecutionResponse> Execute(
             VirtualMachine virtualMachine, 
@@ -28,11 +30,11 @@ namespace SlimShader.VirtualMachine.Execution
 		{
 		    var warp = new Warp(executionContexts.Length);
 		    var activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, warp.DivergenceStack.Peek());
-			while (warp.DivergenceStack.Peek().NextPC < instructions.Length)
+            var topOfDivergenceStack = warp.DivergenceStack.Peek();
+
+			while (topOfDivergenceStack.NextPC < instructions.Length)
 			{
-				var topOfDivergenceStack = warp.DivergenceStack.Peek();
-				int pc = topOfDivergenceStack.NextPC;
-				var instruction = instructions[pc];
+				var instruction = instructions[topOfDivergenceStack.NextPC];
 
 			    List<BitArray> activeMasks = null;
 
@@ -342,8 +344,11 @@ namespace SlimShader.VirtualMachine.Execution
 				//        to the next PC value of this entry.
 				// - Reconvergence (next PC = reconv. PC of TOS)
 				//     => Pop TOS entry from the stack.
-				if (instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks))
-                    activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, topOfDivergenceStack);
+			    if (instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks))
+			    {
+			        activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, topOfDivergenceStack);
+			        topOfDivergenceStack = warp.DivergenceStack.Peek();
+			    }
 			}
 		}
 

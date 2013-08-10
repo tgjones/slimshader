@@ -13,12 +13,37 @@ namespace SlimShader.VirtualMachine.Jitter
     {
         public static string Generate(ExecutableInstruction[] instructions)
         {
+            if (instructions.Any(x => x is DivergentExecutableInstruction))
+                return GenerateDivergent(instructions);
+            return GenerateNonDivergent(instructions);
+        }
+
+        private static string GenerateDivergent(ExecutableInstruction[] instructions)
+        {
             var instructionsCode = new StringBuilder();
+            int instructionIndex = 0;
             foreach (var instruction in instructions)
             {
-                instructionsCode.AppendLineIndent(2, "// " + instruction);
+                instructionsCode.AppendLineIndent(4, "case {0}:", instructionIndex);
+                instructionsCode.AppendLineIndent(4, "{");
+                instructionsCode.AppendLineIndent(5, "// " + instruction);
                 GenerateInstructionCode(instructionsCode, instruction);
                 instructionsCode.AppendLine();
+
+                if (instruction is DivergentExecutableInstruction)
+                    instructionsCode.AppendLineIndent(5, "if (instruction.UpdateDivergenceStack(warp.DivergenceStack, activeMasks))");
+                else
+                    instructionsCode.AppendLineIndent(5, "if (instruction.UpdateDivergenceStack(warp.DivergenceStack, null))");
+                instructionsCode.AppendLineIndent(5, "{");
+                instructionsCode.AppendLineIndent(5, "    activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, topOfDivergenceStack);");
+                instructionsCode.AppendLineIndent(5, "    topOfDivergenceStack = warp.DivergenceStack.Peek();");
+                instructionsCode.AppendLineIndent(5, "}");
+
+                instructionsCode.AppendLineIndent(5, "break;");
+                instructionsCode.AppendLineIndent(4, "}");
+                instructionsCode.AppendLine();
+
+                ++instructionIndex;
             }
 
             return @"
@@ -37,6 +62,49 @@ public static class DynamicShaderExecutor
     {
         var warp = new Warp(executionContexts.Length);
         var activeExecutionContexts = Warp.GetActiveExecutionContexts(executionContexts, warp.DivergenceStack.Peek());
+        var topOfDivergenceStack = warp.DivergenceStack.Peek();
+
+        while (topOfDivergenceStack.NextPC < instructions.Length)
+        {
+            var instruction = instructions[topOfDivergenceStack.NextPC];
+            switch (topOfDivergenceStack.NextPC)
+            {
+" + instructionsCode + @"
+            }
+        }
+
+    }
+}";
+        }
+
+        private static string GenerateNonDivergent(ExecutableInstruction[] instructions)
+        {
+            var instructionsCode = new StringBuilder();
+            int instructionIndex = 0;
+            foreach (var instruction in instructions)
+            {
+                instructionsCode.AppendLineIndent(2, "// " + instruction);
+                GenerateInstructionCode(instructionsCode, instruction);
+                instructionsCode.AppendLine();
+
+                ++instructionIndex;
+            }
+
+            return @"
+using System.Collections;
+using System.Collections.Generic;
+using SlimShader;
+using SlimShader.VirtualMachine;
+using SlimShader.VirtualMachine.Analysis.ExecutableInstructions;
+using SlimShader.VirtualMachine.Execution;
+
+public static class DynamicShaderExecutor
+{
+    public static IEnumerable<ExecutionResponse> Execute(
+        VirtualMachine virtualMachine, ExecutionContext[] executionContexts,
+        ExecutableInstruction[] instructions)
+    {
+        var activeExecutionContexts = executionContexts;
 
 " + instructionsCode + @"
     }
@@ -98,6 +166,40 @@ public static class DynamicShaderExecutor
                     break;
                 case Execution.ExecutableOpcodeType.Rsq:
                     GenerateExecute1(sb, instruction, "Rsq");
+                    break;
+                case Execution.ExecutableOpcodeType.Sample :
+                    var srcResourceIndex = instruction.Operands[2].Indices[0].Value;
+                    var srcSamplerIndex = instruction.Operands[3].Indices[0].Value;
+
+                    sb.AppendLineIndent(2, "{");
+                    sb.AppendLineIndent(2, "    var textureSampler = virtualMachine.TextureSamplers[{0}];", srcResourceIndex);
+                    sb.AppendLineIndent(2, "    var srcResource = virtualMachine.Textures[{0}];", srcResourceIndex);
+                    sb.AppendLineIndent(2, "    var srcSampler = virtualMachine.Samplers[{0}];", srcSamplerIndex);
+                    sb.AppendLineIndent(2, "    ");
+                    sb.AppendLineIndent(2, "    for (var i = 0; i < executionContexts.Length; i += 4)");
+                    sb.AppendLineIndent(2, "    {");
+                    sb.AppendLineIndent(2, "        var topLeft = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 0]"));
+                    sb.AppendLineIndent(2, "        var topRight = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 1]"));
+                    sb.AppendLineIndent(2, "        var bottomLeft = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 2]"));
+                    sb.AppendLineIndent(2, "        var bottomRight = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 3]"));
+                    sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "        var deltaX = Number4.Subtract(ref topRight, ref topLeft);");
+                    sb.AppendLineIndent(2, "        var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);");
+                    sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "        var result = textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft, ref deltaX, ref deltaY);");
+                    GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 0]");
+                    sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "        result = textureSampler.SampleGrad(srcResource, srcSampler, ref topRight, ref deltaX, ref deltaY);");
+                    GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 1]");
+                    sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "        result = textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft, ref deltaX, ref deltaY);");
+                    GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 2]");
+                    sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "        result = textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight, ref deltaX, ref deltaY);");
+                    GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 3]");
+                    sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "    }");
+                    sb.AppendLineIndent(2, "}");
                     break;
                 default :
                     throw new InvalidOperationException(instruction.OpcodeType + " is not yet supported.");
@@ -176,9 +278,9 @@ public static class DynamicShaderExecutor
             sb.AppendLineIndent(2, "}");
         }
 
-        private static void GenerateSetRegisterValue(StringBuilder sb, Operand operand)
+        private static void GenerateSetRegisterValue(StringBuilder sb, Operand operand, string contextName = "context")
         {
-            var register = GetRegister(operand);
+            var register = GetRegister(operand, contextName);
 
             if (operand.ComponentMask.HasFlag(ComponentMask.X)
                 && operand.ComponentMask.HasFlag(ComponentMask.Y)
@@ -213,9 +315,9 @@ public static class DynamicShaderExecutor
                 sb.AppendLineIndent(2, "    {0}.Number3 = result;", register);
         }
 
-        private static string GetRegister(Operand operand)
+        private static string GetRegister(Operand operand, string contextName = "context")
         {
-            return string.Format("context.{0}{1}",
+            return string.Format("{0}.{1}{2}", contextName,
                 GetRegisterName(operand.OperandType),
                 GetRegisterIndex(operand));
         }
@@ -269,7 +371,7 @@ public static class DynamicShaderExecutor
             }
         }
 
-        private static string GenerateGetOperandValue(Operand operand, NumberType numberType)
+        private static string GenerateGetOperandValue(Operand operand, NumberType numberType, string contextName = "context")
         {
             switch (operand.OperandType)
             {
@@ -283,7 +385,7 @@ public static class DynamicShaderExecutor
                 case OperandType.Input:
                 case OperandType.Temp:
                     // TODO: Apply modifier and selection mode.
-                    return ApplyOperandSelectionMode(GetRegister(operand), operand);
+                    return ApplyOperandSelectionMode(GetRegister(operand, contextName), operand);
                 default:
                     throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
             }

@@ -30,3 +30,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: InternalsVisibleTo("SlimShader.VirtualMachine.Jitter")]
+[assembly: InternalsVisibleTo("SlimShader.VirtualMachine.Jitter.Generated")]

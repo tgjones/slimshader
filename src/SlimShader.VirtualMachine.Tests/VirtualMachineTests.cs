@@ -7,6 +7,7 @@ using SlimShader.Chunks.Shex;
 using SlimShader.VirtualMachine.Execution;
 using SlimShader.VirtualMachine.Jitter;
 using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Resources;
 using SlimShader.VirtualMachine.Tests.Shaders.VS;
 using SlimShader.VirtualMachine.Tests.Util;
 
@@ -77,6 +78,35 @@ namespace SlimShader.VirtualMachine.Tests
             Assert.That(output0.Number2.Float, Is.EqualTo(direct3DResult.Position.Z));
             Assert.That(output0.Number3.Float, Is.EqualTo(direct3DResult.Position.W));
 		}
+
+        [TestCaseSource("ShaderExecutors")]
+        public void CanExecutePixelShaderBasicHlsl(IShaderExecutor shaderExecutor)
+        {
+            // Arrange.
+            VirtualMachine.ShaderExecutor = shaderExecutor;
+            var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/BasicHLSL_PS.o")), 4);
+
+            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(0, 0), new Number4
+            {
+                Number0 = Number.FromUInt(1) // bTexture = true
+            });
+
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), new Number4(0.5f, 0, 0, 1)); // COLOR0
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), new Number4(0, 0, 0, 0)); // TEXCOORD0
+
+            vm.SetTexture(new RegisterIndex(0), new FakeTexture(new Number4(0.8f, 0, 0, 1)));
+            vm.SetSampler(new RegisterIndex(0), new SamplerState());
+
+            // Act.
+            vm.Execute();
+
+            // Assert.
+            var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
+            Assert.That(output0.Number0.Float, Is.EqualTo(0.4f));
+            Assert.That(output0.Number1.Float, Is.EqualTo(0));
+            Assert.That(output0.Number2.Float, Is.EqualTo(0));
+            Assert.That(output0.Number3.Float, Is.EqualTo(1));
+        }
 
 	    [TestCaseSource("ShaderExecutors"), Ignore]
         public void PerformanceTest(IShaderExecutor shaderExecutor)

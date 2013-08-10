@@ -68,6 +68,7 @@
     <Compile Include="Analysis\ControlFlow\ControlFlowGraphTests.cs" />
     <Compile Include="Analysis\ExecutableInstructions\ExecutableInstructionRewriterTests.cs" />
     <Compile Include="Analysis\ExplicitBranching\ExplicitBranchingRewriterTests.cs" />
+    <Compile Include="FakeTexture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders\VS\BasicHlsl.cs" />
     <Compile Include="Util\ConversionExtensions.cs" />
