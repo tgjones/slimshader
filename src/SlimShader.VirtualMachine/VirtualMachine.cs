@@ -109,12 +109,16 @@ namespace SlimShader.VirtualMachine
 
         public void SetInputRegisterValue(int contextIndex, int index0, int index1, ref Number4 value)
         {
-            _executionContexts[contextIndex].SetInputRegisterValue(index0, index1, ref value);
+            if (index0 < _requiredRegisters.NumPrimitives && index1 < _requiredRegisters.Inputs)
+                _executionContexts[contextIndex].SetInputRegisterValue(index0, index1, ref value);
         }
 
 		public void SetTexture(RegisterIndex registerIndex, ITexture texture)
 		{
-		    TextureSamplers[registerIndex.Index1D] = TextureSamplerFactory.Create(texture.Dimension);
+            var textureSampler = (texture != null)
+                ? TextureSamplerFactory.Create(texture.Dimension)
+                : null;
+            TextureSamplers[registerIndex.Index1D] = textureSampler;
 			Textures[registerIndex.Index1D] = texture;
 		}
 

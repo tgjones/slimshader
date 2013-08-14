@@ -115,6 +115,9 @@ public static class DynamicShaderExecutor
         {
             switch (instruction.OpcodeType)
             {
+                case Execution.ExecutableOpcodeType.Add:
+                    GenerateExecute2(sb, instruction, "Add");
+                    break;
                 case Execution.ExecutableOpcodeType.Branch :
                     break;
                 case Execution.ExecutableOpcodeType.BranchC :
@@ -176,28 +179,37 @@ public static class DynamicShaderExecutor
                     sb.AppendLineIndent(2, "    var srcResource = virtualMachine.Textures[{0}];", srcResourceIndex);
                     sb.AppendLineIndent(2, "    var srcSampler = virtualMachine.Samplers[{0}];", srcSamplerIndex);
                     sb.AppendLineIndent(2, "    ");
-                    sb.AppendLineIndent(2, "    for (var i = 0; i < executionContexts.Length; i += 4)");
+                    sb.AppendLineIndent(2, "    if (textureSampler == null || srcResource == null)");
                     sb.AppendLineIndent(2, "    {");
-                    sb.AppendLineIndent(2, "        var topLeft = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 0]"));
-                    sb.AppendLineIndent(2, "        var topRight = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 1]"));
-                    sb.AppendLineIndent(2, "        var bottomLeft = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 2]"));
-                    sb.AppendLineIndent(2, "        var bottomRight = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 3]"));
-                    sb.AppendLineIndent(2, "        ");
-                    sb.AppendLineIndent(2, "        var deltaX = Number4.Subtract(ref topRight, ref topLeft);");
-                    sb.AppendLineIndent(2, "        var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);");
-                    sb.AppendLineIndent(2, "        ");
-                    sb.AppendLineIndent(2, "        var result = textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft, ref deltaX, ref deltaY);");
+                    sb.AppendLineIndent(2, "        var result = new Number4();");
+                    sb.AppendLineIndent(2, "        foreach (var context in executionContexts)");
+                    GenerateSetRegisterValue(sb, instruction.Operands[0]);
+                    sb.AppendLineIndent(2, "    }");
+                    sb.AppendLineIndent(2, "    else");
+                    sb.AppendLineIndent(2, "    {");
+                    sb.AppendLineIndent(2, "        for (var i = 0; i < executionContexts.Length; i += 4)");
+                    sb.AppendLineIndent(2, "        {");
+                    sb.AppendLineIndent(2, "            var topLeft = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 0]"));
+                    sb.AppendLineIndent(2, "            var topRight = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 1]"));
+                    sb.AppendLineIndent(2, "            var bottomLeft = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 2]"));
+                    sb.AppendLineIndent(2, "            var bottomRight = {0};", GenerateGetOperandValue(instruction.Operands[1], NumberType.Float, "executionContexts[i + 3]"));
+                    sb.AppendLineIndent(2, "            ");
+                    sb.AppendLineIndent(2, "            var deltaX = Number4.Subtract(ref topRight, ref topLeft);");
+                    sb.AppendLineIndent(2, "            var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);");
+                    sb.AppendLineIndent(2, "            ");
+                    sb.AppendLineIndent(2, "            var result = textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft, ref deltaX, ref deltaY);");
                     GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 0]");
-                    sb.AppendLineIndent(2, "        ");
-                    sb.AppendLineIndent(2, "        result = textureSampler.SampleGrad(srcResource, srcSampler, ref topRight, ref deltaX, ref deltaY);");
+                    sb.AppendLineIndent(2, "            ");
+                    sb.AppendLineIndent(2, "            result = textureSampler.SampleGrad(srcResource, srcSampler, ref topRight, ref deltaX, ref deltaY);");
                     GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 1]");
                     sb.AppendLineIndent(2, "        ");
-                    sb.AppendLineIndent(2, "        result = textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft, ref deltaX, ref deltaY);");
+                    sb.AppendLineIndent(2, "            result = textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft, ref deltaX, ref deltaY);");
                     GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 2]");
                     sb.AppendLineIndent(2, "        ");
-                    sb.AppendLineIndent(2, "        result = textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight, ref deltaX, ref deltaY);");
+                    sb.AppendLineIndent(2, "            result = textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight, ref deltaX, ref deltaY);");
                     GenerateSetRegisterValue(sb, instruction.Operands[0], "executionContexts[i + 3]");
                     sb.AppendLineIndent(2, "        ");
+                    sb.AppendLineIndent(2, "        }");
                     sb.AppendLineIndent(2, "    }");
                     sb.AppendLineIndent(2, "}");
                     break;

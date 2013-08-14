@@ -286,29 +286,38 @@ namespace SlimShader.VirtualMachine.Execution
 				        var srcSampler = virtualMachine.Samplers[instruction.Operands[3].Indices[0].Value];
 				        var textureSampler = virtualMachine.TextureSamplers[srcResourceIndex];
 
-				        for (var i = 0; i < executionContexts.Length; i += 4)
-				        {
-                            var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
-                            var topRight = GetOperandValue(executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
-                            var bottomLeft = GetOperandValue(executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
-                            var bottomRight = GetOperandValue(executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
+                        if (textureSampler == null || srcResource == null)
+                        {
+                            var zero = new Number4();
+                            foreach (var context in executionContexts)
+                                SetRegisterValue(context, instruction.Operands[0], zero);
+                        }
+                        else
+                        {
+                            for (var i = 0; i < executionContexts.Length; i += 4)
+                            {
+                                var topLeft = GetOperandValue(executionContexts[i + 0], instruction.Operands[1], NumberType.Float);
+                                var topRight = GetOperandValue(executionContexts[i + 1], instruction.Operands[1], NumberType.Float);
+                                var bottomLeft = GetOperandValue(executionContexts[i + 2], instruction.Operands[1], NumberType.Float);
+                                var bottomRight = GetOperandValue(executionContexts[i + 3], instruction.Operands[1], NumberType.Float);
 
-                            var deltaX = Number4.Subtract(ref topRight, ref topLeft);
-                            var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
+                                var deltaX = Number4.Subtract(ref topRight, ref topLeft);
+                                var deltaY = Number4.Subtract(ref bottomLeft, ref topLeft);
 
-				            SetRegisterValue(executionContexts[i + 0], instruction.Operands[0],
-                                textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft,
-				                    ref deltaX, ref deltaY));
-                            SetRegisterValue(executionContexts[i + 1], instruction.Operands[0],
-                                textureSampler.SampleGrad(srcResource, srcSampler, ref topRight,
-                                    ref deltaX, ref deltaY));
-                            SetRegisterValue(executionContexts[i + 2], instruction.Operands[0],
-                                textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft,
-                                    ref deltaX, ref deltaY));
-                            SetRegisterValue(executionContexts[i + 3], instruction.Operands[0],
-                                textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight,
-                                    ref deltaX, ref deltaY));
-				        }
+                                SetRegisterValue(executionContexts[i + 0], instruction.Operands[0],
+                                    textureSampler.SampleGrad(srcResource, srcSampler, ref topLeft,
+                                        ref deltaX, ref deltaY));
+                                SetRegisterValue(executionContexts[i + 1], instruction.Operands[0],
+                                    textureSampler.SampleGrad(srcResource, srcSampler, ref topRight,
+                                        ref deltaX, ref deltaY));
+                                SetRegisterValue(executionContexts[i + 2], instruction.Operands[0],
+                                    textureSampler.SampleGrad(srcResource, srcSampler, ref bottomLeft,
+                                        ref deltaX, ref deltaY));
+                                SetRegisterValue(executionContexts[i + 3], instruction.Operands[0],
+                                    textureSampler.SampleGrad(srcResource, srcSampler, ref bottomRight,
+                                        ref deltaX, ref deltaY));
+                            }
+                        }
 				        break;
 				    }
 				    case ExecutableOpcodeType.Sqrt:
