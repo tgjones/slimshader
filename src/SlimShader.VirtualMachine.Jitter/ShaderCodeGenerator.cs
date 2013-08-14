@@ -329,6 +329,10 @@ public static class DynamicShaderExecutor
 
         private static string GetRegister(Operand operand, string contextName = "context")
         {
+            if (operand.OperandType == OperandType.ConstantBuffer)
+                return string.Format("virtualMachine.{0}{1}", 
+                    GetRegisterName(operand.OperandType),
+                    GetRegisterIndex(operand));
             return string.Format("{0}.{1}{2}", contextName,
                 GetRegisterName(operand.OperandType),
                 GetRegisterIndex(operand));

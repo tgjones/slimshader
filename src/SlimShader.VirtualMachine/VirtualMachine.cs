@@ -39,6 +39,7 @@ namespace SlimShader.VirtualMachine
             get { return _bytecode; }
 	    }
 
+        internal Number4[][] ConstantBuffers { get; private set; }
         internal TextureSampler[] TextureSamplers { get; private set; }
         internal ITexture[] Textures { get; private set; }
         internal SamplerState[] Samplers { get; private set; }
@@ -64,7 +65,11 @@ namespace SlimShader.VirtualMachine
 
 			_executionContexts = new ExecutionContext[numContexts];
 			for (int i = 0; i < _executionContexts.Length; i++)
-				_executionContexts[i] = new ExecutionContext(i, _requiredRegisters);
+				_executionContexts[i] = new ExecutionContext(this, i, _requiredRegisters);
+
+            ConstantBuffers = new Number4[_requiredRegisters.ConstantBuffers.Count][];
+            for (int i = 0; i < _requiredRegisters.ConstantBuffers.Count; i++)
+                ConstantBuffers[i] = new Number4[_requiredRegisters.ConstantBuffers[i]];
 
 		    TextureSamplers = new TextureSampler[_requiredRegisters.Resources];
             Textures = new ITexture[_requiredRegisters.Resources];
@@ -111,6 +116,11 @@ namespace SlimShader.VirtualMachine
         {
             if (index0 < _requiredRegisters.NumPrimitives && index1 < _requiredRegisters.Inputs)
                 _executionContexts[contextIndex].SetInputRegisterValue(index0, index1, ref value);
+        }
+
+        public void SetConstantBufferRegisterValue(int index0, int index1, ref Number4 value)
+        {
+            ConstantBuffers[index0][index1] = value;
         }
 
 		public void SetTexture(RegisterIndex registerIndex, ITexture texture)

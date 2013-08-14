@@ -6,9 +6,9 @@ namespace SlimShader.VirtualMachine
 {
 	public class ExecutionContext
 	{
-		public int Index { get; private set; }
+	    private readonly VirtualMachine _virtualMachine;
 
-		public Number4[][] ConstantBuffers { get; private set; }
+	    public int Index { get; private set; }
 
 		public Number4[][] Inputs { get; private set; }
 		public Number4[] Outputs { get; private set; }
@@ -16,13 +16,11 @@ namespace SlimShader.VirtualMachine
 		public Number4[] Temps { get; private set; }
 		public Number4[][] IndexableTemps { get; private set; }
 
-		public ExecutionContext(int index, RequiredRegisters requiredRegisters)
+		public ExecutionContext(VirtualMachine virtualMachine, int index, RequiredRegisters requiredRegisters)
 		{
-			Index = index;
+		    _virtualMachine = virtualMachine;
 
-			ConstantBuffers = new Number4[requiredRegisters.ConstantBuffers.Count][];
-			for (int i = 0; i < requiredRegisters.ConstantBuffers.Count; i++)
-				ConstantBuffers[i] = new Number4[requiredRegisters.ConstantBuffers[i]];
+		    Index = index;
 
 			Inputs = new Number4[requiredRegisters.NumPrimitives][];
 			for (int i = 0; i < requiredRegisters.NumPrimitives; i++)
@@ -42,7 +40,7 @@ namespace SlimShader.VirtualMachine
 			switch (operandType)
 			{
 				case OperandType.ConstantBuffer:
-					register = ConstantBuffers[registerIndex.Index2D_0];
+					register = _virtualMachine.ConstantBuffers[registerIndex.Index2D_0];
 					index = registerIndex.Index2D_1;
 					return;
 				case OperandType.Input:
