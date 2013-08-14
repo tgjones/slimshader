@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using SlimShader.Chunks.Ifce;
 using SlimShader.Chunks.Rdef;
@@ -43,12 +42,17 @@ namespace SlimShader.Chunks
 			uint chunkSize = chunkReader.ReadUInt32();
 
 			ChunkType chunkType;
-			if (KnownChunkTypes.ContainsKey(fourCc))
-				chunkType = KnownChunkTypes[fourCc];
-			else
-				throw new ParseException("Chunk type '" + fourCc.ToFourCcString() + "' is not yet supported.");
+		    if (KnownChunkTypes.ContainsKey(fourCc))
+		    {
+		        chunkType = KnownChunkTypes[fourCc];
+		    }
+		    else
+		    {
+		        System.Diagnostics.Debug.WriteLine("Chunk type '" + fourCc.ToFourCcString() + "' is not yet supported.");
+		        return null;
+		    }
 
-			var chunkContentReader = chunkReader.CopyAtCurrentPosition((int) chunkSize);
+		    var chunkContentReader = chunkReader.CopyAtCurrentPosition((int) chunkSize);
 			BytecodeChunk chunk;
 			switch (chunkType)
 			{
