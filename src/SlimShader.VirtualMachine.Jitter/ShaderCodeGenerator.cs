@@ -389,7 +389,19 @@ public static class DynamicShaderExecutor
             {
                 case OperandType.Immediate32 :
                 case OperandType.Immediate64:
-                    var value = OperandUtility.ApplyOperandModifier(operand.ImmediateValues, numberType, operand.Modifier);
+                    Number4 immediateValues;
+                    switch (operand.NumComponents)
+                    {
+                        case 1:
+                            immediateValues = operand.ImmediateValues.Xxxx;
+                            break;
+                        case 4:
+                            immediateValues = operand.ImmediateValues;
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    var value = OperandUtility.ApplyOperandModifier(immediateValues, numberType, operand.Modifier);
                     return string.Format("new Number4({0}f, {1}f, {2}f, {3}f)",
                         value.Float0, value.Float1, value.Float2, value.Float3);
                 case OperandType.ConstantBuffer:

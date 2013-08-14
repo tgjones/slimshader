@@ -389,7 +389,19 @@ namespace SlimShader.VirtualMachine.Execution
 			{
 				case OperandType.Immediate32:
                 case OperandType.Immediate64:
-                    return OperandUtility.ApplyOperandModifier(operand.ImmediateValues, numberType, operand.Modifier);
+			        Number4 value;
+                    switch (operand.NumComponents)
+                    {
+                        case 1 :
+                            value = operand.ImmediateValues.Xxxx;
+                            break;
+                        case 4 :
+                            value = operand.ImmediateValues;
+                            break;
+                        default :
+                            throw new NotImplementedException();
+                    }
+                    return OperandUtility.ApplyOperandModifier(value, numberType, operand.Modifier);
                 case OperandType.ConstantBuffer:
 				case OperandType.IndexableTemp:
 				case OperandType.Input:

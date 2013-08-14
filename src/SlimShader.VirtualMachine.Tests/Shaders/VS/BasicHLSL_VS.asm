@@ -43,7 +43,7 @@
 //
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
-// POSITION                 0   xyzw        0     NONE   float   xyzw
+// POSITION                 0   xyz         0     NONE   float   xyz 
 // NORMAL                   0   xyz         1     NONE   float   xyz 
 // TEXCOORD                 0   xy          2     NONE   float   xy  
 //
@@ -59,17 +59,19 @@
 vs_4_0
 dcl_constantbuffer cb0[14], immediateIndexed
 dcl_constantbuffer cb1[1], immediateIndexed
-dcl_input v0.xyzw
+dcl_input v0.xyz
 dcl_input v1.xyz
 dcl_input v2.xy
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xyzw
 dcl_output o2.xy
 dcl_temps 2
-dp4 o0.x, v0.xyzw, cb0[10].xyzw
-dp4 o0.y, v0.xyzw, cb0[11].xyzw
-dp4 o0.z, v0.xyzw, cb0[12].xyzw
-dp4 o0.w, v0.xyzw, cb0[13].xyzw
+mov r0.xyz, v0.xyzx
+mov r0.w, l(1.000000)
+dp4 o0.x, r0.xyzw, cb0[10].xyzw
+dp4 o0.y, r0.xyzw, cb0[11].xyzw
+dp4 o0.z, r0.xyzw, cb0[12].xyzw
+dp4 o0.w, r0.xyzw, cb0[13].xyzw
 dp3 r0.x, v1.xyzx, cb0[6].xyzx
 dp3 r0.y, v1.xyzx, cb0[7].xyzx
 dp3 r0.z, v1.xyzx, cb0[8].xyzx
@@ -91,4 +93,4 @@ mad o1.xyz, cb0[1].xyzx, r0.yzwy, r1.xyzx
 movc o2.xy, cb1[0].yyyy, v2.xyxx, l(0,0,0,0)
 mov o1.w, l(1.000000)
 ret 
-// Approximately 25 instruction slots used
+// Approximately 27 instruction slots used
