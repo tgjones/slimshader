@@ -155,6 +155,9 @@ public static class DynamicShaderExecutor
                 case Execution.ExecutableOpcodeType.Max:
                     GenerateExecute2(sb, instruction, "Max");
                     break;
+                case Execution.ExecutableOpcodeType.Min:
+                    GenerateExecute2(sb, instruction, "Min");
+                    break;
                 case Execution.ExecutableOpcodeType.Mul:
                     GenerateExecute2(sb, instruction, "Mul");
                     break;
