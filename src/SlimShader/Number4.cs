@@ -85,21 +85,30 @@ namespace SlimShader
             switch (type)
 			{
 				case NumberType.Float:
+			        return NegateFloat(original);
                 case NumberType.Int:
-                case NumberType.UInt:
-					return new Number4(
-						Number.Negate(original.Number0, type),
-                        Number.Negate(original.Number1, type),
-                        Number.Negate(original.Number2, type),
-                        Number.Negate(original.Number3, type));
+			        return NegateInt(original);
 				case NumberType.Double:
-					return new Number4(
-						-original.Double0,
-						-original.Double1);
+                    return NegateDouble(original);
 				default:
                     throw new InvalidOperationException(string.Format("Negate is not a valid operation for number type '{0}'.", type));
 			}
 		}
+
+        public static Number4 NegateDouble(Number4 original)
+        {
+            return new Number4(-original.Double0, -original.Double1);
+        }
+
+        public static Number4 NegateFloat(Number4 original)
+        {
+            return new Number4(-original.Float0, -original.Float1, -original.Float2, -original.Float3);
+        }
+
+        public static Number4 NegateInt(Number4 original)
+        {
+            return new Number4(-original.Int0, -original.Int1, -original.Int2, -original.Int3);
+        }
 
 	    public static Number4 Saturate(ref Number4 original)
 	    {

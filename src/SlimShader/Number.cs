@@ -31,7 +31,7 @@ namespace SlimShader
 				case NumberType.Float:
 					return FromFloat(-value.Float);
 				default:
-                    throw new InvalidOperationException(string.Format("Abs is not a valid operation for number type '{0}'.", type));
+                    throw new InvalidOperationException(string.Format("Negate is not a valid operation for number type '{0}'.", type));
 			}
 		}
 

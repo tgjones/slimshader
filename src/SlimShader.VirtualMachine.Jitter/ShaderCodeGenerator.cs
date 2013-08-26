@@ -415,8 +415,20 @@ public static class DynamicShaderExecutor
                 case OperandType.IndexableTemp:
                 case OperandType.Input:
                 case OperandType.Temp:
-                    // TODO: Apply modifier and selection mode.
-                    return ApplyOperandSelectionMode(GetRegister(operand, contextName), operand);
+                    var swizzled = ApplyOperandSelectionMode(GetRegister(operand, contextName), operand);
+                    switch (operand.Modifier)
+                    {
+                        case OperandModifier.None:
+                            return swizzled;
+                        case OperandModifier.Neg:
+                            return string.Format("Number4.Negate{0}({1})", numberType, swizzled);
+                        case OperandModifier.Abs:
+                            throw new NotImplementedException();
+                        case OperandModifier.AbsNeg:
+                            throw new NotImplementedException();
+                        default :
+                            throw new ArgumentOutOfRangeException();
+                    }
                 default:
                     throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
             }
