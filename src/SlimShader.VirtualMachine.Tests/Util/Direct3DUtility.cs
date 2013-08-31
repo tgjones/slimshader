@@ -16,7 +16,7 @@ namespace SlimShader.VirtualMachine.Tests.Util
         public static BasicHlsl.VertexShaderOutput ExecuteVertexShader(string compiledShaderFile,
             BasicHlsl.ConstantBufferGlobals globals, VertexPositionNormalTexture vertex)
         {
-            var device = new Device(DriverType.Hardware, DeviceCreationFlags.Debug);
+            var device = new Device(DriverType.Warp, DeviceCreationFlags.Debug);
 
             var vertexShaderBytes = File.ReadAllBytes(compiledShaderFile);
             var vertexShaderBytecode = new ShaderBytecode(vertexShaderBytes);

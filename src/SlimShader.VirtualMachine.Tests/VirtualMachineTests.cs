@@ -86,15 +86,15 @@ namespace SlimShader.VirtualMachine.Tests
             VirtualMachine.ShaderExecutor = shaderExecutor;
             var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/BasicHLSL_PS.o")), 4);
 
-            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(0, 0), new Number4
+            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(0, 1), new Number4
             {
                 Number0 = Number.FromUInt(1) // bTexture = true
             });
 
-            vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), new Number4(0.5f, 0, 0, 1)); // COLOR0
+            vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), new Number4(0.5f, 0.5f, 1.5f, 1)); // COLOR0
             vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), new Number4(0, 0, 0, 0)); // TEXCOORD0
 
-            vm.SetTexture(new RegisterIndex(0), new FakeTexture(new Number4(0.8f, 0, 0, 1)));
+            vm.SetTexture(new RegisterIndex(0), new FakeTexture(new Number4(0.8f, 0.6f, 0.4f, 1)));
             vm.SetSampler(new RegisterIndex(0), new SamplerState());
 
             // Act.
@@ -103,8 +103,8 @@ namespace SlimShader.VirtualMachine.Tests
             // Assert.
             var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
             Assert.That(output0.Number0.Float, Is.EqualTo(0.4f));
-            Assert.That(output0.Number1.Float, Is.EqualTo(0));
-            Assert.That(output0.Number2.Float, Is.EqualTo(0));
+            Assert.That(output0.Number1.Float, Is.EqualTo(0.3f));
+            Assert.That(output0.Number2.Float, Is.EqualTo(0.6f));
             Assert.That(output0.Number3.Float, Is.EqualTo(1));
         }
 
