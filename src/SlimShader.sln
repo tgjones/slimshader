@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimShader.Compiler", "Slim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimShader.VirtualMachine.Jitter", "SlimShader.VirtualMachine.Jitter\SlimShader.VirtualMachine.Jitter.csproj", "{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F51F77BE-121A-4367-816D-A3A165BFECFF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{696D19DB-4683-42E8-B08B-70765815B1AB}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
