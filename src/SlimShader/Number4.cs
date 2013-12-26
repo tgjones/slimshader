@@ -394,6 +394,23 @@ namespace SlimShader
 			throw new ArgumentOutOfRangeException("mask");
 		}
 
+		public Number GetSwizzledNumber(Operand4ComponentName name)
+		{
+			switch (name)
+			{
+				case Operand4ComponentName.X:
+					return Number0;
+				case Operand4ComponentName.Y:
+					return Number1;
+				case Operand4ComponentName.Z:
+					return Number2;
+				case Operand4ComponentName.W:
+					return Number3;
+				default:
+					throw new ArgumentOutOfRangeException("name");
+			}
+		}
+
 		public void WriteMaskedValue(Number4 value, ComponentMask mask)
 		{
 			if (mask.HasFlag(ComponentMask.X))

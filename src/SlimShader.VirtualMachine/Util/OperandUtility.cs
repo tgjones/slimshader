@@ -25,9 +25,14 @@ namespace SlimShader.VirtualMachine.Util
 
 		public static Number4 ApplyOperandSelectionMode(Number4 value, Operand operand)
 		{
-			if (operand.SelectionMode != Operand4ComponentSelectionMode.Swizzle)
-				return value;
-			return Number4.Swizzle(value, operand.Swizzles);
+			switch (operand.SelectionMode)
+			{
+				case Operand4ComponentSelectionMode.Swizzle:
+				case Operand4ComponentSelectionMode.Select1:
+					return Number4.Swizzle(value, operand.Swizzles);
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using SharpDX;
 using SlimShader.Chunks.Shex;
@@ -16,24 +17,6 @@ namespace SlimShader.VirtualMachine.Tests
 	[TestFixture]
 	public class VirtualMachineTests
 	{
-        [TestCaseSource("ShaderExecutors")]
-        public void CanExecuteSimplePixelShader(IShaderExecutor shaderExecutor)
-		{
-			// Arrange.
-            VirtualMachine.ShaderExecutor = shaderExecutor;
-			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")), 4);
-
-			// Act.
-			vm.Execute();
-			
-			// Assert.
-			var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
-			Assert.That(output0.Number0.Float, Is.EqualTo(1.0f));
-			Assert.That(output0.Number1.Float, Is.EqualTo(0.5f));
-			Assert.That(output0.Number2.Float, Is.EqualTo(0.4f));
-			Assert.That(output0.Number3.Float, Is.EqualTo(1.0f));
-		}
-
         [TestCaseSource("ShaderExecutors")]
 		public void CanExecuteVertexShaderBasicHlsl(IShaderExecutor shaderExecutor)
 	    {
@@ -77,6 +60,49 @@ namespace SlimShader.VirtualMachine.Tests
             Assert.That(output0.Number1.Float, Is.EqualTo(direct3DResult.Position.Y));
             Assert.That(output0.Number2.Float, Is.EqualTo(direct3DResult.Position.Z));
             Assert.That(output0.Number3.Float, Is.EqualTo(direct3DResult.Position.W));
+		}
+
+		[TestCaseSource("ShaderExecutors")]
+		public void CanExecuteCubeMapGeometryShader(IShaderExecutor shaderExecutor)
+		{
+			// Arrange.
+			VirtualMachine.ShaderExecutor = shaderExecutor;
+			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/GS/GS_CubeMap_GS.o")), 1);
+
+			// Act.
+			var results = vm.ExecuteMultiple().ToList();
+
+			// Assert.
+			Assert.That(results, Has.Count.EqualTo(25));
+			Assert.That(results[0], Is.EqualTo(ExecutionResponse.Emit));
+			Assert.That(results[1], Is.EqualTo(ExecutionResponse.Emit));
+			Assert.That(results[2], Is.EqualTo(ExecutionResponse.Emit));
+			Assert.That(results[3], Is.EqualTo(ExecutionResponse.Cut));
+			Assert.That(results[24], Is.EqualTo(ExecutionResponse.Finished));
+
+			//var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
+			//Assert.That(output0.Number0.Float, Is.EqualTo(1.0f));
+			//Assert.That(output0.Number1.Float, Is.EqualTo(0.5f));
+			//Assert.That(output0.Number2.Float, Is.EqualTo(0.4f));
+			//Assert.That(output0.Number3.Float, Is.EqualTo(1.0f));
+		}
+
+		[TestCaseSource("ShaderExecutors")]
+		public void CanExecuteSimplePixelShader(IShaderExecutor shaderExecutor)
+		{
+			// Arrange.
+			VirtualMachine.ShaderExecutor = shaderExecutor;
+			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/Simple.o")), 4);
+
+			// Act.
+			vm.Execute();
+
+			// Assert.
+			var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
+			Assert.That(output0.Number0.Float, Is.EqualTo(1.0f));
+			Assert.That(output0.Number1.Float, Is.EqualTo(0.5f));
+			Assert.That(output0.Number2.Float, Is.EqualTo(0.4f));
+			Assert.That(output0.Number3.Float, Is.EqualTo(1.0f));
 		}
 
         [TestCaseSource("ShaderExecutors")]

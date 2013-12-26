@@ -441,7 +441,17 @@ namespace SlimShader.VirtualMachine.Execution
 				case OperandIndexRepresentation.Immediate64PlusRelative:
 				case OperandIndexRepresentation.Relative:
 					var operandValue = GetOperandValue(context, index.Register, NumberType.UInt);
-					result += (ushort)operandValue.GetMaskedNumber(index.Register.ComponentMask).UInt;
+					switch (index.Register.SelectionMode)
+					{
+						case Operand4ComponentSelectionMode.Mask:
+							result += (ushort) operandValue.GetMaskedNumber(index.Register.ComponentMask).UInt;
+							break;
+						case Operand4ComponentSelectionMode.Select1:
+							result += (ushort) operandValue.GetSwizzledNumber(index.Register.Swizzles[0]).UInt;
+							break;
+						default :
+							throw new ArgumentOutOfRangeException();
+					}
 					break;
 			}
 			return result;
