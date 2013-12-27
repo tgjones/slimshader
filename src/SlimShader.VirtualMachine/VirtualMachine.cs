@@ -121,7 +121,9 @@ namespace SlimShader.VirtualMachine
 
         public void SetConstantBufferRegisterValue(int index0, int index1, ref Number4 value)
         {
-            ConstantBuffers[index0][index1] = value;
+			var constantBuffer = ConstantBuffers[index0];
+			if (index1 < constantBuffer.Length)
+				constantBuffer[index1] = value;
         }
 
 		public void SetTexture(RegisterIndex registerIndex, ITexture texture)
