@@ -134,6 +134,10 @@ public static class DynamicShaderExecutor
                     sb.AppendLineIndent(2, "    activeMasks[1][context.Index] = !result;");
                     sb.AppendLineIndent(2, "}");
                     break;
+				case Execution.ExecutableOpcodeType.Cut:
+				case Execution.ExecutableOpcodeType.CutStream:
+					sb.AppendLineIndent(2, "yield return ExecutionResponse.Cut;");
+					break;
                 case Execution.ExecutableOpcodeType.Dp2:
                     GenerateExecuteScalar2(sb, instruction, "Dp2");
                     break;
@@ -143,12 +147,22 @@ public static class DynamicShaderExecutor
                 case Execution.ExecutableOpcodeType.Dp4:
                     GenerateExecuteScalar2(sb, instruction, "Dp4");
                     break;
+				case Execution.ExecutableOpcodeType.Emit:
+				case Execution.ExecutableOpcodeType.EmitStream:
+					sb.AppendLineIndent(2, "yield return ExecutionResponse.Emit;");
+					break;
                 case Execution.ExecutableOpcodeType.IAdd:
                     GenerateExecute2NoSat(sb, instruction, "IAdd");
                     break;
                 case Execution.ExecutableOpcodeType.IGe:
                     GenerateExecute2NoSat(sb, instruction, "IGe");
                     break;
+				case Execution.ExecutableOpcodeType.IShl:
+					GenerateExecute2NoSat(sb, instruction, "IShl");
+					break;
+				case Execution.ExecutableOpcodeType.IShr:
+					GenerateExecute2NoSat(sb, instruction, "IShr");
+					break;
                 case Execution.ExecutableOpcodeType.Mad:
                     GenerateExecute3(sb, instruction, "Mad");
                     break;
@@ -364,15 +378,22 @@ public static class DynamicShaderExecutor
 
         private static string GetRegisterIndex(OperandIndex index)
         {
-            string result = index.Value.ToString();
             switch (index.Representation)
             {
+				case OperandIndexRepresentation.Immediate32:
+				case OperandIndexRepresentation.Immediate64:
+		            return index.Value.ToString();
                 case OperandIndexRepresentation.Immediate32PlusRelative:
                 case OperandIndexRepresentation.Immediate64PlusRelative:
+		            return string.Format("{0} + {1}",
+			            GenerateGetOperandValue(index.Register, NumberType.Unknown, forUseInArrayIndex: true),
+			            index.Value);
                 case OperandIndexRepresentation.Relative:
-                    throw new NotImplementedException();
+		            return string.Format("{0}",
+			            GenerateGetOperandValue(index.Register, NumberType.Unknown, forUseInArrayIndex: true));
+				default :
+					throw new ArgumentOutOfRangeException("index");
             }
-            return result;
         }
 
         private static string GetRegisterName(OperandType operandType)
@@ -390,7 +411,8 @@ public static class DynamicShaderExecutor
             }
         }
 
-        private static string GenerateGetOperandValue(Operand operand, NumberType numberType, string contextName = "context")
+        private static string GenerateGetOperandValue(Operand operand, NumberType numberType, 
+			string contextName = "context", bool forUseInArrayIndex = false)
         {
             switch (operand.OperandType)
             {
@@ -415,7 +437,7 @@ public static class DynamicShaderExecutor
                 case OperandType.IndexableTemp:
                 case OperandType.Input:
                 case OperandType.Temp:
-                    var swizzled = ApplyOperandSelectionMode(GetRegister(operand, contextName), operand);
+					var swizzled = ApplyOperandSelectionMode(GetRegister(operand, contextName), operand, forUseInArrayIndex);
                     switch (operand.Modifier)
                     {
                         case OperandModifier.None:
@@ -434,22 +456,29 @@ public static class DynamicShaderExecutor
             }
         }
 
-        private static string ApplyOperandSelectionMode(string register, Operand operand)
+        private static string ApplyOperandSelectionMode(string register, Operand operand, bool forUseInArrayIndex)
         {
-            if (operand.SelectionMode != Operand4ComponentSelectionMode.Swizzle)
-                return register;
+	        switch (operand.SelectionMode)
+	        {
+		        case Operand4ComponentSelectionMode.Select1:
+					if (forUseInArrayIndex)
+						return string.Format("{0}.Int{1}", register, (int) operand.Swizzles[0]);
+			        goto case Operand4ComponentSelectionMode.Swizzle;
+		        case Operand4ComponentSelectionMode.Swizzle:
+			        if (operand.Swizzles[0] == Operand4ComponentName.X
+				        && operand.Swizzles[1] == Operand4ComponentName.Y
+				        && operand.Swizzles[2] == Operand4ComponentName.Z
+				        && operand.Swizzles[3] == Operand4ComponentName.W)
+				        return register;
 
-            if (operand.Swizzles[0] == Operand4ComponentName.X
-                && operand.Swizzles[1] == Operand4ComponentName.Y
-                && operand.Swizzles[2] == Operand4ComponentName.Z
-                && operand.Swizzles[3] == Operand4ComponentName.W)
-                return register;
-
-            return string.Format("{0}.{1}{2}{3}{4}", register,
-                GetOperand4ComponentName(operand.Swizzles[0]),
-                GetOperand4ComponentName(operand.Swizzles[1]).ToLower(),
-                GetOperand4ComponentName(operand.Swizzles[2]).ToLower(),
-                GetOperand4ComponentName(operand.Swizzles[3]).ToLower());
+			        return string.Format("{0}.{1}{2}{3}{4}", register,
+				        GetOperand4ComponentName(operand.Swizzles[0]),
+				        GetOperand4ComponentName(operand.Swizzles[1]).ToLower(),
+				        GetOperand4ComponentName(operand.Swizzles[2]).ToLower(),
+				        GetOperand4ComponentName(operand.Swizzles[3]).ToLower());
+				default :
+					throw new ArgumentOutOfRangeException();
+	        }
         }
 
         private static string GetOperand4ComponentName(Operand4ComponentName name)

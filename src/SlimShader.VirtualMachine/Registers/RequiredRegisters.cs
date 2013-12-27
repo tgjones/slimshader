@@ -25,6 +25,9 @@ namespace SlimShader.VirtualMachine.Registers
 				OperandIndex[] indices = (declarationToken.Operand != null) 
 					? declarationToken.Operand.Indices 
 					: new OperandIndex[0];
+				var indexDimension = (declarationToken.Operand != null)
+					? declarationToken.Operand.IndexDimension
+					: OperandIndexDimension._0D;
 				switch (declarationToken.Header.OpcodeType)
 				{
 					case OpcodeType.DclInput:
@@ -33,15 +36,18 @@ namespace SlimShader.VirtualMachine.Registers
 					case OpcodeType.DclInputPsSiv:
 					case OpcodeType.DclInputSgv:
 					case OpcodeType.DclInputSiv:
-						if (indices.Length > 1)
+						switch (indexDimension)
 						{
-							result.NumPrimitives = (int) indices[0].Value + 1;
-							result.Inputs = Math.Max(result.Inputs, (int) indices[1].Value + 1);
-						}
-						else
-						{
-							result.NumPrimitives = 1;
-							result.Inputs = (int) indices[0].Value + 1;
+							case OperandIndexDimension._2D:
+								result.NumPrimitives = (int) indices[0].Value + 1;
+								result.Inputs = Math.Max(result.Inputs, (int) indices[1].Value + 1);
+								break;
+							case OperandIndexDimension._1D:
+								result.NumPrimitives = 1;
+								result.Inputs = (int) indices[0].Value + 1;
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
 						}
 						break;
 					case OpcodeType.DclOutput:
