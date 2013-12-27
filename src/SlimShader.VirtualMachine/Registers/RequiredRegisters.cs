@@ -33,7 +33,7 @@ namespace SlimShader.VirtualMachine.Registers
 					case OpcodeType.DclInputPsSiv:
 					case OpcodeType.DclInputSgv:
 					case OpcodeType.DclInputSiv:
-						if (indices.Length == 2)
+						if (indices.Length > 1)
 						{
 							result.NumPrimitives = (int) indices[0].Value + 1;
 							result.Inputs = Math.Max(result.Inputs, (int) indices[1].Value + 1);

@@ -70,21 +70,32 @@ namespace SlimShader.VirtualMachine.Tests
 			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/GS/GS_CubeMap_GS.o")), 1);
 
 			// Act.
-			var results = vm.ExecuteMultiple().ToList();
+			var executionEnumerator = vm.ExecuteMultiple().GetEnumerator();
+			int index = 0;
+			while (true)
+			{
+				executionEnumerator.MoveNext();
+				if (executionEnumerator.Current == ExecutionResponse.Finished)
+					break;
+				Assert.That(executionEnumerator.Current, Is.EqualTo(ExecutionResponse.Emit));
 
-			// Assert.
-			Assert.That(results, Has.Count.EqualTo(25));
-			Assert.That(results[0], Is.EqualTo(ExecutionResponse.Emit));
-			Assert.That(results[1], Is.EqualTo(ExecutionResponse.Emit));
-			Assert.That(results[2], Is.EqualTo(ExecutionResponse.Emit));
-			Assert.That(results[3], Is.EqualTo(ExecutionResponse.Cut));
-			Assert.That(results[24], Is.EqualTo(ExecutionResponse.Finished));
+				executionEnumerator.MoveNext();
+				Assert.That(executionEnumerator.Current, Is.EqualTo(ExecutionResponse.Emit));
 
-			//var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
-			//Assert.That(output0.Number0.Float, Is.EqualTo(1.0f));
-			//Assert.That(output0.Number1.Float, Is.EqualTo(0.5f));
-			//Assert.That(output0.Number2.Float, Is.EqualTo(0.4f));
-			//Assert.That(output0.Number3.Float, Is.EqualTo(1.0f));
+				executionEnumerator.MoveNext();
+				Assert.That(executionEnumerator.Current, Is.EqualTo(ExecutionResponse.Emit));
+
+				executionEnumerator.MoveNext();
+				Assert.That(executionEnumerator.Current, Is.EqualTo(ExecutionResponse.Cut));
+
+				// SV_RenderTargetArrayIndex
+				var output5 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(4));
+				Assert.That(output5.Number0.Int, Is.EqualTo(index));
+
+				index++;
+			}
+
+			Assert.That(index, Is.EqualTo(6));
 		}
 
 		[TestCaseSource("ShaderExecutors")]
