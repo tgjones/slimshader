@@ -130,8 +130,8 @@ public static class DynamicShaderExecutor
                     sb.AppendLineIndent(2, "{");
                     sb.AppendLineIndent(2, "    var src0 = {0};", GenerateGetOperandValue(instruction.Operands[0], NumberType.UInt));
                     sb.AppendLineIndent(2, "    var result = src0.{0};", GenerateTestCondition(instruction.TestBoolean));
-                    sb.AppendLineIndent(2, "    activeMasks[0][context.Index] = result;");
-                    sb.AppendLineIndent(2, "    activeMasks[1][context.Index] = !result;");
+                    sb.AppendLineIndent(2, "    activeMasks[0][context.Index] = !result;");
+                    sb.AppendLineIndent(2, "    activeMasks[1][context.Index] = result;");
                     sb.AppendLineIndent(2, "}");
                     break;
 				case Execution.ExecutableOpcodeType.Cut:

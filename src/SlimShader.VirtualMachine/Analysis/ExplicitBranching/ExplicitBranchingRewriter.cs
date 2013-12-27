@@ -19,11 +19,18 @@ namespace SlimShader.VirtualMachine.Analysis.ExplicitBranching
 					case OpcodeType.If:
 					case OpcodeType.Loop :
 					case OpcodeType.Switch:
+						return new BranchingInstruction
+						{
+							BranchType = BranchType.Conditional,
+							InstructionToken = x,
+							BranchIfPositive = true
+						};
 					case OpcodeType.BreakC :
 						return new BranchingInstruction
 						{
 							BranchType = BranchType.Conditional,
-							InstructionToken = x
+							InstructionToken = x,
+							BranchIfPositive = false
 						};
 					case OpcodeType.Else :
 					case OpcodeType.EndLoop:

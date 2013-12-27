@@ -17,7 +17,7 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 	        get { return _instructionToken.Saturate; }
 	    }
 
-	    public InstructionTestBoolean TestBoolean
+	    public virtual InstructionTestBoolean TestBoolean
 	    {
 	        get { return _instructionToken.TestBoolean; }
 	    }

@@ -4,6 +4,7 @@
 	{
 		public InstructionBase BranchTarget { get; set; }
 		public BranchType BranchType { get; set; }
+		public bool BranchIfPositive { get; set; }
 
 		public override bool IsUnconditionalBranch
 		{

@@ -60,8 +60,8 @@ namespace SlimShader.VirtualMachine.Execution
 				        {
 				            var src0 = GetOperandValue(thread, instruction.Operands[0], NumberType.UInt);
 				            bool result = TestCondition(ref src0, instruction.TestBoolean);
-				            activeMasks[0][thread.Index] = result;
-				            activeMasks[1][thread.Index] = !result;
+				            activeMasks[0][thread.Index] = !result;
+				            activeMasks[1][thread.Index] = result;
 				        }
 				        break;
 				    case ExecutableOpcodeType.Cut:

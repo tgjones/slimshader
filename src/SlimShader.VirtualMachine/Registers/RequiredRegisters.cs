@@ -64,7 +64,7 @@ namespace SlimShader.VirtualMachine.Registers
 					case OpcodeType.DclConstantBuffer:
 						while (result.ConstantBuffers.Count < (int) indices[0].Value + 1)
 							result.ConstantBuffers.Add(0);
-						result.ConstantBuffers[(int)indices[0].Value] = (int) indices[1].Value + 1;
+						result.ConstantBuffers[(int)indices[0].Value] = (int) indices[1].Value;
 						break;
 					case OpcodeType.DclIndexableTemp:
 						while (result.IndexableTemps.Count < (int)indices[0].Value + 1)

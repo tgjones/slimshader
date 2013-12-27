@@ -104,7 +104,8 @@ namespace SlimShader.VirtualMachine
 			Number4[] register;
 			int index;
 			_executionContexts[contextIndex].GetRegister(registerType, registerIndex, out register, out index);
-			register[index] = value;
+			if (index < register.Length)
+				register[index] = value;
 		}
 
         public void SetRegister(int contextIndex, OperandType registerType, RegisterIndex registerIndex, Number4 value)

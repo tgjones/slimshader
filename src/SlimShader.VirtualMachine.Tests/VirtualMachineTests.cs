@@ -123,7 +123,7 @@ namespace SlimShader.VirtualMachine.Tests
             VirtualMachine.ShaderExecutor = shaderExecutor;
             var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/PS/BasicHLSL_PS.o")), 4);
 
-            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(0, 1), new Number4
+            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(0, 0), new Number4
             {
                 Number0 = Number.FromUInt(1) // bTexture = true
             });

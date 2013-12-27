@@ -19,7 +19,7 @@ namespace SlimShader.VirtualMachine.Analysis.ExecutableInstructions
 				if (explicitBranchingInstruction is BranchingInstruction && !explicitBranchingInstruction.IsUnconditionalBranch)
 				{
 					var branchingInstruction = (BranchingInstruction) explicitBranchingInstruction;
-					yield return new DivergentExecutableInstruction(explicitBranchingInstruction.InstructionToken)
+					yield return new DivergentExecutableInstruction(explicitBranchingInstruction.InstructionToken, branchingInstruction.BranchIfPositive)
 					{
 						ReconvergencePC = GetReconvergencePoint(controlFlowGraph, branchingInstruction),
 						NextPCs = new List<int>
