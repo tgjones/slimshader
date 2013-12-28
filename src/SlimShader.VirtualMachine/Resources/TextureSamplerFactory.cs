@@ -1,26 +1,27 @@
 ﻿using System;
+using SlimShader.Chunks.Shex;
 
 namespace SlimShader.VirtualMachine.Resources
 {
     internal static class TextureSamplerFactory
     {
-        public static TextureSampler Create(TextureDimension dimension)
+        public static TextureSampler Create(ResourceDimension dimension)
         {
             switch (dimension)
             {
-                case TextureDimension.Texture1D:
+				case ResourceDimension.Texture1D:
                     throw new NotImplementedException();
-                case TextureDimension.Texture1DArray:
+				case ResourceDimension.Texture1DArray:
                     throw new NotImplementedException();
-                case TextureDimension.Texture2D:
+				case ResourceDimension.Texture2D:
                     return new Texture2DSampler();
-                case TextureDimension.Texture2DArray:
+				case ResourceDimension.Texture2DArray:
+					return new Texture2DArraySampler();
+				case ResourceDimension.Texture3D:
                     throw new NotImplementedException();
-                case TextureDimension.Texture3D:
-                    throw new NotImplementedException();break;
-                case TextureDimension.TextureCube:
-                    throw new NotImplementedException();
-                case TextureDimension.TextureCubeArray:
+				case ResourceDimension.TextureCube:
+					return new TextureCubeSampler();
+				case ResourceDimension.TextureCubeArray:
                     throw new NotImplementedException();
                 default:
                     throw new ArgumentOutOfRangeException("dimension");

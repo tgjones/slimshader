@@ -71,8 +71,11 @@ namespace SlimShader.VirtualMachine
             for (int i = 0; i < _requiredRegisters.ConstantBuffers.Count; i++)
                 ConstantBuffers[i] = new Number4[_requiredRegisters.ConstantBuffers[i]];
 
-		    TextureSamplers = new TextureSampler[_requiredRegisters.Resources];
-            Textures = new ITexture[_requiredRegisters.Resources];
+		    TextureSamplers = new TextureSampler[_requiredRegisters.Resources.Count];
+			for (int i = 0; i < _requiredRegisters.Resources.Count; i++)
+				TextureSamplers[i] = TextureSamplerFactory.Create(_requiredRegisters.Resources[i]);
+
+            Textures = new ITexture[_requiredRegisters.Resources.Count];
             Samplers = new SamplerState[_requiredRegisters.Samplers];
 		}
 
@@ -119,6 +122,11 @@ namespace SlimShader.VirtualMachine
                 _executionContexts[contextIndex].SetInputRegisterValue(index0, index1, ref value);
         }
 
+		internal void SetInputRegisterValue(int contextIndex, int index0, int index1, Number4 value)
+		{
+			SetInputRegisterValue(contextIndex, index0, index1, ref value);
+		}
+
         public void SetConstantBufferRegisterValue(int index0, int index1, ref Number4 value)
         {
 			var constantBuffer = ConstantBuffers[index0];
@@ -126,12 +134,13 @@ namespace SlimShader.VirtualMachine
 				constantBuffer[index1] = value;
         }
 
+		internal void SetConstantBufferRegisterValue(int index0, int index1, Number4 value)
+		{
+			SetConstantBufferRegisterValue(index0, index1, ref value);
+		}
+
 		public void SetTexture(RegisterIndex registerIndex, ITexture texture)
 		{
-            var textureSampler = (texture != null)
-                ? TextureSamplerFactory.Create(texture.Dimension)
-                : null;
-            TextureSamplers[registerIndex.Index1D] = textureSampler;
 			Textures[registerIndex.Index1D] = texture;
 		}
 

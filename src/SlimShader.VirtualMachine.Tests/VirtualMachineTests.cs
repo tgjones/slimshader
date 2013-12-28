@@ -69,6 +69,55 @@ namespace SlimShader.VirtualMachine.Tests
 			VirtualMachine.ShaderExecutor = shaderExecutor;
 			var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/GS/GS_CubeMap_GS.o")), 1);
 
+			// Set constant buffer values. (These values are taken from the Rasterizr environment mapping sample).
+			vm.SetConstantBufferRegisterValue(0, 0, new Number4(0.143317f, 0f, 0.976717f, 0.976619f));
+			vm.SetConstantBufferRegisterValue(0, 1, new Number4(0f, 1.000000f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 2, new Number4(-0.651080f, 0f, 0.214997f, 0.214975f));
+			vm.SetConstantBufferRegisterValue(0, 3, new Number4(-32.553982f, 0f, 9.749746f, 10.748772f));
+			vm.SetConstantBufferRegisterValue(0, 4, new Number4(-0.143317f, 0f, -0.976717f, -0.976619f));
+			vm.SetConstantBufferRegisterValue(0, 5, new Number4(0f, 1.000000f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 6, new Number4(0.651080f, 0f, -0.214997f, -0.214975f));
+			vm.SetConstantBufferRegisterValue(0, 7, new Number4(32.553982f, 0f, -11.749947f, -10.748772f));
+			vm.SetConstantBufferRegisterValue(0, 8, new Number4(0.651080f, 0.214975f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 9, new Number4(0f, 0f, 1.000100f, 1.000000f));
+			vm.SetConstantBufferRegisterValue(0, 10, new Number4(0.143317f, -0.976619f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 11, new Number4(7.165847f, -48.830967f, -1.000100f, 0));
+			vm.SetConstantBufferRegisterValue(0, 12, new Number4(0.651080f, -0.214975f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 13, new Number4(0f, 0f, -1.000100f, -1.000000f));
+			vm.SetConstantBufferRegisterValue(0, 14, new Number4(0.143317f, 0.976619f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 15, new Number4(7.165847f, 48.830967f, -1.000100f, 0));
+			vm.SetConstantBufferRegisterValue(0, 16, new Number4(0.651080f, 0f, -0.214997f, -0.214975f));
+			vm.SetConstantBufferRegisterValue(0, 17, new Number4(0f, 1.000000f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 18, new Number4(0.143317f, 0f, 0.976717f, 0.976619f));
+			vm.SetConstantBufferRegisterValue(0, 19, new Number4(7.165847f, 0f, 47.835758f, 48.830975f));
+			vm.SetConstantBufferRegisterValue(0, 20, new Number4(-0.651080f, 0f, 0.214997f, 0.214975f));
+			vm.SetConstantBufferRegisterValue(0, 21, new Number4(0f, 1.000000f, 0f, 0));
+			vm.SetConstantBufferRegisterValue(0, 22, new Number4(-0.143317f, 0f, -0.976717f, -0.976619f));
+			vm.SetConstantBufferRegisterValue(0, 23, new Number4(-7.165847f, 0f, -49.835957f, -48.830975f));
+
+			// Set input values.
+			vm.SetInputRegisterValue(0, 0, 0, new Number4(12.834300f,11.131500f,-0.087300f,0));
+			vm.SetInputRegisterValue(0, 0, 1, new Number4(12.515460f,11.131500f,-2.844318f,0));
+			vm.SetInputRegisterValue(0, 0, 2, new Number4(-0.944098f,-0.255800f,0.207817f,0));
+			vm.SetInputRegisterValue(0, 0, 3, new Number4(56.420399f,-55.420399f,0,0));
+			vm.SetInputRegisterValue(0, 1, 0, new Number4(11.860000f,11.131500f,4.847000f,0));
+			vm.SetInputRegisterValue(0, 1, 1, new Number4(12.624693f,11.131500f,2.184066f,0));
+			vm.SetInputRegisterValue(0, 1, 2, new Number4(-0.951641f,-0.256300f,-0.169278f,0));
+			vm.SetInputRegisterValue(0, 1, 3, new Number4(49.367802f,-55.420399f,0,0));
+			vm.SetInputRegisterValue(0, 2, 0, new Number4(11.698200f,11.794400f,4.778200f,0));
+			vm.SetInputRegisterValue(0, 2, 1, new Number4(12.451886f,11.794400f,2.151658f,0));
+			vm.SetInputRegisterValue(0, 2, 2, new Number4(-0.951859f,0.256000f,-0.168411f,0));
+			vm.SetInputRegisterValue(0, 2, 3, new Number4(49.367802f, -54.715099f, 0, 0));
+
+			var expectedOutputsForFirstVertex = new[]
+			{
+				new Number4(-30.657768f, 11.131500f, 22.266457f, 23.264225f),
+				new Number4(12.515460f, 11.131500f, -2.844318f, 0),
+				new Number4(-0.944098f, -0.255800f, 0.207817f, 0),
+				new Number4(56.420399f, -55.420399f, 0, 0),
+				new Number4(0, 0, 0, 0)
+			};
+
 			// Act.
 			var executionEnumerator = vm.ExecuteMultiple().GetEnumerator();
 			int index = 0;
@@ -78,6 +127,15 @@ namespace SlimShader.VirtualMachine.Tests
 				if (executionEnumerator.Current == ExecutionResponse.Finished)
 					break;
 				Assert.That(executionEnumerator.Current, Is.EqualTo(ExecutionResponse.Emit));
+
+				if (index == 0)
+				{
+					for (ushort i = 0; i < expectedOutputsForFirstVertex.Length; i++)
+					{
+						var output = vm.GetRegister(0, OperandType.Output, new RegisterIndex(i));
+						Assert.That(output, Is.EqualTo(expectedOutputsForFirstVertex[i]));
+					}
+				}
 
 				executionEnumerator.MoveNext();
 				Assert.That(executionEnumerator.Current, Is.EqualTo(ExecutionResponse.Emit));

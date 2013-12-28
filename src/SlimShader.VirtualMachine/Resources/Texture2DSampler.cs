@@ -3,13 +3,13 @@ using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Resources
 {
-    internal class Texture2DSampler : TextureSampler
+	internal class Texture2DSampler : TextureSampler
     {
         public override float CalculateLevelOfDetail(
             ITexture texture, SamplerState samplerState, 
             ref Number4 ddx, ref Number4 ddy)
         {
-            var mostDetailedMipMap = texture.GetMipMap(0);
+            var mostDetailedMipMap = texture.GetMipMap(0, 0);
             int width = mostDetailedMipMap.Width;
             int height = mostDetailedMipMap.Height;
             float xBound2 = width * width;
@@ -31,11 +31,11 @@ namespace SlimShader.VirtualMachine.Resources
         }
 
         protected override void GetMipMapAndTransformedCoordinates(
-            ITexture texture, ref Number4 location, int level,
-            out ITextureMipMap mipMap,
+            ITexture texture, ref Number4 location, 
+			int level, out ITextureMipMap mipMap,
             out Number4 textureCoordinates)
         {
-            mipMap = texture.GetMipMap(level);
+            mipMap = texture.GetMipMap(0, level);
             textureCoordinates = new Number4(
                 location.Float0 * mipMap.Width,
                 location.Float1 * mipMap.Height,

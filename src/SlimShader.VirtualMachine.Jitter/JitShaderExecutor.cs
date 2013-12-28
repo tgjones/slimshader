@@ -48,7 +48,7 @@ namespace SlimShader.VirtualMachine.Jitter
                 new MetadataFileReference(typeof(VirtualMachine).Assembly.Location)
             };
 
-            var outputName = "SlimShader.VirtualMachine.Jitter.Generated";
+            const string outputName = "SlimShader.VirtualMachine.Jitter.Generated";
             var code = ShaderCodeGenerator.Generate(instructions);
             
             var compilation = Compilation.Create(outputName)

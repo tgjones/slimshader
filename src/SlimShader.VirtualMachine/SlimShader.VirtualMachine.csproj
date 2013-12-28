@@ -65,12 +65,15 @@
     <Compile Include="Registers\RegisterKey.cs" />
     <Compile Include="Registers\RequiredRegisters.cs" />
     <Compile Include="Resources\Comparison.cs" />
+    <Compile Include="Resources\CubeMapUtility.cs" />
     <Compile Include="Resources\Filter.cs" />
     <Compile Include="Resources\SamplerState.cs" />
     <Compile Include="Resources\ITexture.cs" />
     <Compile Include="Resources\ITextureMipMap.cs" />
+    <Compile Include="Resources\Texture2DArraySampler.cs" />
     <Compile Include="Resources\Texture2DSampler.cs" />
     <Compile Include="Resources\TextureAddressMode.cs" />
+    <Compile Include="Resources\TextureCubeSampler.cs" />
     <Compile Include="Resources\TextureDimension.cs" />
     <Compile Include="Resources\TextureSampler.cs" />
     <Compile Include="Resources\TextureSamplerFactory.cs" />

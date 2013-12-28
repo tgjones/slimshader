@@ -10,7 +10,7 @@ namespace SlimShader.VirtualMachine.Registers
 		public int NumPrimitives { get; private set; }
 		public int Inputs { get; private set; }
 		public int Outputs { get; private set; }
-		public int Resources { get; private set; }
+		public List<ResourceDimension> Resources { get; private set; }
 		public int Samplers { get; private set; }
 		public List<int> ConstantBuffers { get; private set; }
 		public List<int> IndexableTemps { get; private set; }
@@ -39,7 +39,7 @@ namespace SlimShader.VirtualMachine.Registers
 						switch (indexDimension)
 						{
 							case OperandIndexDimension._2D:
-								result.NumPrimitives = (int) indices[0].Value + 1;
+								result.NumPrimitives = (int) indices[0].Value;
 								result.Inputs = Math.Max(result.Inputs, (int) indices[1].Value + 1);
 								break;
 							case OperandIndexDimension._1D:
@@ -56,7 +56,7 @@ namespace SlimShader.VirtualMachine.Registers
 						result.Outputs = (int)indices[0].Value + 1;
 						break;
 					case OpcodeType.DclResource:
-						result.Resources = (int)indices[0].Value + 1;
+						result.Resources.Add(((ResourceDeclarationToken) declarationToken).ResourceDimension);
 						break;
 					case OpcodeType.DclSampler:
 						result.Samplers = (int)indices[0].Value + 1;
@@ -82,6 +82,7 @@ namespace SlimShader.VirtualMachine.Registers
 
 		private RequiredRegisters()
 		{
+			Resources = new List<ResourceDimension>();
 			ConstantBuffers = new List<int>();
 			IndexableTemps = new List<int>();
 		}

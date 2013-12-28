@@ -2,9 +2,7 @@
 {
 	public interface ITexture
 	{
-        TextureDimension Dimension { get; }
-
         int MipMapCount { get; }
-	    ITextureMipMap GetMipMap(int level);
+	    ITextureMipMap GetMipMap(int arraySlice, int mipLevel);
 	}
 }

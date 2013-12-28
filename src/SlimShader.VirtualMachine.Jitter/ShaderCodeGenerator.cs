@@ -357,23 +357,23 @@ public static class DynamicShaderExecutor
 
         private static string GetRegisterIndex(Operand operand)
         {
-            switch (operand.OperandType)
-            {
-                case OperandType.Output:
-                case OperandType.Temp:
-                    return string.Format("[{0}]",
-                        GetRegisterIndex(operand.Indices[0]));
-                case OperandType.Input:
-                    return string.Format("[0][{0}]",
-                        GetRegisterIndex(operand.Indices[0]));
-                case OperandType.ConstantBuffer:
-                case OperandType.IndexableTemp :
-                    return string.Format("[{0}][{1}]",
-                        GetRegisterIndex(operand.Indices[0]),
-                        GetRegisterIndex(operand.Indices[1]));
-                default :
-                    throw new ArgumentException("Unsupported operand type: " + operand.OperandType);
-            }
+	        switch (operand.IndexDimension)
+	        {
+		        case OperandIndexDimension._1D:
+					// Only geometry shaders use 2D input values, but we always need to
+					// use 2D indices because we use a 2D input array.
+			        if (operand.OperandType == OperandType.Input)
+				        return string.Format("[0][{0}]",
+					        GetRegisterIndex(operand.Indices[0]));
+			        return string.Format("[{0}]",
+				        GetRegisterIndex(operand.Indices[0]));
+		        case OperandIndexDimension._2D:
+					return string.Format("[{0}][{1}]",
+						GetRegisterIndex(operand.Indices[0]),
+						GetRegisterIndex(operand.Indices[1]));
+		        default:
+			        throw new ArgumentOutOfRangeException();
+	        }
         }
 
         private static string GetRegisterIndex(OperandIndex index)

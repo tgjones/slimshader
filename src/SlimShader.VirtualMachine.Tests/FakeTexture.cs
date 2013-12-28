@@ -21,9 +21,9 @@ namespace SlimShader.VirtualMachine.Tests
             _mipColors = mipColors;
         }
 
-        public ITextureMipMap GetMipMap(int level)
+        public ITextureMipMap GetMipMap(int arraySlice, int mipLevel)
         {
-            return new FakeTextureMipMap(_mipColors[level]);
+			return new FakeTextureMipMap(_mipColors[mipLevel]);
         }
 
         private class FakeTextureMipMap : ITextureMipMap
