@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Shex;
@@ -229,6 +230,12 @@ namespace SlimShader
 
         [FieldOffset(sizeof(int) * 3)]
         public int Int3;
+
+
+		public byte[] RawBytes
+		{
+			get { return new[] { Number0, Number1, Number2, Number3 }.SelectMany(x => x.RawBytes).ToArray(); }
+		}
 
 
 		public bool AllZero

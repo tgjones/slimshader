@@ -42,6 +42,9 @@ namespace SlimShader
 
         public static Number FromByteArray(byte[] bytes, int startIndex)
         {
+			if (startIndex >= bytes.Length)
+				return new Number();
+
             return new Number
             {
                 Byte0 = bytes[startIndex + 0],

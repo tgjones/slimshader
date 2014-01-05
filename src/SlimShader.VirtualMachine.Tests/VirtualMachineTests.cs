@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using SharpDX;
 using SlimShader.Chunks.Shex;
@@ -11,6 +10,7 @@ using SlimShader.VirtualMachine.Registers;
 using SlimShader.VirtualMachine.Resources;
 using SlimShader.VirtualMachine.Tests.Shaders.VS;
 using SlimShader.VirtualMachine.Tests.Util;
+using SlimShader.VirtualMachine.Util;
 
 namespace SlimShader.VirtualMachine.Tests
 {
@@ -24,11 +24,12 @@ namespace SlimShader.VirtualMachine.Tests
             VirtualMachine.ShaderExecutor = shaderExecutor;
             var vm = new VirtualMachine(BytecodeContainer.Parse(File.ReadAllBytes("Shaders/VS/BasicHLSL_VS.o")), 1);
 
-            var globals = new BasicHlsl.ConstantBufferGlobals
-            {
-                WorldViewProjection = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
-                    * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10)
-            };
+	        var globals = new BasicHlsl.ConstantBufferGlobals
+	        {
+		        WorldViewProjection = Matrix.LookAtRH(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY)
+			        * Matrix.PerspectiveFovRH(MathUtil.PiOverFour, 1, 1, 10),
+		        NumLights = 3
+	        };
 
             var vertexInput = new VertexPositionNormalTexture
             {
@@ -41,21 +42,21 @@ namespace SlimShader.VirtualMachine.Tests
 
             SetConstantBuffer(vm, 0, globals);
 
-            vm.SetRegister(0, OperandType.ConstantBuffer, new RegisterIndex(1, 0), new Number4
+            vm.SetConstantBufferRegisterValue(1, 0, new Number4
             {
                 Number0 = Number.FromInt(3), // nNumLights = 3
                 Number1 = Number.FromInt(1) // bTexture = true
             });
 
-            vm.SetRegister(0, OperandType.Input, new RegisterIndex(0), vertexInput.Position.ToNumber4());
-            vm.SetRegister(0, OperandType.Input, new RegisterIndex(1), vertexInput.Normal.ToNumber4());
-            vm.SetRegister(0, OperandType.Input, new RegisterIndex(2), vertexInput.TextureCoordinate.ToNumber4());
+            vm.SetInputRegisterValue(0, 0, 0, vertexInput.Position.ToNumber4());
+			vm.SetInputRegisterValue(0, 0, 1, vertexInput.Normal.ToNumber4());
+			vm.SetInputRegisterValue(0, 0, 2, vertexInput.TextureCoordinate.ToNumber4());
 
             // Act.
             vm.Execute();
 
 			// Assert.
-			var output0 = vm.GetRegister(0, OperandType.Output, new RegisterIndex(0));
+			var output0 = vm.GetOutputRegisterValue(0, 0);
 			Assert.That(output0.Number0.Float, Is.EqualTo(direct3DResult.Position.X));
             Assert.That(output0.Number1.Float, Is.EqualTo(direct3DResult.Position.Y));
             Assert.That(output0.Number2.Float, Is.EqualTo(direct3DResult.Position.Z));

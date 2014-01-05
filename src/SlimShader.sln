@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{696D19
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HlslUnit", "HlslUnit\HlslUnit.csproj", "{2967300A-54B4-40BD-972A-5A72143415A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HlslUnit.Tests", "HlslUnit.Tests\HlslUnit.Tests.csproj", "{B67F268E-7C9B-4CD9-B49A-75D8B0A73774}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,14 @@ Global
 		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32D8D38E-918D-40A7-BFD5-83B0EF596F6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2967300A-54B4-40BD-972A-5A72143415A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2967300A-54B4-40BD-972A-5A72143415A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2967300A-54B4-40BD-972A-5A72143415A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2967300A-54B4-40BD-972A-5A72143415A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B67F268E-7C9B-4CD9-B49A-75D8B0A73774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B67F268E-7C9B-4CD9-B49A-75D8B0A73774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B67F268E-7C9B-4CD9-B49A-75D8B0A73774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B67F268E-7C9B-4CD9-B49A-75D8B0A73774}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

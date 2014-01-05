@@ -81,6 +81,7 @@
     <Compile Include="Util\BitArrayUtility.cs" />
     <Compile Include="Util\MathUtility.cs" />
     <Compile Include="Util\OperandUtility.cs" />
+    <Compile Include="Util\StructUtility.cs" />
     <Compile Include="VirtualMachine.cs" />
     <Compile Include="ExecutionContext.cs" />
   </ItemGroup>

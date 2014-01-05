@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SlimShader.VirtualMachine.Tests.Util
+namespace SlimShader.VirtualMachine.Util
 {
     internal static class StructUtility
     {

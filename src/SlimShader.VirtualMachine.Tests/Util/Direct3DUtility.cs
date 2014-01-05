@@ -6,6 +6,7 @@ using SharpDX.DXGI;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using SlimShader.VirtualMachine.Tests.Shaders.VS;
+using SlimShader.VirtualMachine.Util;
 using Device = SharpDX.Direct3D10.Device;
 using DriverType = SharpDX.Direct3D10.DriverType;
 

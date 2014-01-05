@@ -49,6 +49,11 @@ namespace SlimShader.VirtualMachine
 			get { return _requiredRegisters.NumPrimitives; }
 		}
 
+		public int NumOutputs
+		{
+			get { return _requiredRegisters.Outputs; }
+		}
+
 		public VirtualMachine(BytecodeContainer bytecode, int numContexts)
 		{
             if (bytecode.Shader.Version.ProgramType == ProgramType.PixelShader && numContexts % 4 != 0)
