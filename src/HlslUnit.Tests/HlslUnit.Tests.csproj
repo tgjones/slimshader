@@ -75,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HlslUnit\HlslUnit.csproj">
-      <Project>{2967300A-54B4-40BD-972A-5A72143415A8}</Project>
+      <Project>{2967300a-54b4-40bd-972a-5a72143415a8}</Project>
       <Name>HlslUnit</Name>
     </ProjectReference>
   </ItemGroup>
