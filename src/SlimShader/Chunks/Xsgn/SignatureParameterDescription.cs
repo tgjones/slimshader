@@ -59,6 +59,26 @@ namespace SlimShader.Chunks.Xsgn
 		///// </summary>
 		//public MinPrecision MinPrecision { get; private set; }
 
+        /// <summary>
+        /// Gets the total number of bytes used by this parameter.
+        /// </summary>
+	    public int ByteCount
+	    {
+	        get
+	        {
+	            var result = 0;
+	            if (Mask.HasFlag(ComponentMask.X))
+	                result++;
+                if (Mask.HasFlag(ComponentMask.Y))
+                    result++;
+                if (Mask.HasFlag(ComponentMask.Z))
+                    result++;
+                if (Mask.HasFlag(ComponentMask.W))
+                    result++;
+	            return result * sizeof(float);
+	        }
+	    }
+
 		public SignatureParameterDescription(string semanticName, uint semanticIndex,
 			Name systemValueType, RegisterComponentType componentType, uint register,
 			ComponentMask mask, ComponentMask readWriteMask)

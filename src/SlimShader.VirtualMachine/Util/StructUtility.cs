@@ -5,6 +5,11 @@ namespace SlimShader.VirtualMachine.Util
 {
     internal static class StructUtility
     {
+        public static int SizeOf<T>()
+        {
+            return Marshal.SizeOf(typeof(T));
+        }
+
         public static byte[] ToBytes<T>(T data)
         {
             var size = Marshal.SizeOf(data);

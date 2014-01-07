@@ -151,6 +151,8 @@ namespace SlimShader
 				original.GetNumber((int) swizzles[3]));
 		}
 
+        public const int SizeInBytes = sizeof(byte) * 16;
+
         // The following FieldOffset attributes are there because there
         // are multiple ways of "looking at" a Number4. It can be used
         // to store:
