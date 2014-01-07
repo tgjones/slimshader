@@ -77,6 +77,10 @@
     <Compile Include="VirtualMachineTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\lib\D3DCompiler_43.dll">
+      <Link>D3DCompiler_43.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Shaders\GS\CubeMap.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
