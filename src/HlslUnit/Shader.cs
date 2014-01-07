@@ -12,7 +12,16 @@ using SlimShader.VirtualMachine.Util;
 
 namespace HlslUnit
 {
-    public delegate TColor ResourceCallback<out TColor>(float u, float v, float w);
+    /// <summary>
+    /// Encapsules a method that takes texture coordinates as its parameters, and returns a colour.
+    /// </summary>
+    /// <typeparam name="TColor">Type of the colour to return, i.e. Vector4.</typeparam>
+    /// <param name="u">U coordinate.</param>
+    /// <param name="v">V coordinate.</param>
+    /// <param name="w">W coordinate.</param>
+    /// <param name="x">Array index. Only used by TextureCubeArray.</param>
+    /// <returns></returns>
+    public delegate TColor ResourceCallback<out TColor>(float u, float v, float w, float x);
 
     /// <summary>
     /// The Shader class executes HLSL shaders on the CPU, entirely in managed code.
@@ -104,9 +113,9 @@ namespace HlslUnit
             var registerIndex = new RegisterIndex((ushort) resourceIndex);
             _virtualMachine.SetSampler(registerIndex, new SamplerState());
             _virtualMachine.SetTexture(registerIndex,
-                new FakeTexture((u, v, w) =>
+                new FakeTexture((u, v, w, i) =>
                 {
-                    var bytes = StructUtility.ToBytes(callback(u, v, w));
+                    var bytes = StructUtility.ToBytes(callback(u, v, w, i));
                     return Number4.FromByteArray(bytes, 0);
                 }));
         }

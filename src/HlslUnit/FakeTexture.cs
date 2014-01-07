@@ -1,12 +1,11 @@
-﻿using System;
-using SlimShader;
+﻿using SlimShader;
 using SlimShader.VirtualMachine.Resources;
 
 namespace HlslUnit
 {
     internal class FakeTexture : ITexture
     {
-        private readonly Func<float, float, float, Number4> _callback;
+        private readonly ResourceCallback<Number4> _callback;
 
         public TextureDimension Dimension
         {
@@ -18,7 +17,7 @@ namespace HlslUnit
             get { return 1; }
         }
 
-        public FakeTexture(Func<float, float, float, Number4> callback)
+        public FakeTexture(ResourceCallback<Number4> callback)
         {
             _callback = callback;
         }
@@ -30,7 +29,7 @@ namespace HlslUnit
 
         private class FakeTextureMipMap : ITextureMipMap
         {
-            private readonly Func<float, float, float, Number4> _callback;
+            private readonly ResourceCallback<Number4> _callback;
 
             public int Width
             {
@@ -47,14 +46,14 @@ namespace HlslUnit
                 get { return 0; }
             }
 
-            public FakeTextureMipMap(Func<float, float, float, Number4> callback)
+            public FakeTextureMipMap(ResourceCallback<Number4> callback)
             {
                 _callback = callback;
             }
 
             public Number4 GetData(ref Number4 coords)
             {
-                return _callback(coords.X, coords.Y, coords.Z);
+                return _callback(coords.X, coords.Y, coords.Z, coords.W);
             }
         }
     }

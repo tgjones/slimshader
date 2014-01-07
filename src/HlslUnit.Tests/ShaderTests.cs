@@ -61,7 +61,7 @@ namespace HlslUnit.Tests
             {
                 Texture = true
             });
-            shader.SetResource("MeshTextureSampler", (u, v, w) => new Vector4(0.5f, 1.0f, 0.0f, 1.0f));
+            shader.SetResource("MeshTextureSampler", (u, v, w, i) => new Vector4(0.5f, 1.0f, 0.0f, 1.0f));
             var vertexOutput = new BasicHlsl.VertexShaderOutput
             {
                 Position = new Vector4(0, 1, 2, 1),
