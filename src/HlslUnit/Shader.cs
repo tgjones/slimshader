@@ -5,12 +5,15 @@ using SlimShader;
 using SlimShader.Chunks.Common;
 using SlimShader.Chunks.Rdef;
 using SlimShader.Chunks.Xsgn;
-using SlimShader.Compiler;
 using SlimShader.VirtualMachine;
+using SlimShader.VirtualMachine.Registers;
+using SlimShader.VirtualMachine.Resources;
 using SlimShader.VirtualMachine.Util;
 
 namespace HlslUnit
 {
+    public delegate TColor ResourceCallback<out TColor>(float u, float v, float w);
+
     /// <summary>
     /// The Shader class executes HLSL shaders on the CPU, entirely in managed code.
     /// It it designed to support unit testing for shaders.
@@ -21,7 +24,8 @@ namespace HlslUnit
         private const int ContextIndex = 0;
 
         private readonly List<ConstantBuffer> _constantBuffers;
-	    private readonly InputSignatureChunk _inputSignature;
+        private readonly List<ResourceBinding> _resourceBindings;
+        private readonly InputSignatureChunk _inputSignature;
 	    private readonly int _inputSignatureSize;
         private readonly OutputSignatureChunk _outputSignature;
         private readonly int _outputSignatureSize;
@@ -30,28 +34,32 @@ namespace HlslUnit
         /// <summary>
         /// Creates a new instance of the Shader class.
         /// </summary>
-        /// <param name="fileName">Filename of a file containing HLSL code.</param>
-        /// <param name="entryPoint">Name of the shader entry-point function.</param>
-        /// <param name="profile">Shader profile, i.e. vs_4_0.</param>
-		public Shader(string fileName, string entryPoint, string profile)
+        /// <param name="shaderBytecode">Byte array containing the compiled shader bytecode.</param>
+		public Shader(byte[] shaderBytecode)
 		{
-			var bytecodeContainer = ShaderCompiler.CompileFromFile(fileName, entryPoint, profile);
+            var bytecodeContainer = new BytecodeContainer(shaderBytecode);
 
-            switch (bytecodeContainer.Shader.Version.ProgramType)
+            var programType = bytecodeContainer.Shader.Version.ProgramType;
+            switch (programType)
             {
                 case ProgramType.GeometryShader:
                 case ProgramType.HullShader:
                 case ProgramType.DomainShader:
                 case ProgramType.ComputeShader:
-                    throw new ArgumentOutOfRangeException("profile", "This shader type is not yet supported.");
+                    throw new NotSupportedException(string.Format(
+                        "The '{0}' shader type is not yet supported.", 
+                        bytecodeContainer.Shader.Version.ProgramType));
             }
 
             _constantBuffers = bytecodeContainer.ResourceDefinition.ConstantBuffers;
+            _resourceBindings = bytecodeContainer.ResourceDefinition.ResourceBindings;
 		    _inputSignature = bytecodeContainer.InputSignature;
 		    _inputSignatureSize = _inputSignature.Parameters.Sum(x => x.ByteCount);
             _outputSignature = bytecodeContainer.OutputSignature;
             _outputSignatureSize = _outputSignature.Parameters.Sum(x => x.ByteCount);
-            _virtualMachine = new VirtualMachine(bytecodeContainer, 1);
+
+            var numContexts = (programType == ProgramType.PixelShader) ? 4 : 1;
+            _virtualMachine = new VirtualMachine(bytecodeContainer, numContexts);
 		}
 
         /// <summary>
@@ -72,6 +80,36 @@ namespace HlslUnit
                 _virtualMachine.SetConstantBufferRegisterValue(constantBufferIndex, i / 16,
                     Number4.FromByteArray(bytes, i));
 		}
+
+        /// <summary>
+        /// Sets a callback to be used whenever texture data is requested by a shader.
+        /// The callback will be passed the u, v and w coordinates.
+        /// </summary>
+        /// <typeparam name="TColor">Color type, i.e. Vector4.</typeparam>
+        /// <param name="name">Name of the resource.</param>
+        /// <param name="callback">The callback will be executed once for each texture fetch,
+        /// and will be passed the u, v and w coordinates.</param>
+        public void SetResource<TColor>(string name, ResourceCallback<TColor> callback)
+            where TColor : struct
+        {
+            // Validate.
+            var resourceIndex = _resourceBindings.FindIndex(x => x.Name == name);
+            if (resourceIndex == -1)
+                throw new ArgumentException("Could not find resource named '" + name + "'", "name");
+            if (StructUtility.SizeOf<TColor>() != Number4.SizeInBytes)
+                throw new ArgumentException(string.Format("Expected color struct to be {0} bytes, but was {1}'",
+                    Number4.SizeInBytes, StructUtility.SizeOf<TColor>()));
+
+            // Set resource into virtual machine. We also set a default sampler state.
+            var registerIndex = new RegisterIndex((ushort) resourceIndex);
+            _virtualMachine.SetSampler(registerIndex, new SamplerState());
+            _virtualMachine.SetTexture(registerIndex,
+                new FakeTexture((u, v, w) =>
+                {
+                    var bytes = StructUtility.ToBytes(callback(u, v, w));
+                    return Number4.FromByteArray(bytes, 0);
+                }));
+        }
 
         /// <summary>
         /// Executes the shader. First, the input value is set into the input registers.

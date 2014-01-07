@@ -6,7 +6,7 @@ namespace HlslUnit.Tests.Shaders.VS
     internal static class BasicHlsl
     {
         [StructLayout(LayoutKind.Explicit, Size = 224)]
-        public struct ConstantBufferGlobals
+        public struct VertexConstantBufferGlobals
         {
             [FieldOffset(0)]
             public Vector4 MaterialAmbientColor;
@@ -37,7 +37,7 @@ namespace HlslUnit.Tests.Shaders.VS
         }
 
 		[StructLayout(LayoutKind.Explicit, Size = 12)]
-		public struct ConstantBufferParams
+		public struct VertexConstantBufferParams
 		{
 			[FieldOffset(0)]
 			public int NumLights;
@@ -73,6 +73,13 @@ namespace HlslUnit.Tests.Shaders.VS
             public Vector4 Position;
             public Vector4 Diffuse;
             public Vector2 TextureUV;
+        }
+
+        [StructLayout(LayoutKind.Explicit, Size = 4)]
+        public struct PixelConstantBufferParams
+        {
+            [FieldOffset(0)]
+            public bool Texture;
         }
     }
 }
