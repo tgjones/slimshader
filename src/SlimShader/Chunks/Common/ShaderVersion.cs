@@ -1,5 +1,3 @@
-using System;
-using SlimShader.Chunks.Shex;
 using SlimShader.Util;
 
 namespace SlimShader.Chunks.Common
