@@ -18,6 +18,16 @@ Console.WriteLine(bytecodeContainer.Statistics.StaticFlowControlCount);
 Console.WriteLine(bytecodeContainer.Shader.Tokens.Count);
 ```
 
+Virtual Machine
+---------------
+
+SlimShader also includes a virtual machine, which can execute HLSL shaders on the CPU. [See the source code here](https://github.com/tgjones/slimshader/tree/master/src/SlimShader.VirtualMachine). SlimShader.VirtualMachine includes both an interpreter and a just-in-time (JIT) compiler.
+
+HlslUnit
+--------
+
+HlslUnit is a .NET library that allows you to unit test your HLSL shaders. It is built on top of SlimShader and SlimShader.VirtualMachine. [I blogged about it here](http://timjones.tw/blog/archive/2014/01/07/introducing-hlslunit-unit-tests-for-your-hlsl-shader-code).
+
 GUI
 ---
 
